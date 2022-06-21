@@ -1,5 +1,7 @@
+library(shinyWidgets)
 ui <- fluidPage(
   titlePanel(title=div(img(src="ODClogo.png", height = 50), "OutDeCo")),
+  
   navbarPage("",
              tabPanel(
                title="Home",
@@ -65,11 +67,30 @@ ui <- fluidPage(
              ),
              tabPanel(
                title="Assess DE",
+               dropdown(
+                 
+                 tags$h3("List of Input"),
+                 
+                 pickerInput(inputId = 'xcol2',
+                             label = 'X Variable',
+                             choices = names(iris),
+                             options = list(`style` = "btn-info")),
+                 style = "gradient", icon = icon("cog"),
+                 status = "primary", width = "300px",
+                 animate = animateOptions(
+                   enter = animations$fading_entrances$fadeInLeftBig,
+                   exit = animations$fading_exits$fadeOutLeftBig
+                 )
+               ),
+               
                #Sidebar
+               #DROPDOWN
+              
                navlistPanel(
                  tabPanel(
                    title="Cluster Genes",
                    "Cluster genes Page",
+                   
                  ),
                  
                  tabPanel(
@@ -87,7 +108,9 @@ ui <- fluidPage(
                    title="Gene Set Enrichment Analysis",
                    "GSE Page",
                  ),
+                 
                ),
+               
              )
              
   ),
