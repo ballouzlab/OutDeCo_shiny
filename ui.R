@@ -1,15 +1,21 @@
 library(shinyWidgets)
+library(shinythemes)
 ui <- fluidPage(
   titlePanel(title=div(img(src="ODClogo.png", height = 50), "OutDeCo")),
-  
+  shinythemes::themeSelector(),
   navbarPage("",
+             
              tabPanel(
                title="Home",
 
                navlistPanel(
+                 id = NULL, selected = NULL, well = FALSE, fluid = FALSE, widths = c(3, 8) ,
+                 
                  tabPanel(
                    title="About",
-                   "What is OutDeCo?"       
+                   h3("What is OutDeCo?"),
+                   h4(""),
+                   h5("Header 5"),  
                  ),
                  
                  tabPanel(
@@ -20,7 +26,13 @@ ui <- fluidPage(
                  
                  tabPanel(
                    title="Cluster Genes",
-                   "information about Cluster genes",
+                   h2("Cluster Genes"),
+                   h3("Plot Types"),
+                   h4("Heatmap"),  
+                   h5("text"),
+                   h4("Network"),  
+                   h4("Binarized heatmap"),  
+                   
                  ),
                  
                  tabPanel(
