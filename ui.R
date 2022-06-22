@@ -48,27 +48,28 @@ ui <- fluidPage(
                title="Run DE",
 
                # side panel for upload options
-#               dropdown(
+               dropdown(
 
                 # title of sidepanel
-#                 tags$h3("Options"),
+                 tags$h3("Options"),
 
                  # inputs in the sidepanel
-#                fileInput("file1", "Choose DE File",
-#                  accept = c(
-#                  "text/csv",
-#                  "text/comma-separated-values,text/plain",
-#                   ".csv")
-#                ),
+                fileInput("file1", "Choose DE File",
+                  accept = c(
+                  "text/csv",
+                  "text/comma-separated-values,text/plain",
+                   ".csv")
+                ),
 
                 # side panel characteristics
-#                style = "gradient", icon = icon("cog"),
-#                status = "primary", width = "300px",
-#                animate = animateOptions(
-#                enter = animations$fading_entrances$fadeInLeftBig,
-#                exit = animations$fading_exits$fadeOutLeftBig
-#                )
-#               ),
+                style = "gradient", icon = icon("cog"),
+                status = "primary", width = "300px",
+                animate = animateOptions(
+                enter = animations$fading_entrances$fadeInLeftBig,
+                exit = animations$fading_exits$fadeOutLeftBig
+                )
+               ),
+
                navlistPanel(
                  tabPanel(
                    title="wilcox",
@@ -95,7 +96,7 @@ ui <- fluidPage(
                  tags$h3("Options"),
 
                  # inputs in the sidepanel
-                fileInput("file1", "Choose DE File",
+                fileInput("file2", "Choose DE File",
                   accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
