@@ -48,27 +48,27 @@ ui <- fluidPage(
                title="Run DE",
 
                # side panel for upload options
-               dropdown(
+#               dropdown(
 
                 # title of sidepanel
-                 tags$h3("Options"),
+#                 tags$h3("Options"),
 
                  # inputs in the sidepanel
-                fileInput("file1", "Choose CSV File",
-                  accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
-                   ".csv")
-                ),
+#                fileInput("file1", "Choose DE File",
+#                  accept = c(
+#                  "text/csv",
+#                  "text/comma-separated-values,text/plain",
+#                   ".csv")
+#                ),
 
                 # side panel characteristics
-                style = "gradient", icon = icon("cog"),
-                status = "primary", width = "300px",
-                animate = animateOptions(
-                enter = animations$fading_entrances$fadeInLeftBig,
-                exit = animations$fading_exits$fadeOutLeftBig
-                )
-               ),
+#                style = "gradient", icon = icon("cog"),
+#                status = "primary", width = "300px",
+#                animate = animateOptions(
+#                enter = animations$fading_entrances$fadeInLeftBig,
+#                exit = animations$fading_exits$fadeOutLeftBig
+#                )
+#               ),
                navlistPanel(
                  tabPanel(
                    title="wilcox",
@@ -88,19 +88,27 @@ ui <- fluidPage(
              ),
 
              tabPanel(
-               title="Assess DE",
-               dropdown(
-                 tags$h3("List of Input"),
-                 pickerInput(inputId = 'xcol2',
-                             label = 'X Variable',
-                             choices = names(iris),
-                             options = list(`style` = "btn-info")),
-                 style = "gradient", icon = icon("cog"),
-                 status = "primary", width = "300px",
-                 animate = animateOptions(
-                   enter = animations$fading_entrances$fadeInLeftBig,
-                   exit = animations$fading_exits$fadeOutLeftBig
-                 )
+              title="Assess DE",
+              dropdown(
+
+                # title of sidepanel
+                 tags$h3("Options"),
+
+                 # inputs in the sidepanel
+                fileInput("file1", "Choose DE File",
+                  accept = c(
+                  "text/csv",
+                  "text/comma-separated-values,text/plain",
+                   ".csv")
+                ),
+
+                # side panel characteristics
+                style = "gradient", icon = icon("cog"),
+                status = "primary", width = "300px",
+                animate = animateOptions(
+                enter = animations$fading_entrances$fadeInLeftBig,
+                exit = animations$fading_exits$fadeOutLeftBig
+                )
                ),
                
               #Sidebar
@@ -113,10 +121,14 @@ ui <- fluidPage(
                   #Navigation Bar for types of plots
                   tabsetPanel(
                     tabPanel(
-                      title="Plot 1", 
+                      title="View file",
+                      mainPanel(
+                        tableOutput("contents") 
+                      )
+                      
                     ),
                     tabPanel(
-                      title ="Plot 2"
+                      title="Plot 2"
                     ),
                     tabPanel(
                       title="Plot 3"
