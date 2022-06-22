@@ -5,7 +5,7 @@ ui <- fluidPage(
   navbarPage("",
              tabPanel(
                title="Home",
-               
+
                navlistPanel(
                  tabPanel(
                    title="About",
@@ -83,20 +83,31 @@ ui <- fluidPage(
                  )
                ),
                
-               #Sidebar
-               #DROPDOWN
+              #Sidebar
+              #DROPDOWN
               
-               navlistPanel(
-                 tabPanel(
-                   title="Cluster Genes",
-                   "Cluster genes Page",
-                   
-                 ),
-                 
-                 tabPanel(
-                   title="Gene Connectivity",
-                   "Gene Connectivity Page",
-                 ),
+              navlistPanel(
+                tabPanel(
+                  title="Cluster Genes",
+                  "Cluster genes Page",
+                  #Navigation Bar for types of plots
+                  tabsetPanel(
+                    tabPanel(
+                      title="Plot 1", 
+                    ),
+                    tabPanel(
+                      title ="Plot 2"
+                    ),
+                    tabPanel(
+                      title="Plot 3"
+                    )
+                  ),
+                ),
+                
+                tabPanel(
+                  title="Gene Connectivity",
+                  "Gene Connectivity Page",
+                ),
                  
                  
                  tabPanel(
