@@ -19,7 +19,12 @@ server <- function(input, output) {
 #  })
 
   data <- reactive({
+
   inFile <- input$file2
+  ext <- tools::file_ext(inFile$datapath)
+  req(inFile)
+  validate(need(ext == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+
   if(is.null(inFile)){return()} 
   read.table(file=inFile$datapath, sep=input$sep)
   })
