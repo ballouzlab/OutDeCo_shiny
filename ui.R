@@ -1,4 +1,6 @@
 library(shinyWidgets)
+library(DT)
+library(shiny)
 ui <- fluidPage(
   titlePanel(title=div(img(src="ODClogo.png", height = 50), "OutDeCo")),
   
@@ -98,9 +100,10 @@ ui <- fluidPage(
                  # inputs in the sidepanel
                 fileInput("file2", "Choose DE File",
                   accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
-                   ".csv")
+                   ".csv",
+                   ".tsv",
+                   ".txt"
+                   )
                 ),
 
                 # side panel characteristics
