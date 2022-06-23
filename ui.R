@@ -28,7 +28,8 @@ ui <- fluidPage(
                  ),
                  
                  tabPanel(title="Differential Analysis",
-                   h3("Differential Analysis Methods"),
+                   h3("Differential Expression Analysis"),
+                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
                    h5("Methods:"),
                    h6("wilcox"),
                    p("Compares means of two groups to analyse count data and test for differential expression."),
@@ -47,7 +48,7 @@ ui <- fluidPage(
                    p('Creates modules which are clusters of genes that are hightly co-expressed'),
                    h5("Plot Types"),
                    h6("Heatmap"),  
-                   p("up-regulated or down-regulated network plot"),
+                   p("up-regulated or down-regulated heatmap of genes"),
                    h6("Network"),  
                    p("up regulated or down-regulated network plot where nodes are genes and the weight of the edges corresponds to the co-expression levels between its endpoints"),
                    h6("Binarized heatmap"),  
@@ -57,15 +58,13 @@ ui <- fluidPage(
                  ),
                  
                  tabPanel(title="Gene Connectivity",
-                   h3("Cluster Genes"),
-                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
+                   h3("Gene Connectivity"),
+                   p('Calculates node degrees to get a sense of the global and local connectivities of the gene'),
                    h5("Plot Types"),
-                   h6("Heatmap"),  
-                   p("up-regulated or down-regulated network plot"),
-                   h6("Network"),  
-                   p("up regulated or down-regulated network plot where nodes are genes and the weight of the edges corresponds to the co-expression levels between its endpoints"),
-                   h6("Binarized heatmap"),  
-                   p("up-regulated or down-regulated binary co-expression sub-network"),
+                   h6("Density"),  
+                   h6("Histogram"), 
+                   h6("Subset by clusters"),  
+
                    
                    br(),
                    em("Note: This tool is under construction"),
@@ -75,24 +74,30 @@ ui <- fluidPage(
                  
                  tabPanel(
                    title="Functional Outliers",
-                   "Functional outliers are genes that have been identified to be potentially dysregulated. 
-                   They are the genes that are Differentially Expressed but do not show local co-expression",
-                 
-                   h5("Analysis Types"),
-                   h6("Coexpression heatmap"),
-                   "- Up and Down regulated",
+                   h3("Functional Outliers"),
+                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
+                   They are the genes that are Differentially Expressed but do not show local co-expression"),
+                   p("Module Default Threshold: More than 6 genes"),
+                   h5("Analysis Options"),
+                   h6("Coexpression Heatmap"),
+                   "up-regulated or down-regulated heatmap of genes detailing the outliers connectivity and expression",
                    h6("Network"),
-                   "- Up and Down regulated",
-                   
+                   "up-regulated or down-regulated subnetwork plot detailing the outliers connectivity and expression",
+                   h6("Table"),
+                   p("Genes Filtered and Genes Remaining"),
                    br(),
                    em("Note: This tool is under construction"),
-                   
                  ),
                  
                  tabPanel(
                    title="Gene Set Enrichment Analysis",
-                   "information about Enrichment Analysis",
-      
+                   h3("Gene Set Enrichment Analysis (GSEA)"),
+                   p("GSEA is a process of ranking genes by how statistically significant their differential gene expression is. 
+                   This can remove false positives from the data. "),
+                   h5("Analysis Options"),
+                   h6("Overlap"),
+                   p("A map detailing the overlap"),
+                   
                    br(),
                    em("Note: This tool is under construction")
                  ),
