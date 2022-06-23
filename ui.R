@@ -101,7 +101,7 @@ ui <- fluidPage(
                  tags$h3("Options"),
 
                  # inputs in the sidepanel
-                fileInput("file2", "Choose DE File",
+                fileInput("DEFile", "Choose DE File",
                   accept = c(
                    ".csv",
                    ".tsv",
@@ -124,12 +124,13 @@ ui <- fluidPage(
                 tabPanel(
                   title="Cluster Genes",
                   "Cluster genes Page",
-                  #Navigation Bar for types of plots
+
+                  # Navigation Bar for types of plots inside cluster
                   tabsetPanel(
                     tabPanel(
                       title="View file",
                       mainPanel(
-                        uiOutput("tb") 
+                        uiOutput("UIDEContent") 
                       )
                       
                     ),
