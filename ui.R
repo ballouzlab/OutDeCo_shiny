@@ -8,6 +8,7 @@ ui <- fluidPage(
   navbarPage("",
 
             #tabPanel is each tab in the navbarPage
+            # home tab
              tabPanel(
                title="Home",
 
@@ -45,7 +46,8 @@ ui <- fluidPage(
                  
                )
              ),
-             
+
+            # run DE tab
              tabPanel(
                title="Run DE",
 
@@ -89,7 +91,8 @@ ui <- fluidPage(
                  ),
                ),
              ),
-
+            
+            # Assess DE tab
              tabPanel(
               title="Assess DE",
               dropdown(
@@ -106,6 +109,8 @@ ui <- fluidPage(
                    )
                 ),
 
+                radioButtons(inputId = 'sep', label = 'Separator', choices = c(Comma=',',Semicolon=';',Tab='\t', Space=''), selected = ','),
+
                 # side panel characteristics
                 style = "gradient", icon = icon("cog"),
                 status = "primary", width = "300px",
@@ -114,9 +119,6 @@ ui <- fluidPage(
                 exit = animations$fading_exits$fadeOutLeftBig
                 )
                ),
-               
-              #Sidebar
-              #DROPDOWN
               
               navlistPanel(
                 tabPanel(
@@ -127,7 +129,7 @@ ui <- fluidPage(
                     tabPanel(
                       title="View file",
                       mainPanel(
-                        tableOutput("contents") 
+                        uiOutput("tb") 
                       )
                       
                     ),
