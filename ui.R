@@ -109,7 +109,8 @@ ui <- fluidPage(
                    )
                 ),
 
-                radioButtons(inputId = 'sep', label = 'Separator', choices = c(Comma=',',Semicolon=';',Tab='\t', Space=''), selected = ','),
+                # button for selecting delimiter, default is nothing until file is selected and handled in server side
+                radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
 
                 # side panel characteristics
                 style = "gradient", icon = icon("cog"),
