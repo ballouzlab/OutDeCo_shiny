@@ -9,7 +9,7 @@ ui <- fluidPage(
   theme = bs_theme(version = 5, bootswatch = "sandstone"),
   
   #navbarPage is top menu bar
-  navbarPage("",
+  navbarPage(title=NULL, collapsible = FALSE,
 
             #tabPanel is each tab in the navbarPage
             # home tab
@@ -19,7 +19,7 @@ ui <- fluidPage(
 
               # navlistPanel is each tab on the side menu for each tabPanel
                navlistPanel(
-                 id = "Header", selected = NULL, well = FALSE, fluid = FALSE, widths = c(3, 8) ,
+                 id = "Header", selected = NULL, well = FALSE, fluid = TRUE, widths = c(3, 9), collapsible = TRUE,
              
                  tabPanel(title="About",
                    h3("What is OutDeCo?"),
