@@ -1,11 +1,18 @@
 library(shinyWidgets)
+library(DT)
+library(shiny)
 ui <- fluidPage(
   titlePanel(title=div(img(src="ODClogo.png", height = 50), "OutDeCo")),
   
+  #navbarPage is top menu bar
   navbarPage("",
+
+            #tabPanel is each tab in the navbarPage
+            # home tab
              tabPanel(
                title="Home",
 
+              # navlistPanel is each tab on the side menu for each tabPanel
                navlistPanel(
                  tabPanel(
                    title="About",
@@ -17,7 +24,6 @@ ui <- fluidPage(
                    "information about DE",
                  ),
                  
-                 
                  tabPanel(
                    title="Cluster Genes",
                    "information about Cluster genes",
@@ -27,7 +33,6 @@ ui <- fluidPage(
                    title="Gene Connectivity",
                    "information about Gene Connectivity",
                  ),
-                 
                  
                  tabPanel(
                    title="Functional Outliers",
@@ -41,10 +46,34 @@ ui <- fluidPage(
                  
                )
              ),
-             
-             
+
+            # run DE tab
              tabPanel(
                title="Run DE",
+
+               # side panel for upload options
+               dropdown(
+
+                # title of sidepanel
+                 tags$h3("Options"),
+
+                 # inputs in the sidepanel
+                fileInput("file1", "Choose DE File",
+                  accept = c(
+                  "text/csv",
+                  "text/comma-separated-values,text/plain",
+                   ".csv")
+                ),
+
+                # side panel characteristics
+                style = "gradient", icon = icon("cog"),
+                status = "primary", width = "300px",
+                animate = animateOptions(
+                enter = animations$fading_entrances$fadeInLeftBig,
+                exit = animations$fading_exits$fadeOutLeftBig
+                )
+               ),
+
                navlistPanel(
                  tabPanel(
                    title="wilcox",
@@ -56,47 +85,59 @@ ui <- fluidPage(
                    "DESeq placeholder",
                  ),
                  
-                 
                  tabPanel(
                    title="edgeR",
                    "edgeR Placeholder",
                  ),
                ),
-               
-               
              ),
+            
+            # Assess DE tab
              tabPanel(
-               title="Assess DE",
-               dropdown(
-                 
-                 tags$h3("List of Input"),
-                 
-                 pickerInput(inputId = 'xcol2',
-                             label = 'X Variable',
-                             choices = names(iris),
-                             options = list(`style` = "btn-info")),
-                 style = "gradient", icon = icon("cog"),
-                 status = "primary", width = "300px",
-                 animate = animateOptions(
-                   enter = animations$fading_entrances$fadeInLeftBig,
-                   exit = animations$fading_exits$fadeOutLeftBig
-                 )
+              title="Assess DE",
+              dropdown(
+
+                # title of sidepanel
+                 tags$h3("Options"),
+
+                 # inputs in the sidepanel
+                fileInput("DEFile", "Choose DE File",
+                  accept = c(
+                   ".csv",
+                   ".tsv",
+                   ".txt"
+                   )
+                ),
+
+                # button for selecting delimiter, default is nothing until file is selected and handled in server side
+                radioButtons(inputId = 'fileTypeButton', label = 'File type', choices = c("csv", "tsv", "txt"), selected = "csv"),
+                radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
+
+                # side panel characteristics
+                style = "gradient", icon = icon("cog"),
+                status = "primary", width = "300px",
+                animate = animateOptions(
+                enter = animations$fading_entrances$fadeInLeftBig,
+                exit = animations$fading_exits$fadeOutLeftBig
+                )
                ),
-               
-              #Sidebar
-              #DROPDOWN
               
               navlistPanel(
                 tabPanel(
                   title="Cluster Genes",
                   "Cluster genes Page",
-                  #Navigation Bar for types of plots
+
+                  # Navigation Bar for types of plots inside cluster
                   tabsetPanel(
                     tabPanel(
-                      title="Plot 1", 
+                      title="View file",
+                      mainPanel(
+                        uiOutput("UIDEContent") 
+                      )
+                      
                     ),
                     tabPanel(
-                      title ="Plot 2"
+                      title="Plot 2"
                     ),
                     tabPanel(
                       title="Plot 3"
@@ -109,7 +150,6 @@ ui <- fluidPage(
                   "Gene Connectivity Page",
                 ),
                  
-                 
                  tabPanel(
                    title="Functional Outliers",
                    "Functional Outliers Page",
@@ -119,10 +159,7 @@ ui <- fluidPage(
                    title="Gene Set Enrichment Analysis",
                    "GSE Page",
                  ),
-                 
                ),
-               
              )
-             
   ),
 )
