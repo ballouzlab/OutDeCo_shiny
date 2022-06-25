@@ -19,7 +19,7 @@ ui <- fluidPage(
 
               # navlistPanel is each tab on the side menu for each tabPanel
                navlistPanel(
-                 id = "Header", selected = NULL, well = FALSE, fluid = TRUE, widths = c(3, 9), collapsible = TRUE,
+                 id = "Header", selected = NULL, well = FALSE, fluid = TRUE, widths = c(3, 9),
              
                  tabPanel(title="About",
                    h3("What is OutDeCo?"),
