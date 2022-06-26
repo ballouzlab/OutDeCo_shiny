@@ -2,6 +2,32 @@ server <- function(input, output, session) {
   output$distPlot <- renderPlot({
     hist(rnorm(input$obs), col = 'darkgray', border = 'white')
   })
+
+  observe({
+    x <- input$fileTypeButton
+    if (x == "txt") {
+      choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+      updateRadioButtons(session, "sepButton",
+                        label = paste("Delimiter Selection for", x),
+                        choices = choice
+      )
+    }
+    else if (x == "csv") {
+      choice <-c(",")
+      updateRadioButtons(session, "sepButton",
+                        label = paste("Delimiter: Comma"),
+                        choices = choice
+      )
+    }
+    else {
+      choice <-c("\t")
+      updateRadioButtons(session, "sepButton",
+                        label = paste("Delimiter: Tab"),
+                        choices = choice
+      )
+    }
+  })
+
   # reactive converts the upload file into a reactive expression known as data
   data <- eventReactive(input$DEFile,{
 
@@ -17,28 +43,6 @@ server <- function(input, output, session) {
 
   # convert data into file format
   if(is.null(extDEFile)){return()} 
-
-  if (extDEFile == "txt") {
-    choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
-    updateRadioButtons(session, "sepButton",
-                      label = paste("Delimiters for", extDEFile, "file"),
-                      choices = choice,
-                      )
-  }
-  else if (extDEFile == "tsv") {
-    choice <- (Tab="\t")
-    updateRadioButtons(session, "sepButton",
-              label = paste("Delimiter: Tab"),
-              choices = choice
-              )
-  }
-  else {
-    choice <- (Comma=",")
-    updateRadioButtons(session, "sepButton",
-              label = paste("Delimiter: Comma"),
-              choices = choice
-              )
-  }
 
   read.table(file=ServerDEFile$datapath, sep=input$sepButton)
   })
