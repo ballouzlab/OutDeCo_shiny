@@ -3,33 +3,8 @@ server <- function(input, output, session) {
     hist(rnorm(input$obs), col = 'darkgray', border = 'white')
   })
 
-  observe({
-    x <- input$fileTypeButton
-    if (x == "txt") {
-      choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
-      updateRadioButtons(session, "sepButton",
-                        label = paste("Delimiter Selection for", x),
-                        choices = choice
-      )
-    }
-    else if (x == "csv") {
-      choice <-c(",")
-      updateRadioButtons(session, "sepButton",
-                        label = paste("Delimiter: Comma"),
-                        choices = choice
-      )
-    }
-    else {
-      choice <-c("\t")
-      updateRadioButtons(session, "sepButton",
-                        label = paste("Delimiter: Tab"),
-                        choices = choice
-      )
-    }
-  })
-
   # reactive converts the upload file into a reactive expression known as data
-  data <- eventReactive(input$DEFile,{
+  uploadData <- eventReactive(input$DEFile,{
 
   # DEFile from fileInput() function
   ServerDEFile <- input$DEFile
@@ -44,13 +19,40 @@ server <- function(input, output, session) {
   # convert data into file format
   if(is.null(extDEFile)){return()} 
 
+  if (extDEFile == "txt") {
+    choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+    updateRadioButtons(session, "sepButton",
+                      label = paste("Delimiter Selection for", extDEFile),
+                      choices = choice
+    )
+  }
+  else if (extDEFile == "csv") {
+    choice <-c(",")
+    updateRadioButtons(session, "sepButton",
+                      label = paste("Delimiter: Comma"),
+                      choices = choice
+    )
+  }
+  else {
+    choice <-c("\t")
+    updateRadioButtons(session, "sepButton",
+                      label = paste("Delimiter: Tab"),
+                      choices = choice
+    )
+  }
+
   read.table(file=ServerDEFile$datapath, sep=input$sepButton)
+  })
+
+  sepData <- reactive(input$DEFile,{
+    ServerDE <- input$DEFile
+    read.table(file=ServerDE$datapath, sep=input$sepButton)
   })
 
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
-  if(is.null(data())){return ()}
-  data()
+  if(is.null(sepData())){return ()}
+  sepData()
   })
 
   # handles rendering of reactive object on tb on ui
