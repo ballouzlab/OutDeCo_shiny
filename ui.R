@@ -170,7 +170,7 @@ ui <- fluidPage(
                 ),
 
                 # button for selecting delimiter, default is nothing until file is selected and handled in server side
-                radioButtons(inputId = 'fileTypeButton', label = 'File type', choices = c("csv", "tsv", "txt"), selected = "csv"),
+#                radioButtons(inputId = 'fileTypeButton', label = 'File type', choices = c("csv", "tsv", "txt"), selected = "csv"),
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
 
                 # side panel characteristics
