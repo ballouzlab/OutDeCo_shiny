@@ -178,7 +178,6 @@ ui <- fluidPage(
                 ),
 
                 # button for selecting delimiter, default is nothing until file is selected and handled in server side
-                radioButtons(inputId = 'fileTypeButton', label = 'File type', choices = c("csv", "tsv", "txt"), selected = "csv"),
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
 
                 # side panel characteristics
@@ -189,8 +188,16 @@ ui <- fluidPage(
                 exit = animations$fading_exits$fadeOutLeftBig
                 )
                ),
-              
+        
               navlistPanel(
+
+                tabPanel(
+                  title="View File",
+                      mainPanel(
+                      uiOutput("UIDEContent")
+                      )
+                ),
+
                 tabPanel(
                   title="Cluster Genes",
                   "Cluster genes Page",
@@ -198,14 +205,7 @@ ui <- fluidPage(
                   # Navigation Bar for types of plots inside cluster
                   tabsetPanel(
                     tabPanel(
-                      title="View file",
-                      mainPanel(
-                        uiOutput("UIDEContent") 
-                      )
-                      
-                    ),
-                    tabPanel(
-                      title="Plot 2"
+                      title="Cluster Options"
                     ),
                     tabPanel(
                       title="Plot 3"
@@ -229,7 +229,5 @@ ui <- fluidPage(
                  ),
                ),
              )
-             
-             
   ),
 )
