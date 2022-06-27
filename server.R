@@ -41,7 +41,7 @@ server <- function(input, output, session) {
     # convert data into file format
     if(is.null(extDEFile)){return()}
 
-    read.table(file=ServerDEFile$datapath, sep=input$sepButton)
+    read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE)
   })
 
   # creates reactive table called DEFileContent

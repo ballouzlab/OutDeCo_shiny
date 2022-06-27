@@ -181,21 +181,34 @@ ui <- fluidPage(
                 exit = animations$fading_exits$fadeOutLeftBig
                 )
                ),
-              
+        
               navlistPanel(
+
+                tabPanel(
+                  title="View File",
+                  tabsetPanel(
+                    tabPanel(
+                      title="View File",
+                      mainPanel(
+                      uiOutput("UIDEContent")
+                      )
+                    )
+                  )
+                ),
+
                 tabPanel(
                   title="Cluster Genes",
                   "Cluster genes Page",
 
                   # Navigation Bar for types of plots inside cluster
                   tabsetPanel(
-                    tabPanel(
-                      title="View file",
-                      mainPanel(
-                        uiOutput("UIDEContent") 
-                      )
+#                    tabPanel(
+#                      title="View file",
+#                      mainPanel(
+#                        uiOutput("UIDEContent") 
+#                      )
                       
-                    ),
+#                    ),
                     tabPanel(
                       title="Plot 2"
                     ),
