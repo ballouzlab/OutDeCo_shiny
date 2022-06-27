@@ -210,7 +210,7 @@ ui <- fluidPage(
                       
 #                    ),
                     tabPanel(
-                      title="Plot 2"
+                      title="Cluster Options"
                     ),
                     tabPanel(
                       title="Plot 3"
