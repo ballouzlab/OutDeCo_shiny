@@ -185,14 +185,9 @@ ui <- fluidPage(
 
                 tabPanel(
                   title="View File",
-                  tabsetPanel(
-                    tabPanel(
-                      title="View File",
                       mainPanel(
                       uiOutput("UIDEContent")
                       )
-                    )
-                  )
                 ),
 
                 tabPanel(
