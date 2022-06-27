@@ -134,8 +134,8 @@ ui <- fluidPage(
                 ),
 
                 # side panel characteristics
-                style = "gradient", icon = icon("cog"),
-                status = "primary", width = "300px",
+                style = "gradient", icon = "OPTIONS",
+                status = "primary", width = "300px", size = "sm",
                 animate = animateOptions(
                 enter = animations$fading_entrances$fadeInLeftBig,
                 exit = animations$fading_exits$fadeOutLeftBig
@@ -181,8 +181,8 @@ ui <- fluidPage(
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
 
                 # side panel characteristics
-                style = "gradient", icon = icon("cog"),
-                status = "primary", width = "300px",
+                style = "gradient", icon = "OPTIONS",
+                status = "primary", width = "300px", size = "sm",
                 animate = animateOptions(
                 enter = animations$fading_entrances$fadeInLeftBig,
                 exit = animations$fading_exits$fadeOutLeftBig
