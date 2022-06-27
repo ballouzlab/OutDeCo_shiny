@@ -134,12 +134,8 @@ ui <- fluidPage(
                 ),
 
                 # side panel characteristics
-                style = "gradient", icon = "FILE UPLOAD",
-                status = "primary", width = "300px", size = "sm",
-                animate = animateOptions(
-                enter = animations$fading_entrances$fadeInLeftBig,
-                exit = animations$fading_exits$fadeOutLeftBig
-                )
+                style = "jelly", icon = "FILE UPLOAD",
+                status = "success", width = "300px", size = "sm",
                ),
 
                navlistPanel(
@@ -181,12 +177,9 @@ ui <- fluidPage(
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
 
                 # side panel characteristics
-                style = "gradient", icon = "FILE UPLOAD",
-                status = "primary", width = "300px", size = "sm",
-                animate = animateOptions(
-                enter = animations$fading_entrances$fadeInLeftBig,
-                exit = animations$fading_exits$fadeOutLeftBig
-                )
+                style = "jelly", icon = "FILE UPLOAD",
+                status = "success", width = "300px", size = "sm",
+
                ),
         
               navlistPanel(
