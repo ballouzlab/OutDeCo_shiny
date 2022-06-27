@@ -4,7 +4,7 @@ server <- function(input, output, session) {
   })
 
   # reactive converts the upload file into a reactive expression known as data
-  uploadData <- eventReactive(input$DEFile,{
+  uploadData <- reactive({
 
   # DEFile from fileInput() function
   ServerDEFile <- input$DEFile
@@ -44,15 +44,10 @@ server <- function(input, output, session) {
   read.table(file=ServerDEFile$datapath, sep=input$sepButton)
   })
 
-  sepData <- reactive(input$DEFile,{
-    ServerDE <- input$DEFile
-    read.table(file=ServerDE$datapath, sep=input$sepButton)
-  })
-
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
-  if(is.null(sepData())){return ()}
-  sepData()
+  if(is.null(uploadData())){return ()}
+  uploadData()
   })
 
   # handles rendering of reactive object on tb on ui
