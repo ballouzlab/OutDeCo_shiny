@@ -6,7 +6,7 @@ library(shiny)
 ui <- fluidPage(
  
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
-  theme = bs_theme(version = 5, bootswatch = "sandstone"),
+  theme = bs_theme(version = 3, bootswatch = "sandstone"),
   
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
@@ -177,15 +177,10 @@ ui <- fluidPage(
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
     
                 pickerInput(
-                  inputId = "month",
-                  label = "Select a month",
-                  choices = c("Blood", "Brain", "Tissue"),
+                            inputId = "networkSelect",
+                            label = "Network Selection",
+                            choices = c("Blood", "Brain", "Tissue"),
                 ),
-#                pickerInput(
-#                            inputId = "networkSelect",
-#                            label = "Network Selection",
-#                            choices = c("Blood", "Brain", "Tissue"),
-#                ),
                 # side panel characteristics
                 style = "jelly", icon = "FILE UPLOAD",
                 status = "success", width = "300px", size = "sm",
