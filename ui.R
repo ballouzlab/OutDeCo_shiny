@@ -197,6 +197,13 @@ ui <- fluidPage(
                 ),
 
                 tabPanel(
+                  title="View Network",
+                      mainPanel(
+                      uiOutput("UINetContent")
+                      )
+                ),
+
+                tabPanel(
                   title="Cluster Genes",
                   "Cluster genes Page",
 

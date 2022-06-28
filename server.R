@@ -26,7 +26,7 @@ server <- function(input, output, session) {
   })
   
   # reactive converts the upload file into a reactive expression known as data
-  data <- reactive({
+  DEData <- reactive({
 
     # DEFile from fileInput() function
     ServerDEFile <- input$DEFile
@@ -44,10 +44,34 @@ server <- function(input, output, session) {
     read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE, nrows=5)
   })
 
+  NetData <- reactive({
+
+    option <- input$networkSelect
+    if (option == "Blood") {
+      load("NetworkRData/blood.net.h5")
+    }
+    else if (option == "Brain") {
+      load("NetworkRData/brain.net.h5")
+    }
+    else {
+      load("NetworkRData/generic.net.h5")
+    }
+  })
+
+  output$networkSelect <- renderTable({
+    if(is.null(NetData())){return ()}
+    NetData()
+  })
+
+  output$networkSelect <- renderUI({
+    tableOutput("NetData")
+  })
+  
+
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
-    if(is.null(data())){return ()}
-    data()
+    if(is.null(DEData())){return ()}
+    DEData()
   })
 
   # handles rendering of reactive object on tb on ui
