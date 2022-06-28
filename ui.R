@@ -176,16 +176,16 @@ ui <- fluidPage(
                 # button for selecting delimiter, default is nothing until file is selected and handled in server side
                 radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
     
-#                pickerInput(
-#                  inputId = "month",
-#                  label = "Select a month",
-#                  choices = c("Blood", "Brain", "Tissue"),
-#                )
                 pickerInput(
-                            inputId = 'networkSelect',
-                            label = 'Network Selection',
-                            choices = c("Blood", "Brain", "Tissue"),
-                            ),
+                  inputId = "month",
+                  label = "Select a month",
+                  choices = c("Blood", "Brain", "Tissue"),
+                ),
+#                pickerInput(
+#                            inputId = "networkSelect",
+#                            label = "Network Selection",
+#                            choices = c("Blood", "Brain", "Tissue"),
+#                ),
                 # side panel characteristics
                 style = "jelly", icon = "FILE UPLOAD",
                 status = "success", width = "300px", size = "sm",
