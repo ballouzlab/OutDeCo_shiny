@@ -3,6 +3,7 @@ library(shinythemes)
 library(bslib)
 library(DT)
 library(shiny)
+library(rhdf5)
 ui <- fluidPage(
  
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
@@ -179,7 +180,7 @@ ui <- fluidPage(
                 pickerInput(
                             inputId = "networkSelect",
                             label = "Network Selection",
-                            choices = c("Blood", "Brain", "Tissue"),
+                            choices = c("Blood", "Brain", "Generic"),
                 ),
                 # side panel characteristics
                 style = "jelly", icon = "FILE UPLOAD",
@@ -193,13 +194,6 @@ ui <- fluidPage(
                   title="View File",
                       mainPanel(
                       uiOutput("UIDEContent")
-                      )
-                ),
-
-                tabPanel(
-                  title="View Network",
-                      mainPanel(
-                      uiOutput("UINetContent")
                       )
                 ),
 

@@ -48,25 +48,15 @@ server <- function(input, output, session) {
 
     option <- input$networkSelect
     if (option == "Blood") {
-      load("NetworkRData/blood.net.h5")
+      print("bl")
     }
     else if (option == "Brain") {
-      load("NetworkRData/brain.net.h5")
+      print("br")
     }
     else {
-      load("NetworkRData/generic.net.h5")
+      print("gen")
     }
   })
-
-  output$networkSelect <- renderTable({
-    if(is.null(NetData())){return ()}
-    NetData()
-  })
-
-  output$networkSelect <- renderUI({
-    tableOutput("NetData")
-  })
-  
 
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
