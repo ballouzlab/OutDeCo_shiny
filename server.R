@@ -44,19 +44,20 @@ server <- function(input, output, session) {
     read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE, nrows=5)
   })
 
-  NetData <- reactive({
+  # network selection example code for network users
+#  NetData <- reactive({
 
-    option <- input$networkSelect
-    if (option == "Blood") {
-      print("bl")
-    }
-    else if (option == "Brain") {
-      print("br")
-    }
-    else {
-      print("gen")
-    }
-  })
+#    option <- input$networkSelect
+#    if (option == "Blood") {
+      # picks blood
+#    }
+#    else if (option == "Brain") {
+      # picks brain
+#    }
+#    else {
+      # picks generic
+#    }
+#  })
 
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
