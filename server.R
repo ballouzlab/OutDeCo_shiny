@@ -45,19 +45,19 @@ server <- function(input, output, session) {
   })
 
   # network selection example code for network users
-#  NetData <- reactive({
+  NetData <- reactive({
 
-#    option <- input$networkSelect
-#    if (option == "Blood") {
-      # picks blood
-#    }
-#    else if (option == "Brain") {
-      # picks brain
-#    }
-#    else {
-      # picks generic
-#    }
-#  })
+    option <- input$networkSelect
+    if (option == "Blood") {
+      network_type <- "blood"
+    }
+    else if (option == "Brain") {
+      network_type <- "brain"
+    }
+    else {
+      network_type <- "generic"
+    }
+  })
 
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
