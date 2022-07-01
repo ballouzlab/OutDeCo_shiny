@@ -119,7 +119,7 @@ server <- function(input, output, session) {
     # clust_net <- list() 
     # clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
 
-    sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+    sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../ODC_backend1/")
 
     sub_net <- sub_nets$sub_net
     node_degrees <- sub_nets$node_degrees
