@@ -84,7 +84,7 @@ server <- function(input, output, session) {
     if (input$gene_list_selection == "Generate Gene List") {
       sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo )
     } else {
-      input$DEFile
+      read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
     }
   )
 
@@ -93,7 +93,7 @@ server <- function(input, output, session) {
     input$generate_subnet, 
     {
       output$subnetwork <- renderTable({
-        sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+        sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../ODC_backend1/")
       })
     },
   )
