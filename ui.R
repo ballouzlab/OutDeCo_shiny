@@ -251,36 +251,18 @@ ui <- fluidPage(
                 tabPanel(
                   title="Cluster Genes",
                   
-                  actionButton(inputId = "run", label = "Run"),
-
+                  
                   mainPanel(
-                    
-                    # radioButtons(
-                    #   inputId = 'regulation', 
-                    #   label = 'Gene Regulation', 
-                    #   choices = c("upregulated", "downregulated"), 
-                    #   selected = "upregulated"
-                    # ),
-
+                    actionButton(inputId = "run", label = "Run"),
+                    br(),
+                    br(),
+                    textOutput("CNtext"), 
                     plotOutput(outputId = "network"),
+                    textOutput("CHtext"),
                     plotOutput(outputId = "heatmap")
                   )
 
                   
-                  #  # Navigation Bar for types of plots inside cluster
-                  # tabsetPanel(
-                  #   tabPanel(
-                  #     title="Heatmap",
-                  #     mainPanel(
-                       
-                  #     )
-                  #   ),
-                  #   tabPanel(
-                  #     title="Network",
-                  #     mainPanel(
-                  #     )
-                  #   )
-                  # ),
                 ),
                 
                 tabPanel(

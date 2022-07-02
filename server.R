@@ -51,21 +51,6 @@ server <- function(input, output, session) {
     read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE, nrows=5)
   })
 
-  # network selection example code for network users
-  # NetData <- reactive({
-
-  #   option <- input$networkSelect
-  #   if (option == "Blood") {
-  #       picks blood
-  #   }
-  #   else if (option == "Brain") {
-  #       picks brain
-  #   }
-  #   else {
-  #       picks generic
-  #   }
-  # }) extra stuffs so that I can remerge
-
   # creates reactive table called DEFileContent
   output$DEFileContent <- renderTable({
     if (is.null(DEData())) {
@@ -95,6 +80,11 @@ server <- function(input, output, session) {
       output$subnetwork <- renderTable({
         sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
       })
+
+      s = input$subnetwork_search
+      txt = if (is.null(s) || s == '') 'Filtered data' else {
+        sprintf('Data matching "%s"', s)
+      }
     },
   )
 
@@ -127,6 +117,13 @@ server <- function(input, output, session) {
 
     clust_net <- list() 
     clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
+
+    # add heading here 
+    output$CNtext = renderText({
+      input$run
+      req(input$run) #to prevent print at first lauch
+      isolate(print("Network of Clustered Genes"))
+    }) 
     
     # network output
     output$network <- renderPlot(
@@ -134,6 +131,13 @@ server <- function(input, output, session) {
       # width = 500,
       # height = 500
     )
+
+    output$CHtext = renderText({
+      input$run
+      req(input$run) #to prevent print at first lauch
+      isolate(print("Heatmap of Clustered Genes"))
+    })
+
 
     # heatmap output
     output$heatmap <- renderPlot(
