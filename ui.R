@@ -3,7 +3,13 @@ library(shinythemes)
 library(bslib)
 library(DT)
 library(shiny)
-library(rhdf5)
+library(stats)
+library(gplots)
+library(graphics)
+library(viridis)
+library(utils)
+
+
 ui <- fluidPage(
  
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
@@ -24,7 +30,7 @@ ui <- fluidPage(
              
                 tabPanel(title="About",
                   h3("What is OutDeCo?"),
-                  h6("Outlier detection through co-expression. Using the tools on this website you can:"),
+                  p("Outlier detection through co-expression. Using the tools on this website you can:"),
                   p("- Run a differential expression (DE) analysis "),
                   p("- Assess your DE results using gene co-expression properties"),
                   p("- Report a functional outlier assessment"),
@@ -126,7 +132,7 @@ ui <- fluidPage(
                 # title of sidepanel
                  tags$h3("Options"),
 
-                 # inputs in the sidepanel
+                # inputs in the sidepanel
                 fileInput("file1", "Choose DE File",
                   accept = c(
                   "text/csv",
@@ -134,8 +140,13 @@ ui <- fluidPage(
                    ".csv")
                 ),
 
+                pickerInput(
+                  "select_network",
+                  choices = c("a", "b")
+                ),
+
                 # side panel characteristics
-                style = "jelly", icon = "FILE UPLOAD",
+                style = "jelly", icon = "Options",
                 status = "success", width = "300px", size = "sm",
                ),
 
@@ -162,28 +173,60 @@ ui <- fluidPage(
               title="Assess DE",
               dropdown(
 
-                # title of sidepanel
-                 tags$h3("Options"),
-
-                 # inputs in the sidepanel
-                fileInput("DEFile", "Choose DE File",
-                  accept = c(
-                   ".csv",
-                   ".tsv",
-                   ".txt"
-                   )
-                ),
-
-                # button for selecting delimiter, default is nothing until file is selected and handled in server side
-                radioButtons(inputId = 'sepButton', label = 'Delimiter Selector', choices = c(Default=''), selected = ''),
-    
+                tags$h4("Network Selection"),
                 pickerInput(
-                            inputId = "networkSelect",
-                            label = "Network Selection",
-                            choices = c("Blood", "Brain", "Generic"),
+                  inputId = "network_type",
+                  choices = c("Blood", "Brain", "Generic"),
+                  selected = "Generic"
                 ),
+
+                # gene list
+                radioButtons(
+                  inputId = "gene_list_selection",
+                  label = tags$h4("Gene List Selection"),
+                  choices = c("Upload Gene List", "Generate Gene List"),
+                  selected = ""
+                ),
+            
+
+                # upload gene list
+                conditionalPanel(
+                  condition = "input.gene_list_selection == 'Upload Gene List'", 
+                  # upload file
+                  fileInput(
+                    inputId = "DEFile", 
+                    label = "Choose Gene List File",
+                    accept = c(".csv", ".tsv", ".txt")
+                  ),
+                  # div(style = "margin-top: -25px"),
+                  # button for selecting delimiter, default is nothing until file is selected and handled in server side
+                  radioButtons(
+                    inputId = 'sepButton', 
+                    label = 'Delimiter Selector', 
+                    choices = c(Default=''), 
+                    selected = ''
+                  ),
+                ),
+
+                conditionalPanel(
+                  condition = "input.gene_list_selection == 'Generate Gene List'", 
+                  textInput(
+                    inputId = 'chooseChrome', 
+                    label = 'Choose Chromosome' , 
+                    placeholder = "chrX"
+                  ),
+                  textInput(
+                    inputId = 'chooseGeneNo', 
+                    label = 'Choose Number of Genes',
+                    placeholder = "100"
+                  ),
+                ),
+                
+                # generate subnet button
+                actionButton("generate_subnet", "Generate Subnetwork"),
+
                 # side panel characteristics
-                style = "jelly", icon = "FILE UPLOAD",
+                style = "jelly", icon = "Options",
                 status = "success", width = "300px", size = "sm",
 
                ),
@@ -191,25 +234,35 @@ ui <- fluidPage(
               navlistPanel(
 
                 tabPanel(
-                  title="View File",
-                      mainPanel(
+                  title="View Files",
+ 
+                  tabsetPanel(
+                    tabPanel(
+                      title="File",
                       uiOutput("UIDEContent")
-                      )
+                    ),
+                    tabPanel(
+                      title="Subnetwork", 
+                      tableOutput("subnetwork")
+                    )
+                  ),
                 ),
 
                 tabPanel(
                   title="Cluster Genes",
-                  "Cluster genes Page",
+                  
+                  
+                  mainPanel(
+                    actionButton(inputId = "run", label = "Run"),
+                    br(),
+                    br(),
+                    textOutput("CNtext"), 
+                    plotOutput(outputId = "network"),
+                    textOutput("CHtext"),
+                    plotOutput(outputId = "heatmap")
+                  )
 
-                  # Navigation Bar for types of plots inside cluster
-                  tabsetPanel(
-                    tabPanel(
-                      title="Cluster Options"
-                    ),
-                    tabPanel(
-                      title="Plot 3"
-                    )
-                  ),
+                  
                 ),
                 
                 tabPanel(
