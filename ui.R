@@ -271,13 +271,13 @@ ui <- fluidPage(
                   mainPanel(
                      dropdown(
 
-                       # title of sidepanel
-                       tags$h3("Gene Connectivity Options"),
+                      # title of sidepanel
+                      tags$h3("Gene Connectivity Options"),
 
-                       # inputs in the sidepanel
-                       # side panel characteristics
-                       style = "minimal", icon = "PLOT OPTIONS",
-                       status = "success", width = "300px", size = "sm",
+                      # inputs in the sidepanel
+                      # side panel characteristics
+                      style = "minimal", icon = "PLOT OPTIONS",
+                      status = "success", width = "300px", size = "sm",
                      
                       awesomeCheckboxGroup(
                         inputId = "GCPlotOptions",
@@ -291,12 +291,11 @@ ui <- fluidPage(
 
                     # Run Gene Connectivity
                     br(),
- 
                     actionButton(inputId = "runGC", label = "Run"),
                     br(),
                     br(),
                     
-
+                    # Density Plot Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
@@ -307,7 +306,8 @@ ui <- fluidPage(
                     ),
 
                     br(),
-                    #
+
+                    # Histogram Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
