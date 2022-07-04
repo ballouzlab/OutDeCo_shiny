@@ -259,7 +259,11 @@ ui <- fluidPage(
                     textOutput("CNtext"), 
                     plotOutput(outputId = "network"),
                     textOutput("CHtext"),
-                    plotOutput(outputId = "heatmap")
+                    plotOutput(outputId = "heatmap"), 
+                    br(),
+                    br(),
+                    textOutput("CHBtext"), 
+                    plotOutput(outputId = "Bheatmap"),
                   )
 
                   
