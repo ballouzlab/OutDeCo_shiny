@@ -256,6 +256,7 @@ ui <- fluidPage(
                     actionButton(inputId = "run", label = "Run"),
                     br(),
                     br(),
+                    
                     textOutput("CNtext"), 
                     plotOutput(outputId = "network"),
                     textOutput("CHtext"),
@@ -267,12 +268,59 @@ ui <- fluidPage(
                 
                 tabPanel(
                   title="Gene Connectivity",
-                  "Gene Connectivity Page",
+                  mainPanel(
+                     dropdown(
+
+                       # title of sidepanel
+                       tags$h3("Gene Connectivity Options"),
+
+                       # inputs in the sidepanel
+                       # side panel characteristics
+                       style = "minimal", icon = "PLOT OPTIONS",
+                       status = "success", width = "300px", size = "sm",
+                     
+                      awesomeCheckboxGroup(
+                        inputId = "GCPlotOptions",
+                        label = "Plot Type", 
+                        choices = c("Density", "Histogram"),
+                        
+                      ),
+
+              
+                     ),
+
+                    # Run Gene Connectivity
+                    br(),
+ 
+                    actionButton(inputId = "runGC", label = "Run"),
+                    br(),
+                    br(),
+                    
+
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
+                      textOutput("GCdensityGtext"), 
+                      plotOutput(outputId = "GCdensityG"),
+                      br(),
+
+                    ),
+
+                    br(),
+                    #
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
+                      textOutput("GChistogramGtext"), 
+                      plotOutput(outputId = "GChistogramG"),
+                      br(),
+                    ),
+                  )
                 ),
                  
                  tabPanel(
                    title="Functional Outliers",
-                   "Functional Outliers Page",
+                   
                  ),
                  
                  tabPanel(

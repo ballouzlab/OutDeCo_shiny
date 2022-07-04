@@ -77,6 +77,7 @@ server <- function(input, output, session) {
   observeEvent(
     input$generate_subnet, 
     {
+
       output$subnetwork <- renderTable({
         sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
       })
@@ -148,6 +149,64 @@ server <- function(input, output, session) {
 
   })
   
+  # GENE CONNECTIVITY
+   observeEvent(
+    {input$runGC},
+    {
+    
+    sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+
+    sub_net <- sub_nets$sub_net
+    node_degrees <- sub_nets$node_degrees
+
+    # add heading here 
+    output$GCdensityGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Density plot of Gene Connectivity"))
+    }) 
+
+
+    output$GChistogramGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity"))
+    }) 
+
+    # density output
+    output$GCdensityG <- renderPlot(
+      {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
+                  node_degrees$genes[,2]/node_degrees$n_genes, 
+                  xlab="Global node degree", 
+                  ylab="Local node degree", flag= "density")  },
+       width = 500,
+       height = 500
+    )
+    # histogram output
+    output$GChistogramG <- renderPlot(
+      {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
+                  node_degrees$genes[,2]/node_degrees$n_genes, 
+                  xlab="Global node degree", 
+                  ylab="Local node degree", flag= "hist")  },
+       width = 500,
+       height = 500
+    )
+
+    # m <- match(clust_net$genes$clusters$genes , rownames(sub_net$genes))
+
+    # output$GChistogramSubsetG <- renderPlot(
+    # { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+    #                node_degrees$genes[m,2]/node_degrees$n_genes, 
+    #                xlab="Global node degree", 
+    #                ylab="Local node degree", 
+    #                clusters = clust_net$genes$clusters )   },
+    #     width = 500,
+    #     height = 500
+    # )
+
+
+
+  })
 }
 
 
