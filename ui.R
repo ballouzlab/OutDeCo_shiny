@@ -8,10 +8,11 @@ library(gplots)
 library(graphics)
 library(viridis)
 library(utils)
-
+library(shinycssloaders)
+library(shinybusy)
 
 ui <- fluidPage(
- 
+  #add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
   theme = bs_theme(version = 3, bootswatch = "sandstone"),
   
@@ -146,7 +147,7 @@ ui <- fluidPage(
                 ),
 
                 # side panel characteristics
-                style = "jelly", icon = "Options",
+                style = "jelly", icon = "OPTIONS",
                 status = "success", width = "300px", size = "sm",
                ),
 
@@ -171,6 +172,7 @@ ui <- fluidPage(
             # Assess DE tab
              tabPanel(
               title="Assess DE",
+              
               dropdown(
 
                 tags$h4("Network Selection"),
@@ -224,9 +226,10 @@ ui <- fluidPage(
                 
                 # generate subnet button
                 actionButton("generate_subnet", "Generate Subnetwork"),
+      
 
                 # side panel characteristics
-                style = "jelly", icon = "Options",
+                style = "jelly", icon = "OPTIONS",
                 status = "success", width = "300px", size = "sm",
 
                ),
@@ -235,7 +238,7 @@ ui <- fluidPage(
 
                 tabPanel(
                   title="View Files",
- 
+                  
                   tabsetPanel(
                     tabPanel(
                       title="File",
@@ -243,28 +246,64 @@ ui <- fluidPage(
                     ),
                     tabPanel(
                       title="Subnetwork", 
-                      tableOutput("subnetwork")
+                      tableOutput("subnetwork"),
+                      
+
                     )
                   ),
                 ),
 
                 tabPanel(
                   title="Cluster Genes",
-                  
-                  
                   mainPanel(
-                    actionButton(inputId = "run", label = "Run"),
+                    dropdown(
+
+                      # title of sidepanel
+                      tags$h4("Cluster Genes Options"),
+
+                      # inputs in the sidepanel
+                      # side panel characteristics
+                      style = "minimal", icon = "PLOT OPTIONS",
+                      status = "success", width = "300px", size = "sm",
+                      
+                      awesomeCheckboxGroup(
+                        inputId = "clusterPlotOptions",
+                        label = "Select Plots", 
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                          
+                      ),
+                      textOutput('error_msg'),
+                      br(),
+                      actionButton(inputId = "run", label = "Run"),
+              
+                    ),  
+
                     br(),
                     br(),
-                    
-                    textOutput("CNtext"), 
-                    plotOutput(outputId = "network"),
-                    textOutput("CHtext"),
-                    plotOutput(outputId = "heatmap"), 
-                    br(),
-                    br(),
-                    textOutput("CHBtext"), 
-                    plotOutput(outputId = "Bheatmap"),
+
+                     
+
+                    conditionalPanel(
+                      condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
+                      textOutput("CNtext"), 
+                      plotOutput(outputId = "network"),
+                    ),
+
+                    conditionalPanel(
+                      condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
+                      textOutput("CHtext"),
+                      plotOutput(outputId = "heatmap",
+                      height = "500px"),
+                      br(),
+                      br(),
+                    ),
+
+                    conditionalPanel(
+                      condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
+                      textOutput("CHBtext"), 
+                      plotOutput(outputId = "Bheatmap"),
+                    ),
+
                   )
 
                   
@@ -273,7 +312,7 @@ ui <- fluidPage(
                 tabPanel(
                   title="Gene Connectivity",
                   mainPanel(
-                     dropdown(
+                    dropdown(
 
                       # title of sidepanel
                       tags$h4("Gene Connectivity Options"),
@@ -292,7 +331,7 @@ ui <- fluidPage(
                       br(),
                       actionButton(inputId = "runGC", label = "Run"),
               
-                     ),
+                    ),
 
                     # Run Gene Connectivity
 

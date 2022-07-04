@@ -3,10 +3,8 @@ source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 
 server <- function(input, output, session) {
-  output$distPlot <- renderPlot({
-    hist(rnorm(input$obs), col = 'darkgray', border = 'white')
-  })
-  
+  gene_list <- NULL
+
   observe({
       # DEFile from fileInput() function
       ServerDEFile <- req(input$DEFile)
@@ -164,11 +162,17 @@ server <- function(input, output, session) {
   })
   
   # GENE CONNECTIVITY
-
-  observeEvent(
+   observeEvent(
     {input$runGC},
     {
 
+
+    output$error_msg <- renderText({
+      validate(
+        need(gene_list != NULL, "You must agree to continue")
+      )
+    })
+    
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
