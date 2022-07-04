@@ -142,8 +142,8 @@ server <- function(input, output, session) {
     # heatmap output
     output$heatmap <- renderPlot(
       {plot_coexpression_heatmap( sub_net$gene, clust_net$gene, flag_plot_bin = FALSE)},
-      # width = "10",
-      # height = "10"
+      width = 500,
+      height = 500
     )
 
     output$CHBtext = renderText({
@@ -155,9 +155,9 @@ server <- function(input, output, session) {
 
     # heatmap output
     output$Bheatmap <- renderPlot(
-      {plot_coexpression_heatmap( sub_net$gene, clust_net$gene)},
-      # width = "10",
-      # height = "10"
+      {plot_coexpression_heatmap( sub_net$gene, clust_net$gene )},
+      width = 500,
+      height = 500
     )
 
   })

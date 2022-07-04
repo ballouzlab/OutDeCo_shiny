@@ -234,7 +234,7 @@ plot_network <- function(sub_net, clust_net, threshold = 0.5, filt_min = 6) {
 plot_scatter <- function(x, y, clusters = FALSE, xlab = "", ylab = "", main = "",
                                  xybreaks = 100,  flag ="hist", ...) {
 
-    par_old <- par()
+    # par_old <- par()
 
     if( flag == "density") {
         plot_scatter_density(x, y, clusters, xlab = xlab, ylab = ylab, main = main ,
@@ -245,7 +245,7 @@ plot_scatter <- function(x, y, clusters = FALSE, xlab = "", ylab = "", main = ""
                          xybreaks = xybreaks,   ... )
 
     }
-  par(par_old)
+  # par(par_old)
 }
 
 
