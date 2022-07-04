@@ -308,7 +308,7 @@ ui <- fluidPage(
 
                     ),
 
-                    
+                    br(),
 
                     # Histogram Selected
                     conditionalPanel(

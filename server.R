@@ -164,7 +164,8 @@ server <- function(input, output, session) {
   })
   
   # GENE CONNECTIVITY
-   observeEvent(
+
+  observeEvent(
     {input$runGC},
     {
 
