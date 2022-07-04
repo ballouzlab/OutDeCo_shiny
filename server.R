@@ -167,7 +167,7 @@ server <- function(input, output, session) {
    observeEvent(
     {input$runGC},
     {
-      
+
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
@@ -177,18 +177,11 @@ server <- function(input, output, session) {
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees  
 
-    # add heading here 
+    # Text output for density plot
     output$GCdensityGtext = renderText({
       input$runGC
       req(input$runGC) #to prevent print at first lauch
       isolate(print("Density plot of Gene Connectivity"))
-    }) 
-
-
-    output$GChistogramGtext = renderText({
-      input$runGC
-      req(input$runGC) #to prevent print at first lauch
-      isolate(print("Histogram of Gene Connectivity"))
     }) 
 
     # density output
@@ -200,6 +193,14 @@ server <- function(input, output, session) {
        width = 500,
        height = 500
     )
+
+    # Text output for density plot
+    output$GChistogramGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity"))
+    }) 
+
     # histogram output
     output$GChistogramG <- renderPlot(
       {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
