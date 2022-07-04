@@ -167,6 +167,8 @@ server <- function(input, output, session) {
    observeEvent(
     {input$runGC},
     {
+      
+    # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
         
