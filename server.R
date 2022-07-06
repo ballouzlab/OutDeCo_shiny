@@ -122,7 +122,7 @@ server <- function(input, output, session) {
     output$CNtext = renderText({
       input$run
       req(input$run) #to prevent print at first lauch
-      isolate(print("Network of Clustered Genes"))
+      isolate(h6("Network of Clustered Genes"))
     }) 
     
     # network output
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
     output$CHtext = renderText({
       input$run
       req(input$run) #to prevent print at first lauch
-      isolate(print("Heatmap of Clustered Genes"))
+      isolate(h6("Heatmap of Clustered Genes"))
     })
 
 
