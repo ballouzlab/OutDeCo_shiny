@@ -12,7 +12,7 @@ library(shinycssloaders)
 library(shinybusy)
 
 ui <- fluidPage(
-  #add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
+  add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
   theme = bs_theme(version = 3, bootswatch = "sandstone"),
   

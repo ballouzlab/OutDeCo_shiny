@@ -72,20 +72,28 @@ server <- function(input, output, session) {
   )
 
   # generate subnetwork
-  observeEvent(
-    input$generate_subnet, 
-    {
+  sub_nets <- eventReactive(input$generate_subnet, {
+    subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+  })
+  
+  output$subnetwork <- renderTable({
+    sub_nets()
+  })
 
-      output$subnetwork <- renderTable({
-        sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-      })
+  # generate subnetwork
+  # observeEvent(
+  #   input$generate_subnet, 
+  #   {
+  #     output$subnetwork <- renderTable({
+  #       sub_nets()
+  #     })
 
-      s = input$subnetwork_search
-      txt = if (is.null(s) || s == '') 'Filtered data' else {
-        sprintf('Data matching "%s"', s)
-      }
-    },
-  )
+  #     s = input$subnetwork_search
+  #     txt = if (is.null(s) || s == '') 'Filtered data' else {
+  #       sprintf('Data matching "%s"', s)
+  #     }
+  #   },
+  # )
   sn <- reactiveValues(sub_nets = NULL)
   # cluster genes
   observeEvent(
