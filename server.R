@@ -71,30 +71,15 @@ server <- function(input, output, session) {
     }
   )
 
-  # generate subnetwork
+  # generate subnetwork only when button is clicked
   sub_nets <- eventReactive(input$generate_subnet, {
     subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
   })
 
+  # Output of subnetowrk table
   output$subnetwork <- renderTable({
     sub_nets()
   })
-
-
-  # generate subnetwork
-  # observeEvent(
-  #   input$generate_subnet, 
-  #   {
-  #     output$subnetwork <- renderTable({
-  #       sub_nets()
-  #     })
-
-  #     s = input$subnetwork_search
-  #     txt = if (is.null(s) || s == '') 'Filtered data' else {
-  #       sprintf('Data matching "%s"', s)
-  #     }
-  #   },
-  # )
   
   sn <- reactiveValues(sub_nets = NULL)
   # cluster genes
@@ -171,19 +156,18 @@ server <- function(input, output, session) {
 
   })
   
-
   # GENE CONNECTIVITY
    observeEvent(
     {input$runGC},
     {
 
-    
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
         
     }
 
+    # Assign variables
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees  
 

@@ -361,15 +361,15 @@ ui <- fluidPage(
                   )
                 ),
                  
-                 tabPanel(
-                   title="Functional Outliers",
+                tabPanel(
+                  title="Functional Outliers",
                    
-                 ),
+                ),
                  
-                 tabPanel(
-                   title="Gene Set Enrichment Analysis",
-                   "GSE Page",
-                 ),
+                tabPanel(
+                  title="Gene Set Enrichment Analysis",
+                  "GSE Page",
+                ),
                ),
              )
   ),
