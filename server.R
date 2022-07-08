@@ -75,10 +75,11 @@ server <- function(input, output, session) {
   sub_nets <- eventReactive(input$generate_subnet, {
     subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
   })
-  
+
   output$subnetwork <- renderTable({
     sub_nets()
   })
+
 
   # generate subnetwork
   # observeEvent(
@@ -94,6 +95,7 @@ server <- function(input, output, session) {
   #     }
   #   },
   # )
+  
   sn <- reactiveValues(sub_nets = NULL)
   # cluster genes
   observeEvent(
@@ -169,17 +171,12 @@ server <- function(input, output, session) {
 
   })
   
+
   # GENE CONNECTIVITY
    observeEvent(
     {input$runGC},
     {
 
-
-    output$error_msg <- renderText({
-      validate(
-        need(gene_list != NULL, "You must agree to continue")
-      )
-    })
     
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
@@ -235,9 +232,6 @@ server <- function(input, output, session) {
     #     width = 500,
     #     height = 500
     # )
-
-
-
   })
 }
 

@@ -13,6 +13,7 @@ library(shinybusy)
 
 ui <- fluidPage(
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
+  
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
   theme = bs_theme(version = 3, bootswatch = "sandstone"),
   
@@ -129,16 +130,17 @@ ui <- fluidPage(
 
               # side panel for upload options
               dropdown(
+                
 
                 # title of sidepanel
-                 tags$h3("Options"),
+                  tags$h3("Options"),
 
                 # inputs in the sidepanel
                 fileInput("file1", "Choose DE File",
                   accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
-                   ".csv")
+                  ".csv")
                 ),
 
                 pickerInput(
@@ -152,29 +154,29 @@ ui <- fluidPage(
                ),
 
                navlistPanel(
-                 tabPanel(
-                   title="wilcox",
-                   "wilcox placeholder",
+                widths = c(3, 9),
+                tabPanel(
+                  title="wilcox",
+                  "wilcox placeholder",
                  ),
                  
-                 tabPanel(
-                   title="DESeq",
-                   "DESeq placeholder",
+                tabPanel(
+                  title="DESeq",
+                  "DESeq placeholder",
                  ),
                  
-                 tabPanel(
-                   title="edgeR",
-                   "edgeR Placeholder",
-                 ),
-               ),
-             ),
+                tabPanel(
+                  title="edgeR",
+                  "edgeR Placeholder",
+                ),
+              ),
+            ),
             
             # Assess DE tab
-             tabPanel(
+            tabPanel(
               title="Assess DE",
               
               dropdown(
-
                 tags$h4("Network Selection"),
                 pickerInput(
                   inputId = "network_type",
@@ -227,7 +229,6 @@ ui <- fluidPage(
                 # generate subnet button
                 actionButton("generate_subnet", "Generate Subnetwork"),
       
-
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
                 status = "success", width = "300px", size = "sm",
@@ -235,7 +236,7 @@ ui <- fluidPage(
                ),
         
               navlistPanel(
-
+                widths = c(3, 9),
                 tabPanel(
                   title="View Files",
                   
