@@ -171,6 +171,12 @@ server <- function(input, output, session) {
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees  
 
+    clust_net <- list() 
+    clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
+    m <- match(clust_net$genes$clusters$genes , rownames(sub_net$genes))
+
+
+    # TEXT OUTPUT FOR GENE CONNECTIVITY 
     # Text output for density plot
     output$GCdensityGtext = renderText({
       input$runGC
@@ -178,6 +184,28 @@ server <- function(input, output, session) {
       isolate(print("Density plot of Gene Connectivity"))
     }) 
 
+    # Text output for density plot
+    output$GChistogramGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity"))
+    }) 
+
+    # Text output for density plot subset by clusters
+    output$GCdensitySubsetGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Density plot of Gene Connectivity subset by their clusters "))
+    })  
+
+    # Text output for histogram subset by clusters
+    output$GChistogramSubsetGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity subset by their clusters"))
+    }) 
+
+    # PLOT OUTPUT FOR GENE CONNECTIVITY 
     # density output
     output$GCdensityG <- renderPlot(
       {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
@@ -188,35 +216,45 @@ server <- function(input, output, session) {
        height = 500
     )
 
-    # Text output for density plot
-    output$GChistogramGtext = renderText({
-      input$runGC
-      req(input$runGC) #to prevent print at first lauch
-      isolate(print("Histogram of Gene Connectivity"))
-    }) 
 
     # histogram output
     output$GChistogramG <- renderPlot(
       {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                   node_degrees$genes[,2]/node_degrees$n_genes, 
+                  xybreaks = input$xybreaks,
                   xlab="Global node degree", 
                   ylab="Local node degree", flag= "hist")  },
        width = 500,
        height = 500
     )
+    
+    # density output - subset by clusters
+    output$GCdensitySubsetG <- renderPlot(
+      { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+                     node_degrees$genes[m,2]/node_degrees$n_genes, 
+                     xlab="Global node degree", 
+                     ylab="Local node degree", 
+                     clusters = clust_net$genes$clusters, flag = "density" )  },
+      width = 500,
+      height = 500
+    )
 
-    # m <- match(clust_net$genes$clusters$genes , rownames(sub_net$genes))
+    # histogram output - subset by clusters
+    output$GChistogramSubsetG <- renderPlot(
+      { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+                     node_degrees$genes[m,2]/node_degrees$n_genes, 
+                     xybreaks = input$xybreaks,
+                     xlab="Global node degree", 
+                     ylab="Local node degree", 
+                     clusters = clust_net$genes$clusters, flag = "hist" )  },
+      width = 500,
+      height = 500
+    )
 
-    # output$GChistogramSubsetG <- renderPlot(
-    # { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
-    #                node_degrees$genes[m,2]/node_degrees$n_genes, 
-    #                xlab="Global node degree", 
-    #                ylab="Local node degree", 
-    #                clusters = clust_net$genes$clusters )   },
-    #     width = 500,
-    #     height = 500
-    # )
-  })
+    
+
+    }
+  )
 }
 
 

@@ -16,7 +16,7 @@ ui <- fluidPage(
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
   theme = bs_theme(version = 3, bootswatch = "sandstone"),
-  
+  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
 
@@ -154,7 +154,7 @@ ui <- fluidPage(
                ),
 
                navlistPanel(
-                widths = c(3, 9),
+                widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="wilcox",
                   "wilcox placeholder",
@@ -174,7 +174,7 @@ ui <- fluidPage(
             
             # Assess DE tab
             tabPanel(
-              title="Assess DE",
+              title="Assess DE", 
               
               dropdown(
                 tags$h4("Network Selection"),
@@ -234,9 +234,11 @@ ui <- fluidPage(
                 status = "success", width = "300px", size = "sm",
 
                ),
+
+              br(),
         
               navlistPanel(
-                widths = c(3, 9),
+                widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="View Files",
                   
@@ -271,6 +273,7 @@ ui <- fluidPage(
                         inputId = "clusterPlotOptions",
                         label = "Select Plots", 
                         choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                        status = ""
                           
                       ),
                       textOutput('error_msg'),
@@ -278,12 +281,6 @@ ui <- fluidPage(
                       actionButton(inputId = "run", label = "Run"),
               
                     ),  
-
-                    br(),
-                    br(),
-
-                     
-
                     conditionalPanel(
                       condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
                       textOutput("CNtext"), 
@@ -293,16 +290,15 @@ ui <- fluidPage(
                     conditionalPanel(
                       condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
                       textOutput("CHtext"),
-                      plotOutput(outputId = "heatmap",
-                      height = "500px"),
-                      br(),
+                      plotOutput(outputId = "heatmap", height = "500px"),
                       br(),
                     ),
 
                     conditionalPanel(
                       condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
                       textOutput("CHBtext"), 
-                      plotOutput(outputId = "Bheatmap"),
+                      plotOutput(outputId = "Bheatmap", height = "500px"), 
+        
                     ),
 
                   )
@@ -326,9 +322,19 @@ ui <- fluidPage(
                       awesomeCheckboxGroup(
                         inputId = "GCPlotOptions",
                         label = "Select Plots", 
-                        choices = c("Density", "Histogram"),
+                        choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+                        status = ""
                         
                       ),
+
+                      # ADD XYBREAKS SLIDER FOR HISTOGRAM 
+                      conditionalPanel(
+                        condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
+                        sliderInput("xybreaks", label = "Number of breaks for histogram:",
+                          min = 10, max = 150, value = 100, step = 10
+                        ),
+                      ),
+                      
                       br(),
                       actionButton(inputId = "runGC", label = "Run"),
               
@@ -336,28 +342,44 @@ ui <- fluidPage(
 
                     # Run Gene Connectivity
 
-                    br(),
-       
                     # Density Plot Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
                       textOutput("GCdensityGtext"), 
-                      plotOutput(outputId = "GCdensityG"),
+                      plotOutput(outputId = "GCdensityG", height = "500px",),
                       br(),
-
                     ),
-
-                    br(),
 
                     # Histogram Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
                       textOutput("GChistogramGtext"), 
-                      plotOutput(outputId = "GChistogramG"),
+                      plotOutput(outputId = "GChistogramG", height = "500px",),
                       br(),
                     ),
+
+                    # Density Selected - subset by clusters
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions) > -1", 
+                      textOutput("GCdensitySubsetGtext"), 
+                      plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
+                      br(),
+
+                    ),
+
+                    # Histogram Selected - subset by clusters
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions) > -1", 
+                      textOutput("GChistogramSubsetGtext"), 
+                      plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
+                      br(),
+
+                    ),
+
                   )
                 ),
                  
