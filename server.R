@@ -3,8 +3,13 @@ source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 
 server <- function(input, output, session) {
-  gene_list <- NULL
+  #Removing elements that are not functional without subnetwork
+  #hide(id = "runGC")
+  #hide(id = "run")
+  hide(id = "GC_dropdown")
+  hide(id = "cluster_dropdown")
 
+  sn <- reactiveValues(sub_nets = NULL)
   observe({
       # DEFile from fileInput() function
       ServerDEFile <- req(input$DEFile)
@@ -62,9 +67,15 @@ server <- function(input, output, session) {
     tableOutput("DEFileContent")
   })
 
+
+
   # load gene_list 
   gene_list <- reactive(
     if (input$gene_list_selection == "Generate Gene List") {
+      validate(
+        need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
+        need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, 'Please enter a valid Gene Number'),
+      )
       sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo )
     } else {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
@@ -76,12 +87,22 @@ server <- function(input, output, session) {
     subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
   })
 
+  # Add the Run buttons 
+  observeEvent(input$generate_subnet, {
+    show(id = "run")
+    show(id = "runGC")
+    show(id = "GC_dropdown")
+    show(id = "cluster_dropdown")
+    hide(id = "GC_error")
+    hide(id = "cluster_error")
+  })
+  
   # Output of subnetowrk table
   output$subnetwork <- renderTable({
     sub_nets()
   })
   
-  sn <- reactiveValues(sub_nets = NULL)
+  
   # cluster genes
   observeEvent(
     {input$run},
@@ -157,16 +178,17 @@ server <- function(input, output, session) {
   })
   
   # GENE CONNECTIVITY
-   observeEvent(
+
+  observeEvent(
     {input$runGC},
     {
-
+    
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
         
     }
-
+    
     # Assign variables
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees  
@@ -255,6 +277,17 @@ server <- function(input, output, session) {
 
     }
   )
+
+  #ERROR MESSAGES
+  output$GC_error = renderText({
+    print("Please upload/generate a gene list in OPTIONS")
+  }) 
+
+    output$cluster_error = renderText({
+    print("Please upload/generate a gene list in OPTIONS")
+  }) 
+
+
 }
 
 

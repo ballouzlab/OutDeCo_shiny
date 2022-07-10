@@ -10,8 +10,10 @@ library(viridis)
 library(utils)
 library(shinycssloaders)
 library(shinybusy)
+library(shinyjs)
 
 ui <- fluidPage(
+  useShinyjs(),
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
@@ -130,8 +132,6 @@ ui <- fluidPage(
 
               # side panel for upload options
               dropdown(
-                
-
                 # title of sidepanel
                   tags$h3("Options"),
 
@@ -234,7 +234,7 @@ ui <- fluidPage(
                 status = "success", width = "300px", size = "sm",
 
                ),
-
+              
               br(),
         
               navlistPanel(
@@ -259,7 +259,9 @@ ui <- fluidPage(
                 tabPanel(
                   title="Cluster Genes",
                   mainPanel(
+                    h3("Cluster Genes"),
                     dropdown(
+                      inputId = "cluster_dropdown",
 
                       # title of sidepanel
                       tags$h4("Cluster Genes Options"),
@@ -281,6 +283,9 @@ ui <- fluidPage(
                       actionButton(inputId = "run", label = "Run"),
               
                     ),  
+                    br(),
+                    
+                    textOutput("cluster_error"),
                     conditionalPanel(
                       condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
                       textOutput("CNtext"), 
@@ -308,9 +313,10 @@ ui <- fluidPage(
                 
                 tabPanel(
                   title="Gene Connectivity",
+                  h3("Gene Connectivity"),
                   mainPanel(
                     dropdown(
-
+                      inputId = "GC_dropdown",
                       # title of sidepanel
                       tags$h4("Gene Connectivity Options"),
 
@@ -339,6 +345,9 @@ ui <- fluidPage(
                       actionButton(inputId = "runGC", label = "Run"),
               
                     ),
+                    
+                    br(),
+                    textOutput("GC_error"),
 
                     # Run Gene Connectivity
 
