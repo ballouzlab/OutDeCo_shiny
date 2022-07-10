@@ -17,7 +17,11 @@ ui <- fluidPage(
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
-  theme = bs_theme(version = 3, bootswatch = "sandstone"),
+  theme = bs_theme(version = 5, bootswatch = "sandstone", 
+                  heading_font = font_google("Poppins"), 
+                  base_font = font_collection(font_google("Roboto")),
+                  ),
+  
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
@@ -143,8 +147,9 @@ ui <- fluidPage(
                   ".csv")
                 ),
 
-                pickerInput(
-                  "select_network",
+                selectInput(
+                  inputId="select_network",
+                  label=NULL,
                   choices = c("a", "b")
                 ),
 
@@ -178,8 +183,9 @@ ui <- fluidPage(
               
               dropdown(
                 tags$h4("Network Selection"),
-                pickerInput(
+                selectInput(
                   inputId = "network_type",
+                  label=NULL,
                   choices = c("Blood", "Brain", "Generic"),
                   selected = "Generic"
                 ),
@@ -227,7 +233,8 @@ ui <- fluidPage(
                 ),
                 
                 # generate subnet button
-                actionButton("generate_subnet", "Generate Subnetwork"),
+                actionButton("generate_subnet", "Generate Subnetwork", 
+                style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
       
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
@@ -279,8 +286,8 @@ ui <- fluidPage(
                           
                       ),
                       textOutput('error_msg'),
-                      br(),
-                      actionButton(inputId = "run", label = "Run"),
+                      actionButton(inputId = "run", label = "Run", 
+                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
               
                     ),  
                     br(),
@@ -342,7 +349,8 @@ ui <- fluidPage(
                       ),
                       
                       br(),
-                      actionButton(inputId = "runGC", label = "Run"),
+                      actionButton(inputId = "runGC", label = "Run", 
+                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
               
                     ),
                     

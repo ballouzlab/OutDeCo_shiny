@@ -9,6 +9,7 @@ server <- function(input, output, session) {
   hide(id = "GC_dropdown")
   hide(id = "cluster_dropdown")
 
+
   sn <- reactiveValues(sub_nets = NULL)
   observe({
       # DEFile from fileInput() function
