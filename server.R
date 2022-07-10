@@ -10,6 +10,69 @@ server <- function(input, output, session) {
   hide(id = "cluster_dropdown")
 
 
+  
+
+  labelsData <- reactive({
+
+    # DEFile from fileInput() function
+    server_labels_file <- input$labels_file
+
+    # extensions tool for format validation
+    ext_labels_file <- tools::file_ext(server_labels_file$datapath)
+
+    # file format checking
+    req(server_labels_file)
+     validate(need(ext_labels_file == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+
+    # convert data into file format
+    if (is.null(ext_labels_file)) {
+      return ()
+    }
+
+    read.table(file=server_labels_file$datapath, sep=input$sepButton, header=TRUE)
+    
+  })
+
+  observeEvent(input$labels_file, {
+
+      options <- names(labelsData())
+      updateSelectInput(session, "select_column","Select column to group", choices = options)
+
+      }
+      
+  )
+
+  # creates reactive table called DEFileContent
+  output$labelsFileContent <- renderTable({
+    if (is.null(labelsData())) {
+      return ()
+    }
+    labelsData()
+  })
+
+  output$UILabelsContent <- renderUI({
+    tableOutput("labelsFileContent")
+  })
+  
+  observeEvent(input$run_wilcox, {
+    labels <- labelsData()
+    labels<-subset(labels, select=Status)
+    print(labels)
+    groups <- as.factors(labelsData()$Sex) 
+    #groups[labelsData()$Family==1] <- 0
+    #groups[labelsData()$Relationship == "prb"] <- 0
+
+
+    #deg <- calc_DE("../counts_data", groups, "wilcox")
+
+    
+    
+    
+    }
+  )
+  
+  
+  
   sn <- reactiveValues(sub_nets = NULL)
   observe({
       # DEFile from fileInput() function

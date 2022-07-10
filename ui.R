@@ -140,17 +140,19 @@ ui <- fluidPage(
                   tags$h3("Options"),
 
                 # inputs in the sidepanel
-                fileInput("file1", "Choose DE File",
+                fileInput("labels_file", "Choose labels File",
                   accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
                 ),
 
+
+                
                 selectInput(
-                  inputId="select_network",
-                  label=NULL,
-                  choices = c("a", "b")
+                  inputId="select_column",
+                  label= "Select column to group ",
+                  choices = NULL #no choice before uploading
                 ),
 
                 # side panel characteristics
@@ -161,8 +163,14 @@ ui <- fluidPage(
                navlistPanel(
                 widths = c(3, 9), well = FALSE,
                 tabPanel(
+                  title="View File",
+                  uiOutput("UILabelsContent"),
+                 ),
+                tabPanel(
                   title="wilcox",
                   "wilcox placeholder",
+                  actionButton(inputId="run_wilcox", label = "Run DE"),
+                  plotOutput(outputId = "wilcox_1", height = "500px")
                  ),
                  
                 tabPanel(
