@@ -3,10 +3,14 @@ source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 
 server <- function(input, output, session) {
-  output$distPlot <- renderPlot({
-    hist(rnorm(input$obs), col = 'darkgray', border = 'white')
-  })
-  
+  #Removing elements that are not functional without subnetwork
+  #hide(id = "runGC")
+  #hide(id = "run")
+  hide(id = "GC_dropdown")
+  hide(id = "cluster_dropdown")
+
+
+  sn <- reactiveValues(sub_nets = NULL)
   observe({
       # DEFile from fileInput() function
       ServerDEFile <- req(input$DEFile)
@@ -64,31 +68,42 @@ server <- function(input, output, session) {
     tableOutput("DEFileContent")
   })
 
+
+
   # load gene_list 
   gene_list <- reactive(
     if (input$gene_list_selection == "Generate Gene List") {
+      validate(
+        need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
+        need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, 'Please enter a valid Gene Number'),
+      )
       sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo )
     } else {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
     }
   )
 
-  # generate subnetwork
-  observeEvent(
-    input$generate_subnet, 
-    {
+  # generate subnetwork only when button is clicked
+  sub_nets <- eventReactive(input$generate_subnet, {
+    subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+  })
 
-      output$subnetwork <- renderTable({
-        sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-      })
-
-      s = input$subnetwork_search
-      txt = if (is.null(s) || s == '') 'Filtered data' else {
-        sprintf('Data matching "%s"', s)
-      }
-    },
-  )
-  sn <- reactiveValues(sub_nets = NULL)
+  # Add the Run buttons 
+  observeEvent(input$generate_subnet, {
+    show(id = "run")
+    show(id = "runGC")
+    show(id = "GC_dropdown")
+    show(id = "cluster_dropdown")
+    hide(id = "GC_error")
+    hide(id = "cluster_error")
+  })
+  
+  # Output of subnetowrk table
+  output$subnetwork <- renderTable({
+    sub_nets()
+  })
+  
+  
   # cluster genes
   observeEvent(
     {input$run},
@@ -168,16 +183,23 @@ server <- function(input, output, session) {
   observeEvent(
     {input$runGC},
     {
-
+    
     # Run clustering if not done previously
     if (is.null(sn$sub_nets)) {
       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
         
     }
-
+    
+    # Assign variables
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees  
 
+    clust_net <- list() 
+    clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
+    m <- match(clust_net$genes$clusters$genes , rownames(sub_net$genes))
+
+
+    # TEXT OUTPUT FOR GENE CONNECTIVITY 
     # Text output for density plot
     output$GCdensityGtext = renderText({
       input$runGC
@@ -185,6 +207,28 @@ server <- function(input, output, session) {
       isolate(print("Density plot of Gene Connectivity"))
     }) 
 
+    # Text output for density plot
+    output$GChistogramGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity"))
+    }) 
+
+    # Text output for density plot subset by clusters
+    output$GCdensitySubsetGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Density plot of Gene Connectivity subset by their clusters "))
+    })  
+
+    # Text output for histogram subset by clusters
+    output$GChistogramSubsetGtext = renderText({
+      input$runGC
+      req(input$runGC) #to prevent print at first lauch
+      isolate(print("Histogram of Gene Connectivity subset by their clusters"))
+    }) 
+
+    # PLOT OUTPUT FOR GENE CONNECTIVITY 
     # density output
     output$GCdensityG <- renderPlot(
       {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
@@ -195,38 +239,56 @@ server <- function(input, output, session) {
        height = 500
     )
 
-    # Text output for density plot
-    output$GChistogramGtext = renderText({
-      input$runGC
-      req(input$runGC) #to prevent print at first lauch
-      isolate(print("Histogram of Gene Connectivity"))
-    }) 
 
     # histogram output
     output$GChistogramG <- renderPlot(
       {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                   node_degrees$genes[,2]/node_degrees$n_genes, 
+                  xybreaks = input$xybreaks,
                   xlab="Global node degree", 
                   ylab="Local node degree", flag= "hist")  },
        width = 500,
        height = 500
     )
+    
+    # density output - subset by clusters
+    output$GCdensitySubsetG <- renderPlot(
+      { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+                     node_degrees$genes[m,2]/node_degrees$n_genes, 
+                     xlab="Global node degree", 
+                     ylab="Local node degree", 
+                     clusters = clust_net$genes$clusters, flag = "density" )  },
+      width = 500,
+      height = 500
+    )
 
-    # m <- match(clust_net$genes$clusters$genes , rownames(sub_net$genes))
+    # histogram output - subset by clusters
+    output$GChistogramSubsetG <- renderPlot(
+      { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+                     node_degrees$genes[m,2]/node_degrees$n_genes, 
+                     xybreaks = input$xybreaks,
+                     xlab="Global node degree", 
+                     ylab="Local node degree", 
+                     clusters = clust_net$genes$clusters, flag = "hist" )  },
+      width = 500,
+      height = 500
+    )
 
-    # output$GChistogramSubsetG <- renderPlot(
-    # { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
-    #                node_degrees$genes[m,2]/node_degrees$n_genes, 
-    #                xlab="Global node degree", 
-    #                ylab="Local node degree", 
-    #                clusters = clust_net$genes$clusters )   },
-    #     width = 500,
-    #     height = 500
-    # )
+    
+
+    }
+  )
+
+  #ERROR MESSAGES
+  output$GC_error = renderText({
+    print("Please upload/generate a gene list in OPTIONS")
+  }) 
+
+    output$cluster_error = renderText({
+    print("Please upload/generate a gene list in OPTIONS")
+  }) 
 
 
-
-  })
 }
 
 

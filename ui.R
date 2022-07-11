@@ -8,13 +8,21 @@ library(gplots)
 library(graphics)
 library(viridis)
 library(utils)
-
+library(shinycssloaders)
+library(shinybusy)
+library(shinyjs)
 
 ui <- fluidPage(
- 
-  titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
-  theme = bs_theme(version = 3, bootswatch = "sandstone"),
+  useShinyjs(),
+  add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
+  titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
+  theme = bs_theme(version = 5, bootswatch = "sandstone", 
+                  heading_font = font_google("Poppins"), 
+                  base_font = font_collection(font_google("Roboto")),
+                  success = "#325D88"),
+
+  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
 
@@ -128,54 +136,56 @@ ui <- fluidPage(
 
               # side panel for upload options
               dropdown(
-
                 # title of sidepanel
-                 tags$h3("Options"),
+                  tags$h3("Options"),
 
                 # inputs in the sidepanel
                 fileInput("file1", "Choose DE File",
                   accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
-                   ".csv")
+                  ".csv")
                 ),
 
-                pickerInput(
-                  "select_network",
+                selectInput(
+                  inputId="select_network",
+                  label=NULL,
                   choices = c("a", "b")
                 ),
 
                 # side panel characteristics
-                style = "jelly", icon = "Options",
-                status = "success", width = "300px", size = "sm",
+                style = "jelly", icon = "OPTIONS",
+                status = "primary", width = "300px", size = "sm",
                ),
 
                navlistPanel(
-                 tabPanel(
-                   title="wilcox",
-                   "wilcox placeholder",
+                widths = c(3, 9), well = FALSE,
+                tabPanel(
+                  title="wilcox",
+                  "wilcox placeholder",
                  ),
                  
-                 tabPanel(
-                   title="DESeq",
-                   "DESeq placeholder",
+                tabPanel(
+                  title="DESeq",
+                  "DESeq placeholder",
                  ),
                  
-                 tabPanel(
-                   title="edgeR",
-                   "edgeR Placeholder",
-                 ),
-               ),
-             ),
+                tabPanel(
+                  title="edgeR",
+                  "edgeR Placeholder",
+                ),
+              ),
+            ),
             
             # Assess DE tab
-             tabPanel(
-              title="Assess DE",
+            tabPanel(
+              title="Assess DE", 
+              
               dropdown(
-
                 tags$h4("Network Selection"),
-                pickerInput(
+                selectInput(
                   inputId = "network_type",
+                  label=NULL,
                   choices = c("Blood", "Brain", "Generic"),
                   selected = "Generic"
                 ),
@@ -223,19 +233,22 @@ ui <- fluidPage(
                 ),
                 
                 # generate subnet button
-                actionButton("generate_subnet", "Generate Subnetwork"),
-
+                actionButton("generate_subnet", "Generate Subnetwork", 
+                style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+      
                 # side panel characteristics
-                style = "jelly", icon = "Options",
-                status = "success", width = "300px", size = "sm",
+                style = "jelly", icon = "OPTIONS",
+                status = "primary", width = "300px", size = "sm",
 
                ),
+              
+              br(),
         
               navlistPanel(
-
+                widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="View Files",
- 
+                  
                   tabsetPanel(
                     tabPanel(
                       title="File",
@@ -243,28 +256,63 @@ ui <- fluidPage(
                     ),
                     tabPanel(
                       title="Subnetwork", 
-                      tableOutput("subnetwork")
+                      tableOutput("subnetwork"),
+                      
+
                     )
                   ),
                 ),
 
                 tabPanel(
                   title="Cluster Genes",
-                  
-                  
                   mainPanel(
-                    actionButton(inputId = "run", label = "Run"),
-                    br(),
+                    h3("Cluster Genes"),
+                    dropdown(
+                      inputId = "cluster_dropdown",
+
+                      # title of sidepanel
+                      tags$h4("Cluster Genes Options"),
+
+                      # inputs in the sidepanel
+                      # side panel characteristics
+                      style = "minimal", icon = "PLOT OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+                      
+                      awesomeCheckboxGroup(
+                        inputId = "clusterPlotOptions",
+                        label = "Select Plots", 
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                        status = ""
+                          
+                      ),
+                      textOutput('error_msg'),
+                      actionButton(inputId = "run", label = "Run", 
+                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+              
+                    ),  
                     br(),
                     
-                    textOutput("CNtext"), 
-                    plotOutput(outputId = "network"),
-                    textOutput("CHtext"),
-                    plotOutput(outputId = "heatmap"), 
-                    br(),
-                    br(),
-                    textOutput("CHBtext"), 
-                    plotOutput(outputId = "Bheatmap"),
+                    textOutput("cluster_error"),
+                    conditionalPanel(
+                      condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
+                      textOutput("CNtext"), 
+                      plotOutput(outputId = "network"),
+                    ),
+
+                    conditionalPanel(
+                      condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
+                      textOutput("CHtext"),
+                      plotOutput(outputId = "heatmap", height = "500px"),
+                      br(),
+                    ),
+
+                    conditionalPanel(
+                      condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
+                      textOutput("CHBtext"), 
+                      plotOutput(outputId = "Bheatmap", height = "500px"), 
+        
+                    ),
+
                   )
 
                   
@@ -272,65 +320,97 @@ ui <- fluidPage(
                 
                 tabPanel(
                   title="Gene Connectivity",
+                  h3("Gene Connectivity"),
                   mainPanel(
-                     dropdown(
-
+                    dropdown(
+                      inputId = "GC_dropdown",
                       # title of sidepanel
                       tags$h4("Gene Connectivity Options"),
 
                       # inputs in the sidepanel
                       # side panel characteristics
                       style = "minimal", icon = "PLOT OPTIONS",
-                      status = "success", width = "300px", size = "sm",
+                      status = "primary", width = "300px", size = "sm",
                      
                       awesomeCheckboxGroup(
                         inputId = "GCPlotOptions",
                         label = "Select Plots", 
-                        choices = c("Density", "Histogram"),
+                        choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+                        status = ""
                         
                       ),
+
+                      # ADD XYBREAKS SLIDER FOR HISTOGRAM 
+                      conditionalPanel(
+                        condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
+                        sliderInput("xybreaks", label = "Number of breaks for histogram:",
+                          min = 10, max = 150, value = 100, step = 10
+                        ),
+                      ),
+                      
                       br(),
-                      actionButton(inputId = "runGC", label = "Run"),
+                      actionButton(inputId = "runGC", label = "Run", 
+                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
               
-                     ),
+                    ),
+                    
+                    br(),
+                    textOutput("GC_error"),
 
                     # Run Gene Connectivity
 
-                    br(),
-       
                     # Density Plot Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
                       textOutput("GCdensityGtext"), 
-                      plotOutput(outputId = "GCdensityG"),
+                      plotOutput(outputId = "GCdensityG", height = "500px",),
                       br(),
-
                     ),
-
-                    br(),
 
                     # Histogram Selected
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
                       textOutput("GChistogramGtext"), 
-                      plotOutput(outputId = "GChistogramG"),
+                      plotOutput(outputId = "GChistogramG", height = "500px",),
                       br(),
                     ),
+
+                    # Density Selected - subset by clusters
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions) > -1", 
+                      textOutput("GCdensitySubsetGtext"), 
+                      plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
+                      br(),
+
+                    ),
+
+                    # Histogram Selected - subset by clusters
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions) > -1", 
+                      textOutput("GChistogramSubsetGtext"), 
+                      plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
+                      br(),
+
+                    ),
+
                   )
                 ),
                  
-                 tabPanel(
-                   title="Functional Outliers",
+                tabPanel(
+                  title="Functional Outliers",
                    
-                 ),
+                ),
                  
-                 tabPanel(
-                   title="Gene Set Enrichment Analysis",
-                   "GSE Page",
-                 ),
+                tabPanel(
+                  title="Gene Set Enrichment Analysis",
+                  "GSE Page",
+                ),
                ),
              )
   ),
+  
 )
