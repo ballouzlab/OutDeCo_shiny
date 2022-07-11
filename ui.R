@@ -20,8 +20,8 @@ ui <- fluidPage(
   theme = bs_theme(version = 5, bootswatch = "sandstone", 
                   heading_font = font_google("Poppins"), 
                   base_font = font_collection(font_google("Roboto")),
-                  ),
-  
+                  success = "#325D88"),
+
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
@@ -155,7 +155,7 @@ ui <- fluidPage(
 
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
-                status = "success", width = "300px", size = "sm",
+                status = "primary", width = "300px", size = "sm",
                ),
 
                navlistPanel(
@@ -238,7 +238,7 @@ ui <- fluidPage(
       
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
-                status = "success", width = "300px", size = "sm",
+                status = "primary", width = "300px", size = "sm",
 
                ),
               
@@ -276,7 +276,7 @@ ui <- fluidPage(
                       # inputs in the sidepanel
                       # side panel characteristics
                       style = "minimal", icon = "PLOT OPTIONS",
-                      status = "success", width = "300px", size = "sm",
+                      status = "primary", width = "300px", size = "sm",
                       
                       awesomeCheckboxGroup(
                         inputId = "clusterPlotOptions",
@@ -330,7 +330,7 @@ ui <- fluidPage(
                       # inputs in the sidepanel
                       # side panel characteristics
                       style = "minimal", icon = "PLOT OPTIONS",
-                      status = "success", width = "300px", size = "sm",
+                      status = "primary", width = "300px", size = "sm",
                      
                       awesomeCheckboxGroup(
                         inputId = "GCPlotOptions",
@@ -412,4 +412,5 @@ ui <- fluidPage(
                ),
              )
   ),
+  
 )
