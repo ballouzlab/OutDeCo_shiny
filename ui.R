@@ -147,6 +147,8 @@ ui <- fluidPage(
                   ".csv")
                 ),
 
+                fileInput("counts_file", label = "Upload counts"),
+
 
                 
                 selectInput(
@@ -169,8 +171,8 @@ ui <- fluidPage(
                 tabPanel(
                   title="wilcox",
                   "wilcox placeholder",
-                  actionButton(inputId="run_wilcox", label = "Run DE"),
-                  plotOutput(outputId = "wilcox_1", height = "500px")
+                  actionButton(inputId="run_DE", label = "Run DE"),
+                  plotOutput(outputId = "DEplot", height = "500px")
                  ),
                  
                 tabPanel(

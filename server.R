@@ -1,6 +1,7 @@
 source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
+source("./src/calc_DE.R", local = TRUE)
 
 server <- function(input, output, session) {
   #Removing elements that are not functional without subnetwork
@@ -13,8 +14,7 @@ server <- function(input, output, session) {
   
 
   labelsData <- reactive({
-
-    # DEFile from fileInput() function
+    # Labels File from fileInput() function
     server_labels_file <- input$labels_file
 
     # extensions tool for format validation
@@ -28,51 +28,81 @@ server <- function(input, output, session) {
     if (is.null(ext_labels_file)) {
       return ()
     }
-
     read.table(file=server_labels_file$datapath, sep=input$sepButton, header=TRUE)
     
   })
 
-  observeEvent(input$labels_file, {
+  
+  
+    # Plot the data
+  
+  # observeEvent(input$labels_file, {
+  #     options <- names(labelsData())
+  #     updateSelectInput(session, "select_column","Select column to group", choices = options)
+  #     }
+  #)
 
-      options <- names(labelsData())
-      updateSelectInput(session, "select_column","Select column to group", choices = options)
-
-      }
-      
-  )
-
-  # creates reactive table called DEFileContent
+  # creates reactive table called labelsFileContent
   output$labelsFileContent <- renderTable({
     if (is.null(labelsData())) {
       return ()
     }
-    labelsData()
   })
 
+  # Output labels file
   output$UILabelsContent <- renderUI({
     tableOutput("labelsFileContent")
   })
   
-  observeEvent(input$run_wilcox, {
+
+
+  countsData <- reactive({
+    if ( is.null(input$counts_file)) return(NULL)
+    inFile <- input$counts_file
+    file <- inFile$datapath
+    # load the file into new environment and get it from there
+    e = new.env()
+    name <- load(file, envir = e)
+    data <- e[[name]]
+  })
+
+  # Run DE
+  observeEvent(input$run_DE, {
     labels <- labelsData()
-    labels<-subset(labels, select=Status)
-    print(labels)
-    groups <- as.factors(labelsData()$Sex) 
-    #groups[labelsData()$Family==1] <- 0
-    #groups[labelsData()$Relationship == "prb"] <- 0
-
-
-    #deg <- calc_DE("../counts_data", groups, "wilcox")
-
+    counts <- countsData()
     
+    print("labels$Status")
+    print(labels$Status)
+    groups <- as.numeric(labels$Status)
+    groups <- rep(1, length(labels$Status)) 
+    groups[labels$Status == 1] <- 2   
+    print("groups <- rep(1, length(labels$Status) ) groups[labels$Status == 1] <- 2   ")
+    print(groups)
     
+    groups[labels$Family == 1] <- 0
+    print("groups[labels$Family==1] <- 0")
+    print(groups)
+
+    groups[labels$Relationship == "prb"] <- 0
+    print("groups[labels$Relationship == prb] <- 0")
+    print(groups)
+    
+    groups[labels$ID == "Taf1_23"] <- 2
+    print("groups[labels$ID == Taf1_23] <- 2")
+    print(groups)
+
+    #deg <-  calc_DE(counts, groups, "wilcox") 
+    # output$DEplot <- renderPlot(
+    #    {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+    #    pch=19, bty="n", 
+    #    xlab="log2 FC", ylab="-log10 p-vals" )},
+    #    # width = 500,
+    #    # height = 500
+    #  )
     
     }
   )
-  
-  
-  
+
   sn <- reactiveValues(sub_nets = NULL)
   observe({
       # DEFile from fileInput() function
