@@ -59,8 +59,7 @@ ui <- fluidPage(
                   em("Note: This tool is under construction")
                    
                 ),
-                 
-                 
+                    
                 tabPanel(title="Cluster Genes",
                   h3("Cluster Genes"),
                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
@@ -94,6 +93,8 @@ ui <- fluidPage(
                    
                  ),
                  
+                
+                
                 tabPanel(title="Functional Outliers",
                   h3("Functional Outliers"),
                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
@@ -137,7 +138,7 @@ ui <- fluidPage(
               # side panel for upload options
               dropdown(
                 # title of sidepanel
-                  tags$h3("Options"),
+                tags$h3("Options"),
 
                 # inputs in the sidepanel
                 selectInput(
@@ -287,7 +288,7 @@ ui <- fluidPage(
                   mainPanel(
                     h3("Cluster Genes"),
                     dropdown(
-                      inputId = "cluster_dropdown",
+                      inputId = "CG_dropdown",
 
                       # title of sidepanel
                       tags$h4("Cluster Genes Options"),
@@ -311,11 +312,12 @@ ui <- fluidPage(
                     ),  
                     br(),
                     
-                    textOutput("cluster_error"),
+                    textOutput("CG_error"),
+                    
                     conditionalPanel(
                       condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
                       textOutput("CNtext"), 
-                      plotOutput(outputId = "network"),
+                      plotOutput(outputId = "network", height = "500px"),
                     ),
 
                     conditionalPanel(
@@ -329,18 +331,17 @@ ui <- fluidPage(
                       condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
                       textOutput("CHBtext"), 
                       plotOutput(outputId = "Bheatmap", height = "500px"), 
-        
+    
                     ),
 
                   )
-
-                  
                 ),
                 
                 tabPanel(
                   title="Gene Connectivity",
                   h3("Gene Connectivity"),
                   mainPanel(
+                    
                     dropdown(
                       inputId = "GC_dropdown",
                       # title of sidepanel
@@ -415,15 +416,111 @@ ui <- fluidPage(
                       br(),
 
                     ),
-
                   )
                 ),
-                 
+                
+                # FUNCTIONAL OUTLIERS
+
                 tabPanel(
                   title="Functional Outliers",
-                   
+                  
+                  mainPanel(
+                    h3("Functional Outliers"),
+
+                    dropdown(
+                      inputId = "FO_dropdown", 
+
+                      
+                      awesomeCheckboxGroup(
+                        inputId = "FOPlotOptions",
+                        label = tags$h4("Plot Options"),
+                        choices = c("Network", "Heatmap"),
+                        status = ""
+                      ),
+
+                      awesomeCheckboxGroup(
+                          inputId = "FO_table_options",
+                          label = tags$h4("Table Options"),
+                          choices = c("Selected Genes", "Unselected Genes"),
+                          status = ""
+                      ),
+                      
+                      sliderInput("filtmin", label = "Number of Genes to form Module",
+                          min = 0, max = 20, value = 6, step = 2
+                      ),
+
+                      br(),
+                      actionButton(inputId = "runFO", label = "Run", 
+                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+
+                      style = "minimal", icon = "FUNCTIONAL OUTLIERS OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+
+                    ), 
+                    br(),
+                    
+                    textOutput("FO_error"),
+
+                  ),
+                  br(),
+                  tabsetPanel(
+
+                    # plots
+                    tabPanel(
+                      br(),
+                      title="Plots",
+                      br(),
+                      
+                      # heatmap output
+                      conditionalPanel(
+                        condition = "$.inArray('Network', input.FOPlotOptions) > -1", 
+                        textOutput("FO_network_text"), 
+                        plotOutput(outputId = "FO_network", height = "500px"),
+                      ),
+
+                      # network output
+                      conditionalPanel(
+                        condition = "$.inArray('Heatmap', input.FOPlotOptions) > -1", 
+                        textOutput("FO_heatmap_text"), 
+                        plotOutput(outputId = "FO_heatmap", height = "500px"),
+                        br(),
+                      ),
+                    ),
+
+                    # tables
+                    tabPanel(
+                      br(),
+                      title="Tables", 
+                      br(),
+
+                      # selected genes table output
+                      conditionalPanel(
+                        condition = "$.inArray('Selected Genes', input.FO_table_options) > -1", 
+                        textOutput("FO_selected_text"), 
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_selected_table"),
+                          )
+                        ),
+                      ),
+
+                      br(),
+
+                      # unselected genes table output
+                      conditionalPanel(
+                        condition = "$.inArray('Unselected Genes', input.FO_table_options) > -1", 
+                        textOutput("FO_unselected_text"), 
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_unselected_table"),
+                          )
+                        ),
+                      ),
+                    )
+                  ),
                 ),
-                 
+
+                
                 tabPanel(
                   title="Gene Set Enrichment Analysis",
                   "GSE Page",
