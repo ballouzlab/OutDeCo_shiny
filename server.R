@@ -9,9 +9,8 @@ server <- function(input, output, session) {
   #hide(id = "run")
   hide(id = "GC_dropdown")
   hide(id = "cluster_dropdown")
-
-
-  
+  hide(id = "select_column")
+  hide(id = "select_case")
 
   labelsData <- reactive({
     # Labels File from fileInput() function
@@ -36,11 +35,25 @@ server <- function(input, output, session) {
   
     # Plot the data
   
-  # observeEvent(input$labels_file, {
-  #     options <- names(labelsData())
-  #     updateSelectInput(session, "select_column","Select column to group", choices = options)
-  #     }
-  #)
+  observeEvent(input$labels_file, {
+      show(id = "select_column")
+      show(id = "select_case")
+      options <- names(labelsData())
+      print(options[2:length(options)])
+      updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
+      
+      }
+       
+  )
+
+  observeEvent(input$select_column, {
+      var <- labelsData()[[input$select_column]]
+      lvl <- levels(as.factor(var))
+      updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
+
+  })
+
+
 
   # creates reactive table called labelsFileContent
   output$labelsFileContent <- renderTable({
@@ -70,26 +83,34 @@ server <- function(input, output, session) {
   observeEvent(input$run_DE, {
     labels <- labelsData()
     counts <- countsData()
-    
-    print("labels$Sex")
-    print(labels$Status)
   
-    groups <- rep(1, length(labels$Sex) )  
-    groups[labels$Sex == "m"] = 2   
-    groups[labels$Family==1] <- 0
-    groups[labels$Relationship == "prb"] <- 0
-    filt = groups != 0 
-    deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
 
+    # SEX/GENDER
+    # groups <- rep(1, length(labels$Sex) )  
+    # groups[labels$Sex == "f"] = 2   
+    # groups[labels$Family==1] <- 0
+    # groups[labels$Relationship == "prb"] <- 0
+    # filt = groups != 0 
+    # deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
+
+
+    # STATUS
+    groups <- rep(1, length(labels$Status) )  
+    groups[labels$Status == 1] = 2   
+    groups[labels$Family == 1] <- 0
+    groups[labels$Relationship == "prb"] <- 0
+
+    #filt = groups != 0 
+   # deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
     
-    deg <-  calc_DE(counts, groups, "wilcox") 
-    output$DEplot <- renderPlot(
-         {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
-         pch=19, bty="n", 
-         xlab="log2 FC", ylab="-log10 p-vals" )},
-         # width = 500,
-         # height = 500
-    )
+    #deg <-  calc_DE(counts, groups, "wilcox") 
+    # output$DEplot <- renderPlot(
+    #      {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+    #      pch=19, bty="n", 
+    #      xlab="log2 FC", ylab="-log10 p-vals" )},
+    #      # width = 500,
+    #      # height = 500
+    # )
     
     }
   )

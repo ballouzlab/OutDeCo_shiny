@@ -157,6 +157,12 @@ ui <- fluidPage(
                   choices = NULL #no choice before uploading
                 ),
 
+                selectInput(
+                  inputId="select_case",
+                  label= "Select case to analyse",
+                  choices = NULL #no choice before column selected
+                ),
+
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
                 status = "success", width = "300px", size = "sm",
