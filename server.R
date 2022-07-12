@@ -81,40 +81,23 @@ server <- function(input, output, session) {
     labels <- labelsData()
     counts_data <- countsData()
   
+    # var <- labelsData()[[input$select_column]]
 
-    # SEX/GENDER
-    # groups <- rep(1, length(labels$Sex) )  
-    # groups[labels$Sex == "f"] = 2   
-    # groups[labels$Family==1] <- 0
-    # groups[labels$Relationship == "prb"] <- 0
-    # filt = groups != 0 
-    # deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
-
-
-    # STATUS
-    #groups <- rep(1, length(labels$Status) )  
-    #groups[labels$Status == 1] = 2   
-    #groups[labels$Family == 1] <- 0
-    #groups[labels$Relationship == "prb"] <- 0
-    var <- labelsData()[[input$select_column]]
-
-    #Initialise the variables of the chosen column to be 1
     var <- input$select_column
-
     case <- input$select_case
 
+    # Format labels$var
     labels_var <- labels[[paste0(var)]]
-    print(labels_var)
 
-
+    #Initialise the variables of the chosen column to all be 1
     groups <- rep(1, length(labels_var))
+    # Pick the case, relabel as 2
     groups[labels_var == case] = 2   
-    print(groups)
 
-    #Uncomment for Sex - doesn't work with status
+    #Uncomment for Sex/Gender - doesn't work with status
     #groups[labels$Family == 1] <- 0
     #groups[labels$Relationship == "prb"] <- 0
-    print(groups)
+
     filt = groups != 0 
     deg = calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
     output$DEplot <- renderPlot(
@@ -124,7 +107,6 @@ server <- function(input, output, session) {
             # width = 500,
             # height = 500
     )
-    
     }
   )
 
