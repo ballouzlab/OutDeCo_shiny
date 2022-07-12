@@ -71,34 +71,25 @@ server <- function(input, output, session) {
     labels <- labelsData()
     counts <- countsData()
     
-    print("labels$Status")
+    print("labels$Sex")
     print(labels$Status)
-    groups <- as.numeric(labels$Status)
-    groups <- rep(1, length(labels$Status)) 
-    groups[labels$Status == 1] <- 2   
-    print("groups <- rep(1, length(labels$Status) ) groups[labels$Status == 1] <- 2   ")
-    print(groups)
-    
-    groups[labels$Family == 1] <- 0
-    print("groups[labels$Family==1] <- 0")
-    print(groups)
-
+  
+    groups <- rep(1, length(labels$Sex) )  
+    groups[labels$Sex == "m"] = 2   
+    groups[labels$Family==1] <- 0
     groups[labels$Relationship == "prb"] <- 0
-    print("groups[labels$Relationship == prb] <- 0")
-    print(groups)
-    
-    groups[labels$ID == "Taf1_23"] <- 2
-    print("groups[labels$ID == Taf1_23] <- 2")
-    print(groups)
+    filt = groups != 0 
+    deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
 
-    #deg <-  calc_DE(counts, groups, "wilcox") 
-    # output$DEplot <- renderPlot(
-    #    {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
-    #    pch=19, bty="n", 
-    #    xlab="log2 FC", ylab="-log10 p-vals" )},
-    #    # width = 500,
-    #    # height = 500
-    #  )
+    
+    deg <-  calc_DE(counts, groups, "wilcox") 
+    output$DEplot <- renderPlot(
+         {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+         pch=19, bty="n", 
+         xlab="log2 FC", ylab="-log10 p-vals" )},
+         # width = 500,
+         # height = 500
+    )
     
     }
   )
