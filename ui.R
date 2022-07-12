@@ -132,7 +132,7 @@ ui <- fluidPage(
 
             # run DE tab
             tabPanel(
-              title="Run DE",
+              title="Run DE", 
 
               # side panel for upload options
               dropdown(
@@ -155,8 +155,6 @@ ui <- fluidPage(
                 ),
 
                 fileInput("counts_file", label = "Upload counts"),
-
-
                 
                 selectInput(
                   inputId="select_column",
@@ -169,12 +167,12 @@ ui <- fluidPage(
                   label= "Select case to analyse",
                   choices = NULL #no choice before column selected
                 ),
-
+                actionButton(inputId="run_DE", label = "Run DE"),
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
                 status = "primary", width = "300px", size = "sm",
                ),
-
+               br(),
                navlistPanel(
                 widths = c(3, 9), well = FALSE,
                 tabPanel(
@@ -182,21 +180,10 @@ ui <- fluidPage(
                   uiOutput("UILabelsContent"),
                  ),
                 tabPanel(
-                  title="wilcox",
-                  "wilcox placeholder",
-                  actionButton(inputId="run_DE", label = "Run DE"),
+                  title="Plot DE",
                   plotOutput(outputId = "DEplot", height = "500px")
                  ),
                  
-                tabPanel(
-                  title="DESeq",
-                  "DESeq placeholder",
-                 ),
-                 
-                tabPanel(
-                  title="edgeR",
-                  "edgeR Placeholder",
-                ),
               ),
             ),
             
