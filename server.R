@@ -104,8 +104,15 @@ server <- function(input, output, session) {
             {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
             pch=19, bty="n", 
             xlab="log2 FC", ylab="-log10 p-vals" )},
-            # width = 500,
-            # height = 500
+            width = 500,
+            height = 500
+    )
+    output$DEplot_average <- renderPlot(
+            {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
+            pch=19, bty="n", 
+            ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")},
+            width = 500,
+            height = 500
     )
     }
   )

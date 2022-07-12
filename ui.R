@@ -142,7 +142,7 @@ ui <- fluidPage(
                 # inputs in the sidepanel
                 selectInput(
                   inputId = "DE_method",
-                  label= "Choose Differential Expression Method",
+                  label= "Choose DE Method",
                   choices = c("wilcox", "DESeq2", "edgeR"),
                   selected = NULL,
                 ),
@@ -174,14 +174,23 @@ ui <- fluidPage(
                ),
                br(),
                navlistPanel(
-                widths = c(3, 9), well = FALSE,
+                widths = c(2, 10), well = FALSE,
                 tabPanel(
                   title="View File",
                   uiOutput("UILabelsContent"),
                  ),
                 tabPanel(
                   title="Plot DE",
-                  plotOutput(outputId = "DEplot", height = "500px")
+                 
+                    
+                            splitLayout(cellWidths = c("50%", "50%"), 
+                            plotOutput(outputId = "DEplot", height = "500px"), 
+                            plotOutput(outputId = "DEplot_average", height = "500px"))
+                          
+                     
+                  
+                  #plotOutput(outputId = "DEplot", height = "500px"),
+                  #plotOutput(outputId = "DEplot_average", height = "500px"),
                  ),
                  
               ),
