@@ -284,6 +284,8 @@ ui <- fluidPage(
                     # options dropdown
                     dropdown(
                       inputId = "CG_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -297,8 +299,6 @@ ui <- fluidPage(
                       actionButton(inputId = "run", label = "Run",
 
                       # dropdown characteristics
-                      style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
                       style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
                     ),  
 
@@ -307,7 +307,6 @@ ui <- fluidPage(
                     # error message
                     textOutput("CG_error"),
                     
-
                     tabsetPanel(
 
                       # plots tab
@@ -372,6 +371,8 @@ ui <- fluidPage(
                     # options dropdown
                     dropdown(
                       inputId = "GC_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -397,8 +398,6 @@ ui <- fluidPage(
                       actionButton(inputId = "runGC", label = "Run", 
 
                       # dropdown characteristics
-                      style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
                       style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
 
                     ),
@@ -459,7 +458,9 @@ ui <- fluidPage(
 
                     # options dropdown
                     dropdown(
-                      inputId = "FO_dropdown", 
+                      inputId = "FO_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -491,8 +492,6 @@ ui <- fluidPage(
                       actionButton(inputId = "runFO", label = "Run", 
 
                       # dropdown characteristics
-                      style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
                       style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
 
                     ),
