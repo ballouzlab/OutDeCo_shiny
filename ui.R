@@ -174,7 +174,7 @@ ui <- fluidPage(
                ),
                br(),
                navlistPanel(
-                widths = c(2, 10), well = FALSE,
+                widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="View File",
                   uiOutput("UILabelsContent"),
@@ -184,8 +184,8 @@ ui <- fluidPage(
                  
                     
                             splitLayout(cellWidths = c("50%", "50%"), 
-                            plotOutput(outputId = "DEplot", height = "500px"), 
-                            plotOutput(outputId = "DEplot_average", height = "500px"))
+                            plotOutput(outputId = "DEplot", height = "450px"), 
+                            plotOutput(outputId = "DEplot_average", height = "450px"))
                           
                      
                   
