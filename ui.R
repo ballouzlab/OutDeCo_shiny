@@ -94,7 +94,6 @@ ui <- fluidPage(
                  ),
                  
                 
-                
                 tabPanel(title="Functional Outliers",
                   h3("Functional Outliers"),
                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
@@ -137,42 +136,35 @@ ui <- fluidPage(
 
               # side panel for upload options
               dropdown(
-                # title of sidepanel
-                tags$h3("Options"),
-
-                # inputs in the sidepanel
-                selectInput(
-                  inputId = "DE_method",
-                  label= "Choose DE Method",
-                  choices = c("wilcox", "DESeq2", "edgeR"),
-                  selected = NULL,
-                ),
-
-                fileInput("labels_file", "Choose labels File",
-                  accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
-                  ".csv")
-                ),
-
-                fileInput("counts_file", label = "Upload counts"),
-                
-                selectInput(
-                  inputId="select_column",
-                  label= "Select column to group ",
-                  choices = NULL #no choice before uploading
-                ),
-
-                selectInput(
-                  inputId="select_case",
-                  label= "Select case to analyse",
-                  choices = NULL #no choice before column selected
-                ),
-                actionButton(inputId="run_DE", label = "Run DE"),
+                tags$h3("Options"), 
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
                 status = "primary", width = "300px", size = "sm",
+               
+                # title of sidepanel
+                fluidPage(
+                # inputs in the sidepanel
+                  selectInput(
+                    inputId = "DE_method",
+                    label= "Choose DE Method",
+                    choices = c("wilcox", "DESeq2", "edgeR"),
+                    selected = NULL,
+                  ),
+
+                  fileInput("counts_file", label = "Upload counts"),
+
+                  fileInput("labels_file", "Choose Labels File",
+                    accept = c(
+                    "text/csv",
+                    "text/comma-separated-values,text/plain",
+                    ".csv")
+                  ),
+
+                
+                ), 
                ),
+
+
                br(),
                navlistPanel(
                 widths = c(3, 9), well = FALSE,
@@ -182,11 +174,39 @@ ui <- fluidPage(
                  ),
                 tabPanel(
                   title="Plot DE",
-                 
-                    
-                            splitLayout(cellWidths = c("50%", "50%"), 
-                            plotOutput(outputId = "DEplot", height = "450px"), 
-                            plotOutput(outputId = "DEplot_average", height = "450px"))
+                  dropdown(
+                    # side panel characteristics
+                    style = "minimal", icon = "OPTIONS",
+                    status = "primary", width = "600px", size = "sm",
+                  splitLayout(cellWidths = c("50%", "50%"), 
+                  fluidPage(
+                    h5(id = "case_selection", "Case Selection"),
+                    selectInput(
+                      inputId="select_column",
+                      label= "Select label to group ",
+                      choices = NULL #no choice before uploading
+                    ),
+                
+                    selectInput(
+                      inputId="select_case",
+                      label= "Select case to analyse",
+                      choices = NULL #no choice before column selected
+                    ),
+                    br(),
+                    br(), 
+                    br(),
+                  ),
+                  fluidPage(
+                    h5(id = "control_selection", "Control Selection"),
+                    br(),
+                    actionButton(inputId="run_DE", label = "Run DE"),
+                  ),
+                  ),
+                  ),
+
+                    splitLayout(cellWidths = c("50%", "50%"), 
+                    plotOutput(outputId = "DEplot", height = "450px"), 
+                    plotOutput(outputId = "DEplot_average", height = "450px"))
                           
                      
                   

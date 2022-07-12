@@ -9,10 +9,15 @@ server <- function(input, output, session) {
   # hide(id = "run")
   hide(id = "GC_dropdown")
   hide(id = "cluster_dropdown")
-  hide(id = "select_column")
-  hide(id = "select_case")
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
+
+  # Run DE hide
+  #hide(id = "select_column")
+  #hide(id = "select_case")  
+
+  #hide(id ="run_DE")
+
   
 
   labelsData <- reactive({
@@ -41,6 +46,8 @@ server <- function(input, output, session) {
   observeEvent(input$labels_file, {
       show(id = "select_column")
       show(id = "select_case")
+
+      show(id = "run_DE")
       options <- names(labelsData())
       updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
       
