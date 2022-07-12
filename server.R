@@ -10,7 +10,6 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
 
-  
   observe({
       # DEFile from fileInput() function
       ServerDEFile <- req(input$DEFile)
