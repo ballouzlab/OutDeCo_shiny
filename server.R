@@ -167,12 +167,7 @@ server <- function(input, output, session) {
      
 
       # network output
-      output$CNtext = renderText(
-        # input$run
-        # req(input$run) # to prevent print at first lauch
-        # isolate(h6("Network of Clustered Genes"))
-        "Network of Clustered Genes"
-      )
+      output$CNtext = renderText("Network of Clustered Genes")
       output$network <- renderPlot(
         {plot_network( sub_net$gene, clust_net()$gene, medK )},
         width = 500,
@@ -181,11 +176,7 @@ server <- function(input, output, session) {
 
 
       # heatmap output
-      output$CHtext = renderText({
-        input$run
-        req(input$run) # to prevent print at first lauch
-        isolate(h6("Heatmap of Clustered Genes"))
-      })
+      output$CHtext = renderText("Heatmap of Clustered Genes")
       output$heatmap <- renderPlot(
         {plot_coexpression_heatmap( sub_net$gene, clust_net()$gene, flag_plot_bin = FALSE)},
         width = 500,
@@ -194,11 +185,7 @@ server <- function(input, output, session) {
 
 
       # binarized heatmap output
-      output$CHBtext = renderText({
-        input$run
-        req(input$run) # to prevent print at first lauch
-        isolate(print("Binarized Heatmap of Clustered Genes"))
-      })
+      output$CHBtext = renderText("Binarized Heatmap of Clustered Genes")
       output$Bheatmap <- renderPlot(
         {plot_coexpression_heatmap( sub_net$gene, clust_net()$gene )},
         width = 500,
@@ -236,11 +223,7 @@ server <- function(input, output, session) {
 
 
       # density output
-      output$GCdensityGtext = renderText({
-        input$runGC
-        req(input$runGC) # to prevent print at first lauch
-        isolate(print("Density plot of Gene Connectivity"))
-      })
+      output$GCdensityGtext = renderText("Density plot of Gene Connectivity")
       output$GCdensityG <- renderPlot(
         {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
@@ -252,11 +235,7 @@ server <- function(input, output, session) {
 
 
       # histogram output
-      output$GChistogramGtext = renderText({
-        input$runGC
-        req(input$runGC) # to prevent print at first lauch
-        isolate(print("Histogram of Gene Connectivity"))
-      }) 
+      output$GChistogramGtext = renderText("Histogram of Gene Connectivity")
       output$GChistogramG <- renderPlot(
         {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
@@ -269,11 +248,7 @@ server <- function(input, output, session) {
 
 
       # density output - subset by clusters
-      output$GCdensitySubsetGtext = renderText({
-        input$runGC
-        req(input$runGC) #to prevent print at first lauch
-        isolate(print("Density plot of Gene Connectivity subset by their clusters"))
-      })
+      output$GCdensitySubsetGtext = renderText("Density plot of Gene Connectivity subset by their clusters")
       output$GCdensitySubsetG <- renderPlot(
         { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
@@ -286,11 +261,7 @@ server <- function(input, output, session) {
 
 
       # histogram output - subset by clusters
-      output$GChistogramSubsetGtext = renderText({
-        input$runGC
-        req(input$runGC) #to prevent print at first lauch
-        isolate(print("Histogram of Gene Connectivity subset by their clusters"))
-      }) 
+      output$GChistogramSubsetGtext = renderText("Histogram of Gene Connectivity subset by their clusters")
       output$GChistogramSubsetG <- renderPlot(
         { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
@@ -313,19 +284,31 @@ server <- function(input, output, session) {
     {input$runFO},
     {
       sub_net <- sn$sub_nets$sub_net
-      filt_min <- 6 
+      filt_min <- input$filtmin
       clust_size <- plyr::count(clust_net()$genes$clusters$labels)
       clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
       genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
+      medK <- as.numeric(sn$sub_nets$median)
 
+
+      # heatmap output
+      output$FO_heatmap_text = renderText("Heatmap")
+      output$FO_heatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt=TRUE, flag_plot_bin=FALSE)},
+        width = 500,
+        height = 500
+      )
+
+      # network output
+      output$FO_network_text = renderText("Network")
+      output$FO_network <- renderPlot(
+        {plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK)},
+        width = 500,
+        height = 500
+      )
 
       # unselected genes table output
-      output$FO_unselected_text = renderText({
-        # input$runGC
-        # req(input$runGC) # to prevent print at first lauch
-        # isolate(print("Filtered Genes"))
-        "Unselected Genes"
-      })
+      output$FO_unselected_text = renderText("Unselected Genes")
       output$genes_unselected_table <- renderDT(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
@@ -333,12 +316,7 @@ server <- function(input, output, session) {
 
 
       # selected genes table output
-      output$FO_selected_text = renderText({
-        # input$runGC
-        # req(input$runGC) # to prevent print at first lauch
-        # isolate(print("Unfiltered Genes"))
-        "Selected Genes"
-      })
+      output$FO_selected_text = renderText("Selected Genes")
       output$genes_selected_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))

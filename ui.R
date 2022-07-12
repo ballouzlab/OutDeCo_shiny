@@ -138,7 +138,7 @@ ui <- fluidPage(
               # side panel for upload options
               dropdown(
                 # title of sidepanel
-                  tags$h3("Options"),
+                tags$h3("Options"),
 
                 # inputs in the sidepanel
                 fileInput("file1", "Choose DE File",
@@ -298,7 +298,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
                       textOutput("CNtext"), 
-                      plotOutput(outputId = "network"),
+                      plotOutput(outputId = "network", height = "500px"),
                     ),
 
                     conditionalPanel(
@@ -400,33 +400,44 @@ ui <- fluidPage(
                   )
                 ),
                 
+                # FUNCTIONAL OUTLIERS
+
                 tabPanel(
                   title="Functional Outliers",
                   
                   mainPanel(
                     h3("Functional Outliers"),
-                    dropdown(
-                      inputId = "FO_dropdown",
 
-                      # title of sidepanel
-                      tags$h4("Functional Outliers Options"),
+                    dropdown(
+                      inputId = "FO_dropdown", 
+
                       
-                      # inputs in the sidepanel
                       awesomeCheckboxGroup(
-                        inputId = "FO_table_options",
-                        label = "Select Tables", 
-                        choices = c("Selected Genes", "Unselected Genes"),
+                        inputId = "FOPlotOptions",
+                        label = tags$h4("Plot Options"),
+                        choices = c("Network", "Heatmap"),
                         status = ""
                       ),
 
+                      awesomeCheckboxGroup(
+                          inputId = "FO_table_options",
+                          label = tags$h4("Table Options"),
+                          choices = c("Selected Genes", "Unselected Genes"),
+                          status = ""
+                      ),
+                      
+                      sliderInput("filtmin", label = "Number of Genes to form Module",
+                          min = 0, max = 20, value = 6, step = 2
+                      ),
+
+                      br(),
                       actionButton(inputId = "runFO", label = "Run", 
                       style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
 
-                      # side panel characteristics
-                      style = "minimal", icon = "TABLE OPTIONS",
+                      style = "minimal", icon = "FUNCTIONAL OUTLIERS OPTIONS",
                       status = "primary", width = "300px", size = "sm",
-              
-                    ),
+
+                    ), 
                     br(),
                     
                     textOutput("FO_error"),
@@ -434,14 +445,36 @@ ui <- fluidPage(
                   ),
                   br(),
                   tabsetPanel(
+
+                    # plots
                     tabPanel(
+                      br(),
                       title="Plots",
-                      # uiOutput("UIDEContent")
+                      br(),
+                      
+                      # heatmap output
+                      conditionalPanel(
+                        condition = "$.inArray('Network', input.FOPlotOptions) > -1", 
+                        textOutput("FO_network_text"), 
+                        plotOutput(outputId = "FO_network", height = "500px"),
+                      ),
+
+                      # network output
+                      conditionalPanel(
+                        condition = "$.inArray('Heatmap', input.FOPlotOptions) > -1", 
+                        textOutput("FO_heatmap_text"), 
+                        plotOutput(outputId = "FO_heatmap", height = "500px"),
+                        br(),
+                      ),
                     ),
+
+                    # tables
                     tabPanel(
+                      br(),
                       title="Tables", 
                       br(),
-                      # selected genes
+
+                      # selected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Selected Genes', input.FO_table_options) > -1", 
                         textOutput("FO_selected_text"), 
@@ -451,8 +484,10 @@ ui <- fluidPage(
                           )
                         ),
                       ),
+
                       br(),
-                      # unselected genes
+
+                      # unselected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Unselected Genes', input.FO_table_options) > -1", 
                         textOutput("FO_unselected_text"), 
