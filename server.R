@@ -39,7 +39,6 @@ server <- function(input, output, session) {
       show(id = "select_column")
       show(id = "select_case")
       options <- names(labelsData())
-      print(options[2:length(options)])
       updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
       
       }
@@ -52,8 +51,6 @@ server <- function(input, output, session) {
       updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
 
   })
-
-
 
   # creates reactive table called labelsFileContent
   output$labelsFileContent <- renderTable({
@@ -82,7 +79,7 @@ server <- function(input, output, session) {
   # Run DE
   observeEvent(input$run_DE, {
     labels <- labelsData()
-    counts <- countsData()
+    counts_data <- countsData()
   
 
     # SEX/GENDER
@@ -95,22 +92,38 @@ server <- function(input, output, session) {
 
 
     # STATUS
-    groups <- rep(1, length(labels$Status) )  
-    groups[labels$Status == 1] = 2   
-    groups[labels$Family == 1] <- 0
-    groups[labels$Relationship == "prb"] <- 0
+    #groups <- rep(1, length(labels$Status) )  
+    #groups[labels$Status == 1] = 2   
+    #groups[labels$Family == 1] <- 0
+    #groups[labels$Relationship == "prb"] <- 0
+    var <- labelsData()[[input$select_column]]
 
-    #filt = groups != 0 
-   # deg = calc_DE(counts_data[,filt], groups[filt], "wilcox") 
-    
-    #deg <-  calc_DE(counts, groups, "wilcox") 
-    # output$DEplot <- renderPlot(
-    #      {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
-    #      pch=19, bty="n", 
-    #      xlab="log2 FC", ylab="-log10 p-vals" )},
-    #      # width = 500,
-    #      # height = 500
-    # )
+    #Initialise the variables of the chosen column to be 1
+    var <- input$select_column
+
+    case <- input$select_case
+
+    labels_var <- labels[[paste0(var)]]
+    print(labels_var)
+
+
+    groups <- rep(1, length(labels_var))
+    groups[labels_var == case] = 2   
+    print(groups)
+
+    #Uncomment for Sex - doesn't work with status
+    #groups[labels$Family == 1] <- 0
+    #groups[labels$Relationship == "prb"] <- 0
+    print(groups)
+    filt = groups != 0 
+    deg = calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+    output$DEplot <- renderPlot(
+            {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+            pch=19, bty="n", 
+            xlab="log2 FC", ylab="-log10 p-vals" )},
+            # width = 500,
+            # height = 500
+    )
     
     }
   )

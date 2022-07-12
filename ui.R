@@ -140,6 +140,13 @@ ui <- fluidPage(
                   tags$h3("Options"),
 
                 # inputs in the sidepanel
+                selectInput(
+                  inputId = "DE_method",
+                  label= "Choose Differential Expression Method",
+                  choices = c("wilcox", "DESeq2", "edgeR"),
+                  selected = NULL,
+                ),
+
                 fileInput("labels_file", "Choose labels File",
                   accept = c(
                   "text/csv",
