@@ -264,7 +264,7 @@ ui <- fluidPage(
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
-                      tableOutput("subnetwork"),
+                      tableOutput("subnetwork")
                     ),
 
                     # view file tab
@@ -474,7 +474,7 @@ ui <- fluidPage(
                       awesomeCheckboxGroup(
                           inputId = "FO_table_options",
                           label = tags$h4("Select Tables"),
-                          choices = c("Outliers", "Genes in Module"),
+                          choices = c("Functional Outliers", "Genes in Module"),
                           status = ""
                       ),
 
@@ -541,7 +541,7 @@ ui <- fluidPage(
                         br(),
                         fluidRow(
                           column( 11,
-                                  dataTableOutput("genes_selected_table"),
+                                  dataTableOutput("genes_not_keep_table"),
                           )
                         ),
                       ),
@@ -550,12 +550,12 @@ ui <- fluidPage(
 
                       # unselected genes table output
                       conditionalPanel(
-                        condition = "$.inArray('Outliers', input.FO_table_options) > -1", 
+                        condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
                         h4("Outliers"), 
                         br(),
                         fluidRow(
                           column( 11,
-                                  dataTableOutput("genes_unselected_table"),
+                                  dataTableOutput("genes_keep_table"),
                           )
                         ),
                       ),
