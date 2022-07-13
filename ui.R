@@ -474,7 +474,7 @@ ui <- fluidPage(
                       awesomeCheckboxGroup(
                           inputId = "FO_table_options",
                           label = tags$h4("Select Tables"),
-                          choices = c("Selected Genes", "Unselected Genes"),
+                          choices = c("Outliers", "Genes in Module"),
                           status = ""
                       ),
 
@@ -483,7 +483,7 @@ ui <- fluidPage(
                       
                       # filt_min slider
                       sliderInput("filtmin", label = "Number of Genes to form Module",
-                          min = 0, max = 20, value = 6, step = 2
+                          min = 0, max = 20, value = 6, step = 1
                       ),
 
                       br(),
@@ -536,8 +536,8 @@ ui <- fluidPage(
 
                       # selected genes table output
                       conditionalPanel(
-                        condition = "$.inArray('Selected Genes', input.FO_table_options) > -1", 
-                        h4("Selected Genes"), 
+                        condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
+                        h4("Genes in Module"), 
                         br(),
                         fluidRow(
                           column( 11,
@@ -550,8 +550,8 @@ ui <- fluidPage(
 
                       # unselected genes table output
                       conditionalPanel(
-                        condition = "$.inArray('Unselected Genes', input.FO_table_options) > -1", 
-                        h4("Unselected Genes"), 
+                        condition = "$.inArray('Outliers', input.FO_table_options) > -1", 
+                        h4("Outliers"), 
                         br(),
                         fluidRow(
                           column( 11,
