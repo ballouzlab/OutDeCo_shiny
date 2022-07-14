@@ -2,6 +2,13 @@ source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 source("./src/calc_DE.R", local = TRUE)
+#options(warn=-1)
+defaultW <- getOption("warn") 
+#code
+
+#options(warn = -1) 
+#options(warn = defaultW)
+
 
 server <- function(input, output, session) {
   # Removing elements that are not functional without subnetwork
