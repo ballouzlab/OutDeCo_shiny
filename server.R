@@ -1,6 +1,7 @@
 source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
+library(shinyalert)
 
 server <- function(input, output, session) {
   # Removing elements that are not functional without subnetwork
@@ -77,27 +78,7 @@ server <- function(input, output, session) {
 
 
 
-  # Add the Run buttons 
-  observeEvent(
-    input$generate_subnet,
-    {
-      # cluster genes
-      show(id = "CG_dropdown")
-      show(id = "run")
-      hide(id = "CG_error")
-
-      # gene connectivity
-      show(id = "GC_dropdown")
-      show(id = "runGC")
-      hide(id = "GC_error")
-
-      # functional outliers
-      show(id = "FO_dropdown")
-      show(id = "runFO")
-      hide(id = "FO_error")
-
-    }
-  )
+  
 
 
 
@@ -117,11 +98,18 @@ server <- function(input, output, session) {
     {
       # determine gene_list
       if (input$gene_list_selection == "Generate Gene List") {
-        validate(
-          need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
-          need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, 'Please enter a valid Gene Number'),
-        )
+        # validate(
+        #   need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
+        #   need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, 'Please enter a valid Gene Number'),
+        # )
+        if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) {
+          shinyalert(title = "Invalid Input",
+                    text = "Please enter a valid number of Genes",
+                    type = "error")
+        } 
         gene_list <- sample(EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo)
+        
+        
       } else {
         gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
       }
@@ -153,7 +141,27 @@ server <- function(input, output, session) {
   
 
 
+  # Add the Run buttons 
+  observeEvent(
+    input$generate_subnet,
+    {
+      # cluster genes
+      show(id = "CG_dropdown")
+      show(id = "run")
+      hide(id = "CG_error")
 
+      # gene connectivity
+      show(id = "GC_dropdown")
+      show(id = "runGC")
+      hide(id = "GC_error")
+
+      # functional outliers
+      show(id = "FO_dropdown")
+      show(id = "runFO")
+      hide(id = "FO_error")
+
+    }
+  )
 
 
 
