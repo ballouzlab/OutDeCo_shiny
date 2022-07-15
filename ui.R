@@ -180,18 +180,28 @@ ui <- fluidPage(
                     status = "primary", width = "600px", size = "sm",
                   
                     h5(id = "case_selection", "Case/Control Selection"),
+                    radioButtons(
+                    inputId = "case_control_method",
+                    label = tags$h4("Grouping Method"),
+                    choices = c("Choose Case by Label", "Choose Case/Controls individually"),
+                    selected = ""
+                    ),
+                   
+                    conditionalPanel(condition = "input.case_control_method == 'Choose Case by Label'", 
+                      selectInput(
+                        inputId="select_column",
+                        label= "Select label to group ",
+                        choices = NULL #no choice before uploading
+                      ),
+                  
+                      selectInput(
+                        inputId="select_case",
+                        label= "Select case to analyse",
+                        choices = NULL #no choice before column selected
+                      ),
+
+                    ),
                     
-                    selectInput(
-                      inputId="select_column",
-                      label= "Select label to group ",
-                      choices = NULL #no choice before uploading
-                    ),
-                
-                    selectInput(
-                      inputId="select_case",
-                      label= "Select case to analyse",
-                      choices = NULL #no choice before column selected
-                    ),
                     actionButton(inputId="run_DE", label = "Run DE"),
                   
                   ),
