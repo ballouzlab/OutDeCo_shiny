@@ -281,7 +281,6 @@ server <- function(input, output, session) {
 
 
       # heatmap output
-      output$FO_heatmap_text = renderText("Heatmap")
       output$FO_heatmap <- renderPlot(
         {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt = TRUE, flag_plot_bin = FALSE)},
         width = 500,
@@ -289,24 +288,21 @@ server <- function(input, output, session) {
       )
 
       # network output
-      output$FO_network_text = renderText("Network")
       output$FO_network <- renderPlot(
         {plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK)},
         width = 500,
         height = 500
       )
 
-      # unselected genes table output
-      output$FO_unselected_text = renderText("Unselected Genes")
-      output$genes_unselected_table <- renderDataTable(
+      # genes in module table output
+      output$genes_not_keep_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
 
-      # selected genes table output
-      output$FO_selected_text = renderText("Selected Genes")
-      output$genes_selected_table <- renderDataTable(
+      # functional outliers table output
+      output$genes_keep_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
