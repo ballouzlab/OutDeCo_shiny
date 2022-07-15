@@ -195,6 +195,14 @@ server <- function(input, output, session) {
     tableOutput("DEFileContent")
   })
 
+
+
+
+
+
+
+
+
   # Add the Run buttons 
   observeEvent(
     input$generate_subnet,
@@ -218,6 +226,13 @@ server <- function(input, output, session) {
   )
 
 
+
+
+
+
+
+
+  # sub_nets
   sn <- reactiveValues(
     sub_nets = NULL,
   )
@@ -249,7 +264,7 @@ server <- function(input, output, session) {
     medK <- as.numeric(sn$sub_nets$median)
 
     clust_net <- list() 
-    clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
+    clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
     return(clust_net)
 
   })
@@ -262,7 +277,14 @@ server <- function(input, output, session) {
   )
   
   
-  # CLUSTER GENES
+
+
+
+
+
+
+
+  ##################### CLUSTER GENES #####################
 
   observeEvent(
     {input$run},
@@ -273,41 +295,32 @@ server <- function(input, output, session) {
      
 
       # network output
-      output$CNtext = renderText("Network of Clustered Genes")
       output$network <- renderPlot(
-        {plot_network( sub_net$gene, clust_net()$gene, medK )},
+        {plot_network(sub_net$genes, clust_net()$genes, medK)},
         width = 500,
         height = 500
       )
 
 
       # heatmap output
-      output$CHtext = renderText("Heatmap of Clustered Genes")
       output$heatmap <- renderPlot(
-        {plot_coexpression_heatmap( sub_net$gene, clust_net()$gene, flag_plot_bin = FALSE)},
+        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)},
         width = 500,
         height = 500
       )
 
 
       # binarized heatmap output
-      output$CHBtext = renderText("Binarized Heatmap of Clustered Genes")
       output$Bheatmap <- renderPlot(
-        {plot_coexpression_heatmap( sub_net$gene, clust_net()$gene )},
+        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)},
         width = 500,
         height = 500
       )
       
 
       # clustering genes table output
-      output$CG_table_text = renderText({
-        # input$runGC
-        # req(input$runGC) # to prevent print at first lauch
-        # isolate(print("Filtered Genes"))
-        "Clustering Genes"
-      })
-      output$CG_table <- renderDT(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+      output$CG_table <- renderDataTable(
+        {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
@@ -317,7 +330,7 @@ server <- function(input, output, session) {
 
 
 
-  # GENE CONNECTIVITY
+  ##################### GENE CONNECTIVITY #####################
 
   observeEvent(
     {input$runGC},
@@ -329,7 +342,6 @@ server <- function(input, output, session) {
 
 
       # density output
-      output$GCdensityGtext = renderText("Density plot of Gene Connectivity")
       output$GCdensityG <- renderPlot(
         {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
@@ -341,7 +353,6 @@ server <- function(input, output, session) {
 
 
       # histogram output
-      output$GChistogramGtext = renderText("Histogram of Gene Connectivity")
       output$GChistogramG <- renderPlot(
         {plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
@@ -354,9 +365,8 @@ server <- function(input, output, session) {
 
 
       # density output - subset by clusters
-      output$GCdensitySubsetGtext = renderText("Density plot of Gene Connectivity subset by their clusters")
       output$GCdensitySubsetG <- renderPlot(
-        { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+        {plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
                       xlab="Global node degree", 
                       ylab="Local node degree", 
@@ -367,9 +377,8 @@ server <- function(input, output, session) {
 
 
       # histogram output - subset by clusters
-      output$GChistogramSubsetGtext = renderText("Histogram of Gene Connectivity subset by their clusters")
       output$GChistogramSubsetG <- renderPlot(
-        { plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+        {plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
                       xybreaks = input$xybreaks,
                       xlab="Global node degree", 
@@ -384,7 +393,7 @@ server <- function(input, output, session) {
   )
 
 
-  # FUNCTIONAL OUTLIERS
+  ##################### FUNCTIONAL OUTLIERS #####################
 
   observeEvent(
     {input$runFO},
@@ -398,32 +407,28 @@ server <- function(input, output, session) {
 
 
       # heatmap output
-      output$FO_heatmap_text = renderText("Heatmap")
       output$FO_heatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt=TRUE, flag_plot_bin=FALSE)},
+        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt = TRUE, flag_plot_bin = FALSE)},
         width = 500,
         height = 500
       )
 
       # network output
-      output$FO_network_text = renderText("Network")
       output$FO_network <- renderPlot(
         {plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK)},
         width = 500,
         height = 500
       )
 
-      # unselected genes table output
-      output$FO_unselected_text = renderText("Unselected Genes")
-      output$genes_unselected_table <- renderDT(
+      # genes in module table output
+      output$genes_not_keep_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
 
-      # selected genes table output
-      output$FO_selected_text = renderText("Selected Genes")
-      output$genes_selected_table <- renderDataTable(
+      # functional outliers table output
+      output$genes_keep_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
@@ -431,7 +436,10 @@ server <- function(input, output, session) {
     }
   )
 
-  # ERROR MESSAGES
+
+
+
+  ##################### ERROR MESSAGES #####################
 
   output$CG_error <- renderText({
     print("Please upload/generate a gene list in OPTIONS")
