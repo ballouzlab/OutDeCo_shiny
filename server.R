@@ -102,13 +102,16 @@ server <- function(input, output, session) {
       #            text = "Please enter a valid number of Genes",
       #            type = "error")),
       # )
-      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-2][0-9]") == FALSE) {
+      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[1-9]") == FALSE && str_detect(input$chooseChrome, "chr1[0-9]") == FALSE && str_detect(input$chooseChrome, "chr2[0-2]") == FALSE) {
         shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-
+        NULL
       } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
         shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
+        NULL
+      } else { 
+        sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+
       }
-      sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
     } else {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
     }
@@ -116,7 +119,9 @@ server <- function(input, output, session) {
 
   # generate subnetwork only when button is clicked
   sub_nets <- eventReactive(input$generate_subnet, {
-    subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+    if (!is.null(gene_list())) { 
+      subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+    } 
   })
 
   # Add the Run buttons 
