@@ -2,13 +2,10 @@ source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 source("./src/calc_DE.R", local = TRUE)
-#options(warn=-1)
+
+# Warnings silenced for wilcox
+options(warn=-1)
 defaultW <- getOption("warn") 
-#code
-
-#options(warn = -1) 
-#options(warn = defaultW)
-
 
 server <- function(input, output, session) {
   # Removing elements that are not functional without subnetwork
@@ -19,11 +16,6 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
 
-  # Run DE hide
-  #hide(id = "select_column")
-  #hide(id = "select_case")  
-
-  #hide(id ="run_DE")
 
   
 
@@ -48,13 +40,9 @@ server <- function(input, output, session) {
 
   
   
-    # Plot the data
-  
+  # Plot the data
   observeEvent(input$labels_file, {
-      show(id = "select_column")
-      show(id = "select_case")
-
-      show(id = "run_DE")
+      # Update the labels selection with column headers of labels
       options <- names(labelsData())
       updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
       
@@ -63,6 +51,7 @@ server <- function(input, output, session) {
   )
 
   observeEvent(input$select_column, {
+      # Update the case selection with levels of selected column 
       var <- labelsData()[[input$select_column]]
       lvl <- levels(as.factor(var))
       updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
@@ -93,7 +82,13 @@ server <- function(input, output, session) {
     data <- e[[name]]
   })
 
-  # Run DE
+
+  # __________________________________Run DE Plots___________________________________________
+  de <- reactiveValues(
+    deg_output = NULL, 
+  )
+
+
   observeEvent(input$run_DE, {
     labels <- labelsData()
     counts_data <- countsData()
@@ -116,7 +111,11 @@ server <- function(input, output, session) {
     #groups[labels$Relationship == "prb"] <- 0
 
     filt = groups != 0 
-    deg = calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+    deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+    de$deg_output <- deg()
+
+    # Volcano Plot
+    output$DE_V_text = renderText("Volcano Plot")
     output$DEplot <- renderPlot(
             {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
             pch=19, bty="n", 
@@ -124,6 +123,9 @@ server <- function(input, output, session) {
             width = 450,
             height = 450
     )
+
+    #MA Plot
+    output$DE_MA_text = renderText("MA Plot")
     output$DEplot_average <- renderPlot(
             {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
             pch=19, bty="n", 
@@ -216,9 +218,6 @@ server <- function(input, output, session) {
   )
 
 
-
-  sn <- reactiveValues(sub_nets = NULL)
-  # sub_nets
   sn <- reactiveValues(
     sub_nets = NULL,
   )
@@ -263,13 +262,6 @@ server <- function(input, output, session) {
   )
   
   
-
-
-
-
-
-
-
   # CLUSTER GENES
 
   observeEvent(

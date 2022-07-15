@@ -178,9 +178,9 @@ ui <- fluidPage(
                     # side panel characteristics
                     style = "minimal", icon = "OPTIONS",
                     status = "primary", width = "600px", size = "sm",
-                  splitLayout(cellWidths = c("50%", "50%"), 
-                  fluidPage(
-                    h5(id = "case_selection", "Case Selection"),
+                  
+                    h5(id = "case_selection", "Case/Control Selection"),
+                    
                     selectInput(
                       inputId="select_column",
                       label= "Select label to group ",
@@ -192,26 +192,23 @@ ui <- fluidPage(
                       label= "Select case to analyse",
                       choices = NULL #no choice before column selected
                     ),
-                    br(),
-                    br(), 
-                    br(),
-                  ),
-                  fluidPage(
-                    h5(id = "control_selection", "Control Selection"),
-                    br(),
                     actionButton(inputId="run_DE", label = "Run DE"),
-                  ),
-                  ),
+                  
                   ),
 
                     splitLayout(cellWidths = c("50%", "50%"), 
-                    plotOutput(outputId = "DEplot", height = "450px"), 
-                    plotOutput(outputId = "DEplot_average", height = "450px"))
+                    fluidPage(
+                      textOutput("DE_V_text"),
+                      plotOutput(outputId = "DEplot", height = "450px"), 
+                    ),
+                    fluidPage(
+                      textOutput("DE_MA_text"),
+                      plotOutput(outputId = "DEplot_average", height = "450px")
+                    )
                           
-                     
+                    )
                   
-                  #plotOutput(outputId = "DEplot", height = "500px"),
-                  #plotOutput(outputId = "DEplot_average", height = "500px"),
+                 
                  ),
                  
               ),
