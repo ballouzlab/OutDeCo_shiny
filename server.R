@@ -104,13 +104,10 @@ server <- function(input, output, session) {
       # )
       if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-2][0-9]") == FALSE) {
         shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-        return()
 
       } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
         shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
-        return()
       }
-
       sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
     } else {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
