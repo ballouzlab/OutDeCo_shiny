@@ -176,14 +176,26 @@ ui <- fluidPage(
                 widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="View File",
-                  uiOutput("UILabelsContent"),
+
+                  tabsetPanel(
+                    tabPanel(
+                      title="Counts File",
+                      uiOutput("UICountsContent")
+                    ),
+                    tabPanel(
+                      title="Labels File",
+                      dataTableOutput("UILabelContent")
+                    )
+                  )
+                
+
                  ),
                 tabPanel(
                   title="Plot DE",
                   dropdown(
                     # side panel characteristics
                     style = "minimal", icon = "OPTIONS",
-                    status = "primary", width = "350px", size = "sm",
+                    status = "primary", width = "600px", size = "sm",
                   
                     h5(id = "case_selection", "Case/Control Selection"),
                     radioButtons(
@@ -207,37 +219,10 @@ ui <- fluidPage(
                       ),
 
                     ),
-  
-                    splitLayout(cellWidths = c("50%", "50%"), 
 
-                     checkboxGroupInput(
-                       inputId = "case_checkbox",
-                       label = "Choose Cases",
-                       choices = NULL, #no choice before uploading
-                       #inline = TRUE
-                     ),
-
-                    checkboxGroupInput(
-                       inputId = "conditions_checkbox",
-                       label = "Choose Conditions",
-                       choices = NULL #no choice before uploading
-                     ),
-                    ),
-
-                    selectInput(
-                      inputId = "case_dropdown",
-                      label = "Choose Cases",
-                      choices = NULL, #no choice before uploading
-                      multiple = TRUE
-                      #inline = TRUE
-                    ),
-
-                     selectInput(
-                      inputId = "conditions_dropdown",
-                      label = "Choose Cases",
-                      choices = NULL, #no choice before uploading
-                      multiple = TRUE
-                      #inline = TRUE
+                    conditionalPanel(condition = "input.case_control_method == 'Choose Case/Controls individually'", 
+                      h6(strong("Select Cases")),
+                      dataTableOutput("UILabelContentSelection"),                    
                     ),
                     
                     actionButton(inputId="run_DE", label = "Run DE"),

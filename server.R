@@ -20,44 +20,67 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
 
-
   
-
+    ##################### RUN DE UPLOAD LABELS DATA ###########################
+  # Make labelsData
   labelsData <- reactive({
-    # Labels File from fileInput() function
-    server_labels_file <- input$labels_file
-
-    # extensions tool for format validation
-    ext_labels_file <- tools::file_ext(server_labels_file$datapath)
-
-    # file format checking
-    req(server_labels_file)
-     validate(need(ext_labels_file == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
-
-    # convert data into file format
-    if (is.null(ext_labels_file)) {
+    ServerLabelsFile <- input$labels_file
+    extLabelsFile <- tools::file_ext(ServerLabelsFile$datapath)
+    req(ServerLabelsFile)
+    validate(need(extLabelsFile == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+    if (is.null(extLabelsFile)) {
       return ()
     }
-    read.table(file=server_labels_file$datapath, sep=input$sepButton, header=TRUE)
-    
+    read.table(file=ServerLabelsFile$datapath, sep=input$sepLabelsButton, header=TRUE)
   })
 
-  
-  
+  # creates reactive table called LabelFileContent
+  output$LabelFileContent <- renderTable({
+    if (is.null(labelsData())) {
+      return ()
+    }
+    labelsData()
+  })
+
+  # handles rendering DT table of labels file
+  output$UILabelContent <- renderDataTable(
+    labelsData()    
+  )
+
+  output$UILabelContentSelection <- renderDataTable(
+    labelsData()  
+  )
+
+  observe({
+    # labels_file from fileInput() function
+    ServerLabelsFile <- req(input$labels_file)
+    
+    # extensions tool for format validation
+    extLabelsFile <- tools::file_ext(ServerLabelsFile$datapath)
+    if (is.null(input$labels_file)) {
+      return ()
+    } else{
+      if (extLabelsFile == "txt") {
+        label = paste("Delimiters for", extLabelsFile, "file")
+        choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+      } else if (extLabelsFile == "tsv") {
+        label = paste("Delimiter: Tab")
+        choice <- (Tab="\t")
+      } else {
+        label = paste("Delimiter: Comma")
+        choice <- (Comma=",")
+      }
+      updateRadioButtons(session, "sepLabelsButton", label = label, choices = choice)
+      }
+    })
+    
   # Plot the data
   observeEvent(input$labels_file, {
       # Update the labels selection with column headers of labels
       options <- names(labelsData())
       updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
+  })
 
-
-      updateCheckboxGroupInput(session, inputId="case_checkbox","Choose Cases", choices = labelsData()$ID)
-      updateCheckboxGroupInput(session, inputId="conditions_checkbox","Choose Conditions", choices = labelsData()$ID)
-
-      updateSelectInput(session, inputId="case_dropdown","Choose Cases", choices = labelsData()$ID, selected = NULL)
-      updateSelectInput(session, inputId="conditions_dropdown","Choose Cases", choices = labelsData()$ID, selected = NULL)
-      }
-  )
   # Group by label option 
   observeEvent(input$select_column, {
       # Update the case selection with levels of selected column 
@@ -89,19 +112,6 @@ server <- function(input, output, session) {
 
   })
 
-  # creates reactive table called labelsFileContent
-  output$labelsFileContent <- renderTable({
-    if (is.null(labelsData())) {
-      return ()
-    }
-  })
-
-  # Output labels file
-  output$UILabelsContent <- renderUI({
-    tableOutput("labelsFileContent")
-  })
-  
-
 
   countsData <- reactive({
     if ( is.null(input$counts_file)) return(NULL)
@@ -113,6 +123,21 @@ server <- function(input, output, session) {
     data <- e[[name]]
   })
 
+  # output$x4 = renderPrint({
+  #     s = input$UILabelContentSelection_rows_selected
+  #     if (length(s)) {
+  #       cat('These rows were selected:\n\n')
+  #       cat(s, sep = ', ')
+  #     }
+      
+  # })
+
+  case_selected <- reactive({
+    input$UILabelContentSelection_rows_selected
+  })
+  
+
+
 
   # __________________________________Run DE Plots___________________________________________
   de <- reactiveValues(
@@ -121,27 +146,42 @@ server <- function(input, output, session) {
 
 
   observeEvent(input$run_DE, {
+
     labels <- labelsData()
     counts_data <- countsData()
-  
+
     # var <- labelsData()[[input$select_column]]
+    if (input$case_control_method == "Choose Case by Label") {
+      var <- input$select_column
+      case <- input$select_case
 
-    var <- input$select_column
-    case <- input$select_case
+      # Format labels$var
+      labels_var <- labels[[paste0(var)]]
 
-    # Format labels$var
-    labels_var <- labels[[paste0(var)]]
+      #Initialise the variables of the chosen column to all be 1
+      groups <- rep(1, length(labels_var))
+      
+      # Pick the case, relabel as 2
+      groups[labels_var == case] = 2   
 
-    #Initialise the variables of the chosen column to all be 1
-    groups <- rep(1, length(labels_var))
+
+      filt = groups != 0 
+      deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+      de$deg_output <- deg
+    } else {
+      cases <- case_selected()
+      groups <- rep(1, nrow(labels))
+      for (c in cases) {
+        print(c)
+        groups[c] = 2
+      }
+      filt = groups != 0 
+      deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+      de$deg_output <- deg
+
+
+    }
     
-    # Pick the case, relabel as 2
-    groups[labels_var == case] = 2   
-
-
-    filt = groups != 0 
-    deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
-    de$deg_output <- deg
 
     # Volcano Plot
     output$DE_V_text = renderText("Volcano Plot")
@@ -208,7 +248,7 @@ server <- function(input, output, session) {
       return ()
     }
 
-    read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE, nrows=5)
+    read.table(file=ServerDEFile$datapath, sep=input$sepButton, header=TRUE)
   })
 
   # creates reactive table called DEFileContent
