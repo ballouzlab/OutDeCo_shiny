@@ -49,16 +49,43 @@ server <- function(input, output, session) {
       # Update the labels selection with column headers of labels
       options <- names(labelsData())
       updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
-      
-      }
-       
-  )
 
+
+      updateCheckboxGroupInput(session, inputId="case_checkbox","Choose Cases", choices = labelsData()$ID)
+      updateCheckboxGroupInput(session, inputId="conditions_checkbox","Choose Conditions", choices = labelsData()$ID)
+
+      updateSelectInput(session, inputId="case_dropdown","Choose Cases", choices = labelsData()$ID, selected = NULL)
+      updateSelectInput(session, inputId="conditions_dropdown","Choose Cases", choices = labelsData()$ID, selected = NULL)
+      }
+  )
+  # Group by label option 
   observeEvent(input$select_column, {
       # Update the case selection with levels of selected column 
       var <- labelsData()[[input$select_column]]
       lvl <- levels(as.factor(var))
       updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
+  })
+
+  #Group by selection option 
+  observe({
+    all <- labelsData()$ID
+
+    selected <- input$case_checkbox
+    unselected <- setdiff(all, selected)
+
+
+    selected_dropdown <- input$case_dropdown
+    unselected_dropdown <- setdiff(all, selected_dropdown)
+    
+
+    # Can use character(0) to remove all choices
+
+
+    # Can also set the label and select items
+    updateCheckboxGroupInput(session, "conditions_checkbox",
+      choices = unselected,
+    )
+    updateSelectInput(session, inputId="conditions_dropdown","Choose Conditions", choices = unselected_dropdown, selected = NULL)
 
   })
 
@@ -107,12 +134,10 @@ server <- function(input, output, session) {
 
     #Initialise the variables of the chosen column to all be 1
     groups <- rep(1, length(labels_var))
+    
     # Pick the case, relabel as 2
     groups[labels_var == case] = 2   
 
-    #Uncomment for Sex/Gender - doesn't work with status
-    #groups[labels$Family == 1] <- 0
-    #groups[labels$Relationship == "prb"] <- 0
 
     filt = groups != 0 
     deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
