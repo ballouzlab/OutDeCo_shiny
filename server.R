@@ -1,6 +1,11 @@
 source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
+source("./src/calc_DE.R", local = TRUE)
+
+# Warnings silenced for wilcox
+options(warn=-1)
+defaultW <- getOption("warn") 
 
 # sub_nets
 sn <- reactiveValues(
@@ -11,8 +16,129 @@ server <- function(input, output, session) {
   # hide(id = "runGC")
   # hide(id = "run")
   hide(id = "GC_dropdown")
+  hide(id = "cluster_dropdown")
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
+
+
+  
+
+  labelsData <- reactive({
+    # Labels File from fileInput() function
+    server_labels_file <- input$labels_file
+
+    # extensions tool for format validation
+    ext_labels_file <- tools::file_ext(server_labels_file$datapath)
+
+    # file format checking
+    req(server_labels_file)
+     validate(need(ext_labels_file == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+
+    # convert data into file format
+    if (is.null(ext_labels_file)) {
+      return ()
+    }
+    read.table(file=server_labels_file$datapath, sep=input$sepButton, header=TRUE)
+    
+  })
+
+  
+  
+  # Plot the data
+  observeEvent(input$labels_file, {
+      # Update the labels selection with column headers of labels
+      options <- names(labelsData())
+      updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
+      
+      }
+       
+  )
+
+  observeEvent(input$select_column, {
+      # Update the case selection with levels of selected column 
+      var <- labelsData()[[input$select_column]]
+      lvl <- levels(as.factor(var))
+      updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
+
+  })
+
+  # creates reactive table called labelsFileContent
+  output$labelsFileContent <- renderTable({
+    if (is.null(labelsData())) {
+      return ()
+    }
+  })
+
+  # Output labels file
+  output$UILabelsContent <- renderUI({
+    tableOutput("labelsFileContent")
+  })
+  
+
+
+  countsData <- reactive({
+    if ( is.null(input$counts_file)) return(NULL)
+    inFile <- input$counts_file
+    file <- inFile$datapath
+    # load the file into new environment and get it from there
+    e = new.env()
+    name <- load(file, envir = e)
+    data <- e[[name]]
+  })
+
+
+  # __________________________________Run DE Plots___________________________________________
+  de <- reactiveValues(
+    deg_output = NULL, 
+  )
+
+
+  observeEvent(input$run_DE, {
+    labels <- labelsData()
+    counts_data <- countsData()
+  
+    # var <- labelsData()[[input$select_column]]
+
+    var <- input$select_column
+    case <- input$select_case
+
+    # Format labels$var
+    labels_var <- labels[[paste0(var)]]
+
+    #Initialise the variables of the chosen column to all be 1
+    groups <- rep(1, length(labels_var))
+    # Pick the case, relabel as 2
+    groups[labels_var == case] = 2   
+
+    #Uncomment for Sex/Gender - doesn't work with status
+    #groups[labels$Family == 1] <- 0
+    #groups[labels$Relationship == "prb"] <- 0
+
+    filt = groups != 0 
+    deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+    de$deg_output <- deg
+
+    # Volcano Plot
+    output$DE_V_text = renderText("Volcano Plot")
+    output$DEplot <- renderPlot(
+            {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+            pch=19, bty="n", 
+            xlab="log2 FC", ylab="-log10 p-vals" )},
+            width = 450,
+            height = 450
+    )
+
+    #MA Plot
+    output$DE_MA_text = renderText("MA Plot")
+    output$DEplot_average <- renderPlot(
+            {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
+            pch=19, bty="n", 
+            ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")},
+            width = 450,
+            height = 450
+    )
+    }
+  )
 
   observe({
       # DEFile from fileInput() function

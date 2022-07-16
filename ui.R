@@ -138,48 +138,85 @@ ui <- fluidPage(
 
             ##################### RUN DE TAB #####################
             tabPanel(
-              title="Run DE",
+              title="Run DE", 
 
               # side panel for upload options
               dropdown(
-                # title of sidepanel
-                tags$h3("Options"),
-
-                # inputs in the sidepanel
-                fileInput("file1", "Choose DE File",
-                  accept = c(
-                  "text/csv",
-                  "text/comma-separated-values,text/plain",
-                  ".csv")
-                ),
-
-                selectInput(
-                  inputId = "select_network",
-                  label = NULL,
-                  choices = c("a", "b")
-                ),
-
+                tags$h3("Options"), 
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
                 status = "primary", width = "300px", size = "sm",
+               
+                # title of sidepanel
+                fluidPage(
+                # inputs in the sidepanel
+                  selectInput(
+                    inputId = "DE_method",
+                    label= "Choose DE Method",
+                    choices = c("wilcox", "DESeq2", "edgeR"),
+                    selected = NULL,
+                  ),
+
+                  fileInput("counts_file", label = "Upload counts"),
+
+                  fileInput("labels_file", "Choose Labels File",
+                    accept = c(
+                    "text/csv",
+                    "text/comma-separated-values,text/plain",
+                    ".csv")
+                  ),
+
+                
+                ), 
                ),
 
+
+               br(),
                navlistPanel(
                 widths = c(3, 9), well = FALSE,
                 tabPanel(
-                  title="wilcox",
-                  "wilcox placeholder",
+                  title="View File",
+                  uiOutput("UILabelsContent"),
+                 ),
+                tabPanel(
+                  title="Plot DE",
+                  dropdown(
+                    # side panel characteristics
+                    style = "minimal", icon = "OPTIONS",
+                    status = "primary", width = "600px", size = "sm",
+                  
+                    h5(id = "case_selection", "Case/Control Selection"),
+                    
+                    selectInput(
+                      inputId="select_column",
+                      label= "Select label to group ",
+                      choices = NULL #no choice before uploading
+                    ),
+                
+                    selectInput(
+                      inputId="select_case",
+                      label= "Select case to analyse",
+                      choices = NULL #no choice before column selected
+                    ),
+                    actionButton(inputId="run_DE", label = "Run DE"),
+                  
+                  ),
+
+                    splitLayout(cellWidths = c("50%", "50%"), 
+                    fluidPage(
+                      textOutput("DE_V_text"),
+                      plotOutput(outputId = "DEplot", height = "450px"), 
+                    ),
+                    fluidPage(
+                      textOutput("DE_MA_text"),
+                      plotOutput(outputId = "DEplot_average", height = "450px")
+                    )
+                          
+                    )
+                  
+                 
                  ),
                  
-                tabPanel(
-                  title="DESeq",
-                  "DESeq placeholder",
-                 ),
-                 
-                tabPanel(
-                  title="edgeR",
-                  "edgeR Placeholder",
-                ),
               ),
             ),
             
