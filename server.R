@@ -112,7 +112,7 @@ server <- function(input, output, session) {
 
     filt = groups != 0 
     deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
-    de$deg_output <- deg()
+    de$deg_output <- deg
 
     # Volcano Plot
     output$DE_V_text = renderText("Volcano Plot")
