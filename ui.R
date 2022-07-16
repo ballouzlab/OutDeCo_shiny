@@ -165,6 +165,12 @@ ui <- fluidPage(
                     "text/comma-separated-values,text/plain",
                     ".csv")
                   ),
+                  radioButtons(
+                      inputId = 'sepLabelsButton', 
+                      label = 'Delimiter Selector', 
+                      choices = c(Default=''), 
+                      selected = ''
+                  ),
 
                 
                 ), 
@@ -185,7 +191,8 @@ ui <- fluidPage(
                     tabPanel(
                       title="Labels File",
                       dataTableOutput("UILabelContent")
-                    )
+                    ),
+                    
                   )
                 
 

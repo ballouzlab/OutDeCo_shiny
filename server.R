@@ -31,16 +31,23 @@ server <- function(input, output, session) {
     if (is.null(extLabelsFile)) {
       return ()
     }
+
     read.table(file=ServerLabelsFile$datapath, sep=input$sepLabelsButton, header=TRUE)
+
   })
+
 
   # creates reactive table called LabelFileContent
   output$LabelFileContent <- renderTable({
+    
+
     if (is.null(labelsData())) {
       return ()
     }
     labelsData()
   })
+
+
 
   # handles rendering DT table of labels file
   output$UILabelContent <- renderDataTable(
@@ -190,10 +197,9 @@ server <- function(input, output, session) {
       for (d in cases_removed) {
         groups[d] = 0
       }
-      print(groups)
+
 
       deg <- calc_DE(counts_data, groups, input$DE_method) 
-      print(deg)
       de$deg_output <- deg
 
 
