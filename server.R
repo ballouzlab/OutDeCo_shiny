@@ -51,6 +51,10 @@ server <- function(input, output, session) {
     labelsData()  
   )
 
+  output$UILabelContentRemoveSelection <- renderDataTable(
+    labelsData()  
+  )
+
   observe({
     # labels_file from fileInput() function
     ServerLabelsFile <- req(input$labels_file)
@@ -135,6 +139,10 @@ server <- function(input, output, session) {
   case_selected <- reactive({
     input$UILabelContentSelection_rows_selected
   })
+
+  remove_selected <- reactive({
+    input$UILabelContentRemoveSelection_rows_selected
+  })
   
 
 
@@ -168,15 +176,24 @@ server <- function(input, output, session) {
       filt = groups != 0 
       deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
       de$deg_output <- deg
+
     } else {
       cases <- case_selected()
+      cases_removed <- remove_selected()
+      
+      #Initalise all values to 1
       groups <- rep(1, nrow(labels))
       for (c in cases) {
-        print(c)
         groups[c] = 2
       }
-      filt = groups != 0 
-      deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
+      
+      for (d in cases_removed) {
+        groups[d] = 0
+      }
+      print(groups)
+
+      deg <- calc_DE(counts_data, groups, input$DE_method) 
+      print(deg)
       de$deg_output <- deg
 
 

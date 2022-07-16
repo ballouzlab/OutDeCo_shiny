@@ -222,7 +222,9 @@ ui <- fluidPage(
 
                     conditionalPanel(condition = "input.case_control_method == 'Choose Case/Controls individually'", 
                       h6(strong("Select Cases")),
-                      dataTableOutput("UILabelContentSelection"),                    
+                      dataTableOutput("UILabelContentSelection"),   
+                      h6(strong("Select Rows to ignore")),
+                      dataTableOutput("UILabelContentRemoveSelection"),                   
                     ),
                     
                     actionButton(inputId="run_DE", label = "Run DE"),
