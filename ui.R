@@ -11,6 +11,9 @@ library(utils)
 library(shinycssloaders)
 library(shinybusy)
 library(shinyjs)
+library(shinyalert)
+library(stringi)
+library(stringr)
 
 ui <- fluidPage(
   useShinyjs(),

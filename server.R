@@ -7,6 +7,10 @@ source("./src/calc_DE.R", local = TRUE)
 options(warn=-1)
 defaultW <- getOption("warn") 
 
+# sub_nets
+sn <- reactiveValues(
+  sub_nets = NULL,
+)
 server <- function(input, output, session) {
   # Removing elements that are not functional without subnetwork
   # hide(id = "runGC")
@@ -203,6 +207,49 @@ server <- function(input, output, session) {
 
 
 
+  
+
+
+
+
+
+
+
+
+  
+
+  # # generate sub_nets
+  
+  gene_list <- reactive(
+    if (input$gene_list_selection == "Generate Gene List") {
+      # validate(
+      #   need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
+      #   need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, shinyalert(title = "Invalid Input",
+      #            text = "Please enter a valid number of Genes",
+      #            type = "error")),
+      # )
+      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[1-9]") == FALSE && str_detect(input$chooseChrome, "chr1[0-9]") == FALSE && str_detect(input$chooseChrome, "chr2[0-2]") == FALSE) {
+        shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
+        NULL
+      } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
+        shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
+        NULL
+      } else { 
+        sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+
+      }
+    } else {
+      read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
+    }
+  )
+
+  # generate subnetwork only when button is clicked
+  sub_nets <- eventReactive(input$generate_subnet, {
+    if (!is.null(gene_list())) { 
+      subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+    } 
+  })
+
   # Add the Run buttons 
   observeEvent(
     input$generate_subnet,
@@ -227,36 +274,6 @@ server <- function(input, output, session) {
 
 
 
-
-
-
-
-
-  # sub_nets
-  sn <- reactiveValues(
-    sub_nets = NULL,
-  )
-
-  # generate sub_nets
-  observeEvent(
-    input$generate_subnet,
-    {
-      # determine gene_list
-      if (input$gene_list_selection == "Generate Gene List") {
-        validate(
-          need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
-          need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, 'Please enter a valid Gene Number'),
-        )
-        gene_list <- sample(EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo)
-      } else {
-        gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
-      }
-      # generate sub_nets & store under sn
-      sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
-    }
-  )
-
-
   # clust_net
   clust_net <- reactive({
     sub_net <- sn$sub_nets$sub_net
@@ -270,14 +287,17 @@ server <- function(input, output, session) {
   })
   
   
-  # Output of subnetowrk table
-  observeEvent(
-    input$generate_subnet, 
-    {output$subnetwork <- renderTable(sn$sub_nets)}
-  )
-  
-  
+  # Output of subnetwork table
+  # observeEvent(
+  #   input$generate_subnet, 
+  #   {output$subnetwork <- renderTable(sn$sub_nets)}
+  # )
 
+  output$subnetwork <- renderTable({
+    sub_nets()
+  })
+  
+  
 
 
 
@@ -289,9 +309,14 @@ server <- function(input, output, session) {
   observeEvent(
     {input$run},
     {
+      sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees
       medK <- as.numeric(sn$sub_nets$median)
+
+      clust_net <- list() 
+      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
      
 
       # network output
@@ -335,9 +360,16 @@ server <- function(input, output, session) {
   observeEvent(
     {input$runGC},
     {
+      if (is.null(sn$sub_nets)) {
+        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+        
+      }
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
+
+      clust_net <- list() 
+      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
       m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
 
 
@@ -398,6 +430,17 @@ server <- function(input, output, session) {
   observeEvent(
     {input$runFO},
     {
+      if (is.null(sn$sub_nets)) {
+        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
+        
+      }
+      sub_net <- sn$sub_nets$sub_net
+      node_degrees <- sn$sub_nets$node_degrees  
+      medK <- as.numeric(sn$sub_nets$median)
+
+      clust_net <- list() 
+      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
+
       sub_net <- sn$sub_nets$sub_net
       filt_min <- input$filtmin
       clust_size <- plyr::count(clust_net()$genes$clusters$labels)
