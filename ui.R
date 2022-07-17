@@ -162,7 +162,7 @@ ui <- fluidPage(
                   radioButtons(
                       inputId = 'sepLabelsButton', 
                       label = 'Delimiter Selector', 
-                      choices = c(Default=""),
+                      choices = c(Comma=",", Semicolon=";", Tab="\t", Space=" "),
                       selected = ''
                   ),
 

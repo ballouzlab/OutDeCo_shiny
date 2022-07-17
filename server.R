@@ -67,8 +67,21 @@ server <- function(input, output, session) {
 
 
   # handles rendering DT table of labels file
+
+
+  rowList <- rep(1, 26)
+  rowList[4] <- 2
+
+
   output$UILabelContent <- renderDataTable(
-    labelsData()    
+    labelsData(), options = list(
+      pageLength = 50,
+      rowCallback = JS('function(row, data, index, rowId, rowList, condition) {',
+                       'if(data[5] == "m") {',
+                       
+                       
+                       'row.style.backgroundColor = "pink";','}','}')
+    )
   )
 
   # rendering DT table for RUN DE options (to select cases)
@@ -124,6 +137,8 @@ server <- function(input, output, session) {
   #     }
       
   # })
+  #TEMP
+
 
   case_selected <- reactive({
     input$UILabelContentSelection_rows_selected
@@ -168,7 +183,9 @@ server <- function(input, output, session) {
 
     } else {
       cases <- case_selected()
+      print(cases)
       cases_removed <- remove_selected()
+      print(removed)
       
       #Initalise all values to 1
       groups <- rep(1, nrow(labels))
