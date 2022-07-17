@@ -25,8 +25,55 @@ server <- function(input, output, session) {
   sn <- reactiveValues(
     sub_nets = NULL,
   )
+    #####################  UPLOAD COUNTS DATA ###########################
+
+      # Make labelsData
+  countsData <- reactive({
+    ServerCountsFile <- input$counts_file
+    extCountsFile <- tools::file_ext(ServerCountsFile$datapath)
+    req(ServerCountsFile)
+    validate(need(extCountsFile == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+    if (is.null(extCountsFile)) {
+      return ()
+    }
+    read.table(file=ServerCountsFile$datapath, sep=input$sepCountsButton, header=TRUE, nrows=10)
+    
+  })
+
+  observe({
+     # counts_file from fileInput() function
+    ServerCountsFile <- req(input$counts_file)
+    
+  #   # extensions tool for format validation
+    extCountsFile <- tools::file_ext(ServerCountsFile$datapath)
+    if (is.null(input$counts_file)) {
+      return ()
+    } else{
+      if (extCountsFile == "txt") {
+        label = paste("Delimiters for", extCountsFile, "file")
+        choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+      } else if (extCountsFile == "tsv") {
+        label = paste("Delimiter: Tab")
+        choice <- (Tab="\t")
+      } else {
+        label = paste("Delimiter: Comma")
+        choice <- (Comma=",")
+      }
+      updateRadioButtons(session, "sepCountsButton", label = label, choices = choice)
+      }
+    })
+
+    output$UICountsContent <- renderDataTable(
+        countsData(), options = list(
+          pageLength = 25
+        )
+      )
+
 
   
+
+
+
     ##################### RUN DE UPLOAD LABELS DATA ###########################
 
     
@@ -120,27 +167,15 @@ server <- function(input, output, session) {
       )
   })
 
-
-  countsData <- reactive({
-    if ( is.null(input$counts_file)) return(NULL)
-    inFile <- input$counts_file
-    file <- inFile$datapath
-    # load the file into new environment and get it from there
-    e = new.env()
-    name <- load(file, envir = e)
-    data <- e[[name]]
-  })
-
-  # output$x4 = renderPrint({
-  #     s = input$UILabelContentSelection_rows_selected
-  #     if (length(s)) {
-  #       cat('These rows were selected:\n\n')
-  #       cat(s, sep = ', ')
-  #     }
-      
+  # countsData <- reactive({
+  #   if ( is.null(input$counts_file)) return(NULL)
+  #   inFile <- input$counts_file
+  #   file <- inFile$datapath
+  #   # load the file into new environment and get it from there
+  #   e = new.env()
+  #   name <- load(file, envir = e)
+  #   data <- e[[name]]
   # })
-  #TEMP
-
 
   case_selected <- reactive({
     input$UILabelContentSelection_rows_selected
@@ -160,7 +195,6 @@ server <- function(input, output, session) {
 
 
   observeEvent(input$run_DE, {
-
     labels <- labelsData()
     counts_data <- countsData()
 

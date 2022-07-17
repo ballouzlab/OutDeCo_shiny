@@ -150,7 +150,14 @@ ui <- fluidPage(
                 # title of sidepanel
                 fluidPage(
                 # inputs in the sidepanel
-                  fileInput("counts_file", label = "Upload counts"),
+                  fileInput("counts_file", label = "Choose Counts Data File"),
+                  
+                  radioButtons(
+                    inputId = 'sepCountsButton', 
+                    label = 'Delimiter Selector', 
+                    choices = c(Comma=",", Semicolon=";", Tab="\t", Space=" "), 
+                    selected = ''
+                  ),
 
                   fileInput("labels_file", "Choose Labels File",
                     accept = c(
@@ -179,7 +186,7 @@ ui <- fluidPage(
                   tabsetPanel(
                     tabPanel(
                       title="Counts File",
-                      uiOutput("UICountsContent")
+                      dataTableOutput("UICountsContent")
                     ),
                     tabPanel(
                       title="Labels File",
