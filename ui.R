@@ -28,9 +28,9 @@ ui <- fluidPage(
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
-
             ##################### HOME TAB #####################
             tabPanel(
+              
               title="Home",
               icon = icon("home"),
 
@@ -150,14 +150,14 @@ ui <- fluidPage(
                 # title of sidepanel
                 fluidPage(
                 # inputs in the sidepanel
-                  selectInput(
-                    inputId = "DE_method",
-                    label= "Choose DE Method",
-                    choices = c("wilcox", "DESeq2", "edgeR"),
-                    selected = NULL,
+                  fileInput("counts_file", label = "Choose Counts Data File"),
+                  
+                  radioButtons(
+                    inputId = 'sepCountsButton', 
+                    label = 'Delimiter Selector', 
+                    choices = c(Comma=",", Semicolon=";", Tab="\t", Space=" "), 
+                    selected = ''
                   ),
-
-                  fileInput("counts_file", label = "Upload counts"),
 
                   fileInput("labels_file", "Choose Labels File",
                     accept = c(
@@ -166,7 +166,13 @@ ui <- fluidPage(
                     ".csv")
                   ),
 
-                
+                  radioButtons(
+                      inputId = 'sepLabelsButton', 
+                      label = 'Delimiter Selector', 
+                      choices = c(Comma=",", Semicolon=";", Tab="\t", Space=" "),
+                      selected = ''
+                  ),
+
                 ), 
                ),
 
@@ -176,40 +182,85 @@ ui <- fluidPage(
                 widths = c(3, 9), well = FALSE,
                 tabPanel(
                   title="View File",
-                  uiOutput("UILabelsContent"),
+
+                  tabsetPanel(
+                    tabPanel(
+                      title="Counts File",
+                      dataTableOutput("UICountsContent")
+                    ),
+                    tabPanel(
+                      title="Labels File",
+                      dataTableOutput("UILabelContent")
+                    ),
+                    
+                  )
+                
+
                  ),
                 tabPanel(
                   title="Plot DE",
+                  h4("Plot Differential Expression"),
+                  p(id = "runDE_error", "Please upload counts and labels data in OPTIONS"),
                   dropdown(
+                    inputId = "DE_options",
                     # side panel characteristics
-                    style = "minimal", icon = "OPTIONS",
+                    style = "minimal", icon = "ANALYSIS OPTIONS",
                     status = "primary", width = "600px", size = "sm",
+
+                  selectInput(
+                    inputId = "DE_method",
+                    label= tags$h5("Choose DE Method"),
+                    choices = c("wilcox", "DESeq2", "edgeR"),
+                    selected = NULL,
+                    width = "600px",
+                  ),
                   
-                    h5(id = "case_selection", "Case/Control Selection"),
                     
-                    selectInput(
-                      inputId="select_column",
-                      label= "Select label to group ",
-                      choices = NULL #no choice before uploading
+                    radioButtons(
+                    inputId = "case_control_method",
+                    label = tags$h5("Case/Control Selection"),
+                    choices = c("Choose Case by Label", "Choose Case/Controls individually"),
+                    selected = ""
                     ),
-                
-                    selectInput(
-                      inputId="select_case",
-                      label= "Select case to analyse",
-                      choices = NULL #no choice before column selected
+                   
+                    conditionalPanel(condition = "input.case_control_method == 'Choose Case by Label'", 
+                      selectInput(
+                        inputId="select_column",
+                        label= "Select label to group ",
+                        choices = NULL, #no choice before uploading
+                        width = "600px",
+                      ),
+                  
+                      selectInput(
+                        inputId="select_case",
+                        label= "Select case to analyse",
+                        choices = NULL, #no choice before column selected
+                        width = "600px",
+                      ),
+
                     ),
+
+                    conditionalPanel(condition = "input.case_control_method == 'Choose Case/Controls individually'", 
+                      h6(strong("Select Cases")),
+                      dataTableOutput("UILabelContentSelection"),   
+                      h6(strong("Select Rows to ignore")),
+                      dataTableOutput("UILabelContentRemoveSelection"),                   
+                    ),
+                    
                     actionButton(inputId="run_DE", label = "Run DE"),
                   
                   ),
 
                     splitLayout(cellWidths = c("50%", "50%"), 
                     fluidPage(
-                      textOutput("DE_V_text"),
-                      plotOutput(outputId = "DEplot", height = "450px"), 
+                      #textOutput("DE_V_text"),
+                      h4(id="vol"," Volcano Plot", style="text-align: center;"),
+                      column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
                     ),
                     fluidPage(
-                      textOutput("DE_MA_text"),
-                      plotOutput(outputId = "DEplot_average", height = "450px")
+                      #textOutput("DE_MA_text"),
+                      h4(id="MA"," MA Plot", style="text-align: center;"),
+                      column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center")
                     )
                           
                     )
@@ -281,8 +332,7 @@ ui <- fluidPage(
                 
                 
                 # generate subnet button
-                actionButton("generate_subnet", "Generate Subnetwork", 
-                style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                actionButton("generate_subnet", "Generate Subnetwork",),
       
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
@@ -300,18 +350,19 @@ ui <- fluidPage(
                 tabPanel(
                   title="View Files",
                   tabsetPanel(
-                    
+                    id="subnetwork_file_tabset",
+                     # view file tab
+                    tabPanel(
+                      title="File",
+                      uiOutput("UIDEContent"),
+                    ),
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
                       tableOutput("subnetwork")
                     ),
 
-                    # view file tab
-                    tabPanel(
-                      title="File",
-                      uiOutput("UIDEContent")
-                    ),
+                   
                   ),
                 ),
 
@@ -336,10 +387,7 @@ ui <- fluidPage(
                       ),
 
                       # run button
-                      actionButton(inputId = "run", label = "Run",
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "run", label = "Run",),
                     ),  
 
                     br(),
@@ -358,7 +406,7 @@ ui <- fluidPage(
                         # network
                         conditionalPanel(
                           condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
-                          h4("Network of Clustered Genes"), 
+                          h5(id="CG_network_text", "Network of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
                         ),
@@ -366,7 +414,7 @@ ui <- fluidPage(
                         # heatmap
                         conditionalPanel(
                           condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Heatmap of Clustered Genes"),
+                          h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
                           br(),
                           plotOutput(outputId = "heatmap", height = "500px"),
                         ),
@@ -374,7 +422,7 @@ ui <- fluidPage(
                         # binarized heatmap
                         conditionalPanel(
                           condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Binarized Heatmap of Clustered Genes"), 
+                          h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
                         ),
@@ -387,10 +435,10 @@ ui <- fluidPage(
                         br(),
 
                         # clustering genes
-                        h4("Clustering Genes"), 
+                        h5(id="CG_table_text", "Clustering Genes"), 
                         br(),
                         fluidRow(
-                          column( 11,
+                          column(11,
                                   dataTableOutput("CG_table"),
                           )
                         ),
@@ -426,7 +474,7 @@ ui <- fluidPage(
                       conditionalPanel(
                         condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
                         sliderInput(
-                          "xybreaks", 
+                          inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
                           min = 10, max = 150, value = 100, step = 10,
                         ),
@@ -435,10 +483,7 @@ ui <- fluidPage(
                       br(),
 
                       # run button
-                      actionButton(inputId = "runGC", label = "Run", 
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "runGC", label = "Run", ),
 
                     ),
                     
@@ -451,7 +496,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
-                      h4("Density Plot of Gene Connectivity"), 
+                      h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
                       br(),
                       plotOutput(outputId = "GCdensityG", height = "500px",),
                       br(),
@@ -461,7 +506,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
-                      h4("Histogram of Gene Connectivity"),
+                      h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
                       br(),
                       plotOutput(outputId = "GChistogramG", height = "500px",),
                       br(),
@@ -471,7 +516,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Clustered Density', input.GCPlotOptions) > -1", 
-                      h4("Density plot of Gene Connectivity subset by their clusters"), 
+                      h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
                       br(),
@@ -481,7 +526,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Clustered Histogram', input.GCPlotOptions) > -1", 
-                      h4("Histogram of Gene Connectivity subset by their clusters"), 
+                      h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
                       br(),
@@ -529,10 +574,7 @@ ui <- fluidPage(
                       br(),
                       
                       # run button
-                      actionButton(inputId = "runFO", label = "Run", 
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "runFO", label = "Run", ),
 
                     ),
 
@@ -555,14 +597,14 @@ ui <- fluidPage(
                       # heatmap
                       conditionalPanel(
                         condition = "$.inArray('Network', input.FOPlotOptions) > -1", 
-                        h4("Network"), 
+                        h5(id="FO_network_text", "Network"), 
                         plotOutput(outputId = "FO_network", height = "500px"),
                       ),
 
                       # network
                       conditionalPanel(
                         condition = "$.inArray('Heatmap', input.FOPlotOptions) > -1", 
-                        h4("Heatmap"), 
+                        h5(id="FO_heatmap_text", "Heatmap"), 
                         plotOutput(outputId = "FO_heatmap", height = "500px"),
                         br(),
                       ),
@@ -577,7 +619,7 @@ ui <- fluidPage(
                       # selected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
-                        h4("Genes in Module"), 
+                        h5(id="genes_not_keep_table_text", "Genes in Module"), 
                         br(),
                         fluidRow(
                           column( 11,
@@ -591,7 +633,7 @@ ui <- fluidPage(
                       # unselected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
-                        h4("Outliers"), 
+                        h5(id="genes_keep_table_text", "Outliers"), 
                         br(),
                         fluidRow(
                           column( 11,
