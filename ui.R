@@ -473,7 +473,7 @@ ui <- fluidPage(
                       conditionalPanel(
                         condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
                         sliderInput(
-                          "xybreaks", 
+                          inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
                           min = 10, max = 150, value = 100, step = 10,
                         ),

@@ -401,7 +401,7 @@ server <- function(input, output, session) {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
     }
   )
-
+  
   # generate subnetwork only when button is clicked
   sub_nets <- eventReactive(input$generate_subnet, {
     if (!is.null(gene_list())) { 
@@ -427,6 +427,10 @@ server <- function(input, output, session) {
       show(id = "FO_dropdown")
       show(id = "runFO")
       hide(id = "FO_error")
+      if (input$gene_list_selection == "Generate Gene List") {
+        updateSliderInput(session, inputId = "xybreaks", min = 10, max = 150, value = input$chooseGeneNo, step = 10)
+      }
+      
 
     }
   )
