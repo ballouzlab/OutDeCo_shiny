@@ -199,14 +199,17 @@ ui <- fluidPage(
                  ),
                 tabPanel(
                   title="Plot DE",
+                  h4("Plot Differential Expression"),
+                  p(id = "runDE_error", "Please upload counts and labels data in OPTIONS"),
                   dropdown(
+                    inputId = "DE_options",
                     # side panel characteristics
-                    style = "minimal", icon = "OPTIONS",
+                    style = "minimal", icon = "ANALYSIS OPTIONS",
                     status = "primary", width = "600px", size = "sm",
 
                   selectInput(
                     inputId = "DE_method",
-                    label= tags$h4("Choose DE Method"),
+                    label= tags$h5("Choose DE Method"),
                     choices = c("wilcox", "DESeq2", "edgeR"),
                     selected = NULL,
                     width = "600px",
@@ -215,7 +218,7 @@ ui <- fluidPage(
                     
                     radioButtons(
                     inputId = "case_control_method",
-                    label = tags$h4("Case/Control Selection"),
+                    label = tags$h5("Case/Control Selection"),
                     choices = c("Choose Case by Label", "Choose Case/Controls individually"),
                     selected = ""
                     ),
@@ -406,7 +409,7 @@ ui <- fluidPage(
                         # network
                         conditionalPanel(
                           condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
-                          h4("Network of Clustered Genes"), 
+                          h5(id="CG_network_text", "Network of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
                         ),
@@ -414,7 +417,7 @@ ui <- fluidPage(
                         # heatmap
                         conditionalPanel(
                           condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Heatmap of Clustered Genes"),
+                          h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
                           br(),
                           plotOutput(outputId = "heatmap", height = "500px"),
                         ),
@@ -422,7 +425,7 @@ ui <- fluidPage(
                         # binarized heatmap
                         conditionalPanel(
                           condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Binarized Heatmap of Clustered Genes"), 
+                          h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
                         ),
@@ -435,10 +438,10 @@ ui <- fluidPage(
                         br(),
 
                         # clustering genes
-                        h4("Clustering Genes"), 
+                        h5(id="CG_table_text", "Clustering Genes"), 
                         br(),
                         fluidRow(
-                          column( 11,
+                          column(11,
                                   dataTableOutput("CG_table"),
                           )
                         ),
@@ -499,7 +502,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
-                      h4("Density Plot of Gene Connectivity"), 
+                      h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
                       br(),
                       plotOutput(outputId = "GCdensityG", height = "500px",),
                       br(),
@@ -509,7 +512,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
-                      h4("Histogram of Gene Connectivity"),
+                      h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
                       br(),
                       plotOutput(outputId = "GChistogramG", height = "500px",),
                       br(),
@@ -519,7 +522,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Clustered Density', input.GCPlotOptions) > -1", 
-                      h4("Density plot of Gene Connectivity subset by their clusters"), 
+                      h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
                       br(),
@@ -529,7 +532,7 @@ ui <- fluidPage(
                     conditionalPanel(
                       br(),
                       condition = "$.inArray('Clustered Histogram', input.GCPlotOptions) > -1", 
-                      h4("Histogram of Gene Connectivity subset by their clusters"), 
+                      h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
                       br(),
@@ -603,14 +606,14 @@ ui <- fluidPage(
                       # heatmap
                       conditionalPanel(
                         condition = "$.inArray('Network', input.FOPlotOptions) > -1", 
-                        h4("Network"), 
+                        h5(id="FO_network_text", "Network"), 
                         plotOutput(outputId = "FO_network", height = "500px"),
                       ),
 
                       # network
                       conditionalPanel(
                         condition = "$.inArray('Heatmap', input.FOPlotOptions) > -1", 
-                        h4("Heatmap"), 
+                        h5(id="FO_heatmap_text", "Heatmap"), 
                         plotOutput(outputId = "FO_heatmap", height = "500px"),
                         br(),
                       ),
@@ -625,7 +628,7 @@ ui <- fluidPage(
                       # selected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
-                        h4("Genes in Module"), 
+                        h5(id="genes_not_keep_table_text", "Genes in Module"), 
                         br(),
                         fluidRow(
                           column( 11,
@@ -639,7 +642,7 @@ ui <- fluidPage(
                       # unselected genes table output
                       conditionalPanel(
                         condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
-                        h4("Outliers"), 
+                        h5(id="genes_keep_table_text", "Outliers"), 
                         br(),
                         fluidRow(
                           column( 11,
