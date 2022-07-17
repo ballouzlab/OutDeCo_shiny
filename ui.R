@@ -332,8 +332,7 @@ ui <- fluidPage(
                 
                 
                 # generate subnet button
-                actionButton("generate_subnet", "Generate Subnetwork", 
-                style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                actionButton("generate_subnet", "Generate Subnetwork",),
       
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
@@ -387,10 +386,7 @@ ui <- fluidPage(
                       ),
 
                       # run button
-                      actionButton(inputId = "run", label = "Run",
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "run", label = "Run",),
                     ),  
 
                     br(),
@@ -486,10 +482,7 @@ ui <- fluidPage(
                       br(),
 
                       # run button
-                      actionButton(inputId = "runGC", label = "Run", 
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "runGC", label = "Run", ),
 
                     ),
                     
@@ -580,10 +573,7 @@ ui <- fluidPage(
                       br(),
                       
                       # run button
-                      actionButton(inputId = "runFO", label = "Run", 
-
-                      # dropdown characteristics
-                      style="color: #fff; background-color: #3E3F3A; border-color: #20201F"),
+                      actionButton(inputId = "runFO", label = "Run", ),
 
                     ),
 
