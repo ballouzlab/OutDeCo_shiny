@@ -350,18 +350,19 @@ ui <- fluidPage(
                 tabPanel(
                   title="View Files",
                   tabsetPanel(
-                    
+                    id="subnetwork_file_tabset",
+                     # view file tab
+                    tabPanel(
+                      title="File",
+                      uiOutput("UIDEContent"),
+                    ),
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
                       tableOutput("subnetwork")
                     ),
 
-                    # view file tab
-                    tabPanel(
-                      title="File",
-                      uiOutput("UIDEContent")
-                    ),
+                   
                   ),
                 ),
 

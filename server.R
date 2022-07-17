@@ -401,6 +401,16 @@ server <- function(input, output, session) {
       read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
     }
   )
+
+  observeEvent(input$gene_list_selection, {
+    if (input$gene_list_selection == "Upload Gene List") {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
+    } else {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
+    }
+
+
+  })
   
   # generate subnetwork only when button is clicked
   sub_nets <- eventReactive(input$generate_subnet, {
