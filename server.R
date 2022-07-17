@@ -243,6 +243,7 @@ server <- function(input, output, session) {
   observeEvent(input$run_DE, {
     labels <- labelsData()
     counts_data <- countsData()
+    deg <- NULL
 
     # var <- labelsData()[[input$select_column]]
     if (input$case_control_method == "Choose Case by Label") {
@@ -266,10 +267,13 @@ server <- function(input, output, session) {
     } else {
       cases <- case_selected()
       cases_removed <- remove_selected()
+      
 
       
       #Initalise all values to 1
       groups <- rep(1, nrow(labels))
+      check <- rep(1, nrow(labels))
+
       for (c in cases) {
         groups[c] = 2
       }
@@ -277,34 +281,42 @@ server <- function(input, output, session) {
       for (d in cases_removed) {
         groups[d] = 0
       }
-
-      deg <- calc_DE(counts_data, groups, input$DE_method) 
-      de$deg_output <- deg
+      # No cases have been selected
+      print(groups)
+      print(check)
+      if (groups == check) {
+        shinyalert(title = "Invalid Input", text = "Please select cases to assess", type = "error")
+      } else {
+        deg <- calc_DE(counts_data, groups, input$DE_method) 
+        de$deg_output <- deg
+      }
 
 
     }
     
 
     # Volcano Plot
-    show(id="vol")
-    output$DEplot <- renderPlot(
-            {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
-            pch=19, bty="n", 
-            xlab="log2 FC", ylab="-log10 p-vals" )},
-            width = 450,
-            height = 450
-    )
+    if (!is.null(deg)) {
+      show(id="vol")
+      output$DEplot <- renderPlot(
+              {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+              pch=19, bty="n", 
+              xlab="log2 FC", ylab="-log10 p-vals" )},
+              width = 450,
+              height = 450
+      )
 
-    #MA Plot
-    show(id="MA")
-    #output$DE_MA_text = renderText("MA Plot")
-    output$DEplot_average <- renderPlot(
-            {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
-            pch=19, bty="n", 
-            ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")},
-            width = 450,
-            height = 450
-    )
+      #MA Plot
+      show(id="MA")
+      #output$DE_MA_text = renderText("MA Plot")
+      output$DEplot_average <- renderPlot(
+              {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
+              pch=19, bty="n", 
+              ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")},
+              width = 450,
+              height = 450
+      )
+    }
     }
   )
 
