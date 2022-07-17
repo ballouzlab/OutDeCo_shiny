@@ -18,6 +18,7 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
   hide(id = "sepLabelsButton")
+  hide(id = "sepCountsButton")
   hide(id = "vol")
   hide(id = "MA")
 
@@ -36,7 +37,7 @@ server <- function(input, output, session) {
     if (is.null(extCountsFile)) {
       return ()
     }
-    read.table(file=ServerCountsFile$datapath, sep=input$sepCountsButton, header=TRUE, nrows=10)
+    read.table(file=ServerCountsFile$datapath, sep=input$sepCountsButton, header=TRUE)
     
   })
 
@@ -68,15 +69,12 @@ server <- function(input, output, session) {
           pageLength = 25
         )
       )
-
-
-  
-
-
+      
+    observeEvent(input$counts_file, {
+      show(id = "sepCountsButton")
+    })
 
     ##################### RUN DE UPLOAD LABELS DATA ###########################
-
-    
   # Make labelsData
   labelsData <- reactive({
     ServerLabelsFile <- input$labels_file
@@ -93,6 +91,8 @@ server <- function(input, output, session) {
   observeEvent(input$labels_file, {
     show(id = "sepLabelsButton")
   })
+
+
 
   observe({
      # labels_file from fileInput() function
@@ -184,6 +184,8 @@ server <- function(input, output, session) {
   remove_selected <- reactive({
     input$UILabelContentRemoveSelection_rows_selected
   })
+
+  
   
 
 
