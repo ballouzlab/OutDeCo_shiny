@@ -28,9 +28,9 @@ ui <- fluidPage(
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
   navbarPage(title=NULL, collapsible = FALSE,
-
             ##################### HOME TAB #####################
             tabPanel(
+              
               title="Home",
               icon = icon("home"),
 
@@ -166,8 +166,6 @@ ui <- fluidPage(
                       selected = ''
                   ),
 
-
-                  
                 ), 
                ),
 
@@ -204,6 +202,7 @@ ui <- fluidPage(
                     label= tags$h4("Choose DE Method"),
                     choices = c("wilcox", "DESeq2", "edgeR"),
                     selected = NULL,
+                    width = "600px",
                   ),
                   
                     
@@ -218,13 +217,15 @@ ui <- fluidPage(
                       selectInput(
                         inputId="select_column",
                         label= "Select label to group ",
-                        choices = NULL #no choice before uploading
+                        choices = NULL, #no choice before uploading
+                        width = "600px",
                       ),
                   
                       selectInput(
                         inputId="select_case",
                         label= "Select case to analyse",
-                        choices = NULL #no choice before column selected
+                        choices = NULL, #no choice before column selected
+                        width = "600px",
                       ),
 
                     ),
@@ -242,12 +243,14 @@ ui <- fluidPage(
 
                     splitLayout(cellWidths = c("50%", "50%"), 
                     fluidPage(
-                      textOutput("DE_V_text"),
-                      plotOutput(outputId = "DEplot", height = "450px"), 
+                      #textOutput("DE_V_text"),
+                      h4(id="vol"," Volcano Plot", style="text-align: center;"),
+                      column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
                     ),
                     fluidPage(
-                      textOutput("DE_MA_text"),
-                      plotOutput(outputId = "DEplot_average", height = "450px")
+                      #textOutput("DE_MA_text"),
+                      h4(id="MA"," MA Plot", style="text-align: center;"),
+                      column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center")
                     )
                           
                     )

@@ -7,11 +7,9 @@ source("./src/calc_DE.R", local = TRUE)
 options(warn=-1)
 defaultW <- getOption("warn") 
 
-# sub_nets
-sn <- reactiveValues(
-  sub_nets = NULL,
-)
+
 server <- function(input, output, session) {
+
   # Removing elements that are not functional without subnetwork
   # hide(id = "runGC")
   # hide(id = "run")
@@ -20,6 +18,13 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
   hide(id = "sepLabelsButton")
+  hide(id = "vol")
+  hide(id = "MA")
+
+  # sub_nets
+  sn <- reactiveValues(
+    sub_nets = NULL,
+  )
 
   
     ##################### RUN DE UPLOAD LABELS DATA ###########################
@@ -69,29 +74,26 @@ server <- function(input, output, session) {
   # handles rendering DT table of labels file
 
 
-  rowList <- rep(1, 26)
-  rowList[4] <- 2
 
 
   output$UILabelContent <- renderDataTable(
     labelsData(), options = list(
-      pageLength = 50,
-      rowCallback = JS('function(row, data, index, rowId, rowList, condition) {',
-                       'if(data[5] == "m") {',
-                       
-                       
-                       'row.style.backgroundColor = "pink";','}','}')
+      pageLength = 100
     )
   )
 
   # rendering DT table for RUN DE options (to select cases)
   output$UILabelContentSelection <- renderDataTable(
-    labelsData()  
+    labelsData(), options = list(
+      pageLength = 100
+    )
   )
 
     # rendering DT table for RUN DE options (to remove cases)
   output$UILabelContentRemoveSelection <- renderDataTable(
-    labelsData()  
+    labelsData(), options = list(
+      pageLength = 100
+    ) 
   )
 
   # Plot the data
@@ -183,9 +185,8 @@ server <- function(input, output, session) {
 
     } else {
       cases <- case_selected()
-      print(cases)
       cases_removed <- remove_selected()
-      print(removed)
+
       
       #Initalise all values to 1
       groups <- rep(1, nrow(labels))
@@ -206,7 +207,8 @@ server <- function(input, output, session) {
     
 
     # Volcano Plot
-    output$DE_V_text = renderText("Volcano Plot")
+    #output$DE_V_text = renderText("Volcano Plot")
+    show(id="vol")
     output$DEplot <- renderPlot(
             {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
             pch=19, bty="n", 
@@ -216,7 +218,8 @@ server <- function(input, output, session) {
     )
 
     #MA Plot
-    output$DE_MA_text = renderText("MA Plot")
+    show(id="MA")
+    #output$DE_MA_text = renderText("MA Plot")
     output$DEplot_average <- renderPlot(
             {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
             pch=19, bty="n", 
