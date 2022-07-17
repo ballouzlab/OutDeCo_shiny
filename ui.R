@@ -150,13 +150,6 @@ ui <- fluidPage(
                 # title of sidepanel
                 fluidPage(
                 # inputs in the sidepanel
-                  selectInput(
-                    inputId = "DE_method",
-                    label= "Choose DE Method",
-                    choices = c("wilcox", "DESeq2", "edgeR"),
-                    selected = NULL,
-                  ),
-
                   fileInput("counts_file", label = "Upload counts"),
 
                   fileInput("labels_file", "Choose Labels File",
@@ -165,14 +158,16 @@ ui <- fluidPage(
                     "text/comma-separated-values,text/plain",
                     ".csv")
                   ),
+
                   radioButtons(
                       inputId = 'sepLabelsButton', 
                       label = 'Delimiter Selector', 
-                      choices = c(Default=''), 
+                      choices = c(Default=""),
                       selected = ''
                   ),
 
-                
+
+                  
                 ), 
                ),
 
@@ -203,11 +198,18 @@ ui <- fluidPage(
                     # side panel characteristics
                     style = "minimal", icon = "OPTIONS",
                     status = "primary", width = "600px", size = "sm",
+
+                  selectInput(
+                    inputId = "DE_method",
+                    label= tags$h4("Choose DE Method"),
+                    choices = c("wilcox", "DESeq2", "edgeR"),
+                    selected = NULL,
+                  ),
                   
-                    h5(id = "case_selection", "Case/Control Selection"),
+                    
                     radioButtons(
                     inputId = "case_control_method",
-                    label = tags$h4("Grouping Method"),
+                    label = tags$h4("Case/Control Selection"),
                     choices = c("Choose Case by Label", "Choose Case/Controls individually"),
                     selected = ""
                     ),

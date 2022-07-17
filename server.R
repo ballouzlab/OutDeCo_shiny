@@ -19,9 +19,12 @@ server <- function(input, output, session) {
   hide(id = "cluster_dropdown")
   hide(id = "CG_dropdown")
   hide(id = "FO_dropdown")
+  hide(id = "sepLabelsButton")
 
   
     ##################### RUN DE UPLOAD LABELS DATA ###########################
+
+    
   # Make labelsData
   labelsData <- reactive({
     ServerLabelsFile <- input$labels_file
@@ -31,42 +34,19 @@ server <- function(input, output, session) {
     if (is.null(extLabelsFile)) {
       return ()
     }
-
     read.table(file=ServerLabelsFile$datapath, sep=input$sepLabelsButton, header=TRUE)
-
-  })
-
-
-  # creates reactive table called LabelFileContent
-  output$LabelFileContent <- renderTable({
     
-
-    if (is.null(labelsData())) {
-      return ()
-    }
-    labelsData()
   })
 
-
-
-  # handles rendering DT table of labels file
-  output$UILabelContent <- renderDataTable(
-    labelsData()    
-  )
-
-  output$UILabelContentSelection <- renderDataTable(
-    labelsData()  
-  )
-
-  output$UILabelContentRemoveSelection <- renderDataTable(
-    labelsData()  
-  )
+  observeEvent(input$labels_file, {
+    show(id = "sepLabelsButton")
+  })
 
   observe({
-    # labels_file from fileInput() function
+     # labels_file from fileInput() function
     ServerLabelsFile <- req(input$labels_file)
     
-    # extensions tool for format validation
+  #   # extensions tool for format validation
     extLabelsFile <- tools::file_ext(ServerLabelsFile$datapath)
     if (is.null(input$labels_file)) {
       return ()
@@ -84,12 +64,32 @@ server <- function(input, output, session) {
       updateRadioButtons(session, "sepLabelsButton", label = label, choices = choice)
       }
     })
-    
+
+
+  # handles rendering DT table of labels file
+  output$UILabelContent <- renderDataTable(
+    labelsData()    
+  )
+
+  # rendering DT table for RUN DE options (to select cases)
+  output$UILabelContentSelection <- renderDataTable(
+    labelsData()  
+  )
+
+    # rendering DT table for RUN DE options (to remove cases)
+  output$UILabelContentRemoveSelection <- renderDataTable(
+    labelsData()  
+  )
+
   # Plot the data
-  observeEvent(input$labels_file, {
-      # Update the labels selection with column headers of labels
+  observeEvent(input$case_control_method, {
       options <- names(labelsData())
-      updateSelectInput(session, inputId="select_column","Select column to group", choices = options[2:length(options)], selected = NULL)
+      updateSelectInput(session, 
+        inputId="select_column",
+        "Select column to group", 
+        choices = options[2:length(options)], 
+        selected = NULL
+      )
   })
 
   # Group by label option 
@@ -97,30 +97,12 @@ server <- function(input, output, session) {
       # Update the case selection with levels of selected column 
       var <- labelsData()[[input$select_column]]
       lvl <- levels(as.factor(var))
-      updateSelectInput(session, inputId="select_case", "Select case to analyse", choices = lvl, selected = NULL)
-  })
-
-  #Group by selection option 
-  observe({
-    all <- labelsData()$ID
-
-    selected <- input$case_checkbox
-    unselected <- setdiff(all, selected)
-
-
-    selected_dropdown <- input$case_dropdown
-    unselected_dropdown <- setdiff(all, selected_dropdown)
-    
-
-    # Can use character(0) to remove all choices
-
-
-    # Can also set the label and select items
-    updateCheckboxGroupInput(session, "conditions_checkbox",
-      choices = unselected,
-    )
-    updateSelectInput(session, inputId="conditions_dropdown","Choose Conditions", choices = unselected_dropdown, selected = NULL)
-
+      updateSelectInput(session, 
+        inputId="select_case", 
+        "Select case to analyse", 
+        choices = lvl, 
+        selected = NULL
+      )
   })
 
 
