@@ -27,7 +27,7 @@ ui <- fluidPage(
 
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
   #navbarPage is top menu bar
-  navbarPage(title=NULL, collapsible = FALSE,
+  navbarPage(title=NULL, id="navpage", collapsible = FALSE,
 
             ##################### HOME TAB #####################
             tabPanel(
@@ -209,10 +209,14 @@ ui <- fluidPage(
                     ),
                     fluidPage(
                       textOutput("DE_MA_text"),
-                      plotOutput(outputId = "DEplot_average", height = "450px")
-                    )
+                      plotOutput(outputId = "DEplot_average", height = "450px"),
+                      br(), 
+                      actionButton(inputId="assess_run_de", label = "Assess Run DE") 
+                    ),
+                    
                           
                     )
+                    # 
                   
                  
                  ),
@@ -223,7 +227,6 @@ ui <- fluidPage(
             ##################### ASSESS DE TAB #####################
             tabPanel(
               title="Assess DE", 
-              
               # options dropdown
               dropdown(
 
