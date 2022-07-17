@@ -393,15 +393,16 @@ server <- function(input, output, session) {
   
   gene_list <- reactive(
     if (input$gene_list_selection == "Generate Gene List") {
-      # validate(
-      #   need(input$chooseChrome, 'Please enter a Chromosme between 1-22, X, Y'),
-      #   need(input$chooseGeneNo != "" && input$chooseGeneNo > 0, shinyalert(title = "Invalid Input",
-      #            text = "Please enter a valid number of Genes",
-      #            type = "error")),
-      # )
-      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[1-9]") == FALSE && str_detect(input$chooseChrome, "chr1[0-9]") == FALSE && str_detect(input$chooseChrome, "chr2[0-2]") == FALSE) {
+      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
         shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
         NULL
+      } else if (str_detect(substring(input$chooseChrome,4), "[0-9]")) {
+        if (strtoi(substring(input$chooseChrome,4)) < 1 || strtoi(substring(input$chooseChrome,4)) > 22) {
+          shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
+          NULL
+        } else {
+          sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+        }
       } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
         shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
         NULL
