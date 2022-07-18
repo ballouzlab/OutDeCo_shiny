@@ -226,7 +226,16 @@ server <- function(input, output, session) {
   })
 
   
-  
+    
+  # Switch to labels tab if labels file is uploaded
+  observeEvent(input$labels_file, {
+    updateTabsetPanel(session, "counts_labels_tabset", selected = "Labels File")
+  })
+  # Switch to counts tab if counts file is uploaded
+  observeEvent(input$counts_file, {
+    updateTabsetPanel(session, "counts_labels_tabset", selected = "Counts File")
+  })
+
 
 
 

@@ -185,6 +185,7 @@ ui <- fluidPage(
                   title="View File",
 
                   tabsetPanel(
+                    id="counts_labels_tabset",
                     tabPanel(
                       title="Counts File",
                       dataTableOutput("UICountsContent")
