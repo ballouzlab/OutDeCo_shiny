@@ -50,6 +50,17 @@ server <- function(input, output, session) {
   hide(id="GChistogramG_text")
   hide(id="GCdensitySubsetG_text")
   hide(id="GChistogramSubsetG_text")
+  hide(id="GCdensityG_upreg_text")
+  hide(id="GChistogramG_upreg_text")
+  hide(id="GCdensitySubsetG_upreg_text")
+  hide(id="GChistogramSubsetG_upreg_text")
+  hide(id="GCdensityG_downreg_text")
+  hide(id="GChistogramG_downreg_text")
+  hide(id="GCdensitySubsetG_downreg_text")
+  hide(id="GChistogramSubsetG_downreg_text")
+  hide(id="GCPlotOptions_upreg")
+  hide(id="GCPlotOptions_downreg")
+
   #Functional Outliers
   hide(id="FO_network_text")
   hide(id="FO_heatmap_text")
@@ -415,7 +426,10 @@ server <- function(input, output, session) {
         sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
         show(id="clusterPlotOptions_upreg")
         show(id="clusterPlotOptions_downreg")  
-        hide(id="clusterPlotOptions_genelist")      
+        hide(id="clusterPlotOptions_genelist")   
+        show(id="GCPlotOptions_upreg")
+        show(id="GCPlotOptions_downreg")
+        hide(id="GCPlotOptions_genelist")   
 
     } else { 
       # subnetwork from Gene List 
@@ -643,7 +657,7 @@ server <- function(input, output, session) {
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
-      m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
+      
 
 
       # density output
@@ -673,7 +687,8 @@ server <- function(input, output, session) {
       show(id="GCdensitySubsetG_text")
       # density output - subset by clusters
       output$GCdensitySubsetG <- renderPlot(
-        {plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+        {m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
+         plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
                       xlab="Global node degree", 
                       ylab="Local node degree", 
@@ -686,7 +701,8 @@ server <- function(input, output, session) {
       # histogram output - subset by clusters
       show(id="GChistogramSubsetG_text")
       output$GChistogramSubsetG <- renderPlot(
-        {plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
+        {m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
+         plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
                       xybreaks = input$xybreaks,
                       xlab="Global node degree", 
@@ -696,6 +712,105 @@ server <- function(input, output, session) {
         height = 500
       )
 
+      # density - upreg
+      show(id="GCdensityG_upreg_text")
+      output$GCdensityGupreg <- renderPlot(
+        {plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
+                    node_degrees$up[,2]/node_degrees$n_genes_up, 
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram - upreg 
+      show(id="GChistogramG_upreg_text")
+      output$GChistogramGupreg <- renderPlot(
+        {plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
+                    node_degrees$up[,2]/node_degrees$n_genes_up, 
+                    xybreaks = input$xybreaks,
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density by subsets - upreg 
+      show(id="GCdensitySubsetG_upreg_text")
+      output$GCdensitySubsetGupreg <- renderPlot(
+        {m <- match(clust_net()$up$clusters$genes, rownames(sub_net$up))
+         plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$up[m,2]/node_degrees$n_genes_up, 
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net()$up$clusters, flag = "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram by subsets - upreg 
+      show(id="GChistogramSubsetG_upreg_text")
+      output$GChistogramSubsetGupreg <- renderPlot(
+        {m <- match(clust_net()$up$clusters$genes, rownames(sub_net$up))
+         plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$up[m,2]/node_degrees$n_genes_up, 
+                      xybreaks = input$xybreaks,
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net()$up$clusters, flag = "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density - downreg
+      show(id="GCdensityG_downreg_text")
+      output$GCdensityGdownreg <- renderPlot(
+        {plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
+                    node_degrees$down[,2]/node_degrees$n_genes_down, 
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram - downreg 
+      show(id="GChistogramG_downreg_text")
+      output$GChistogramGdownreg <- renderPlot(
+        {plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
+                    node_degrees$down[,2]/node_degrees$n_genes_down, 
+                    xybreaks = input$xybreaks,
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density by subsets - downreg 
+      show(id="GCdensitySubsetG_downreg_text")
+      output$GCdensitySubsetGdownreg <- renderPlot(
+        {m <- match(clust_net()$down$clusters$genes, rownames(sub_net$down))
+         plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$down[m,2]/node_degrees$n_genes_down, 
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net()$down$clusters, flag = "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram by subsets - downreg 
+      show(id="GChistogramSubsetG_downreg_text")
+      output$GChistogramSubsetGdownreg <- renderPlot(
+        {m <- match(clust_net()$down$clusters$genes, rownames(sub_net$down))
+         plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$down[m,2]/node_degrees$n_genes_down, 
+                      xybreaks = input$xybreaks,
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net()$down$clusters, flag = "hist")},
+        width = 500,
+        height = 500
+      )
 
     }
   )

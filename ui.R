@@ -525,15 +525,30 @@ ui <- fluidPage(
 
                       # select plots
                       awesomeCheckboxGroup(
-                        inputId = "GCPlotOptions",
+                        inputId = "GCPlotOptions_genelist",
                         label = tags$h4("Select Plots"), 
                         choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
                         status = ""
                       ),
+
+                      awesomeCheckboxGroup(
+                        inputId = "GCPlotOptions_upreg", 
+                        label = tags$h4("Upregulated"),
+                        choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), 
+                        status = ""
+                      ), 
+
+                      awesomeCheckboxGroup(
+                        inputId = "GCPlotOptions_downreg", 
+                        label = tags$h4("Downregulated"),
+                        choices =  c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+                        status = ""
+
+                      ),
                       
                       # filt_min slider
                       conditionalPanel(
-                        condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
+                        condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Histogram', input.GCPlotOptions_downreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1" ,
                         sliderInput(
                           inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
@@ -556,7 +571,7 @@ ui <- fluidPage(
                     # density
                     conditionalPanel(
                       br(),
-                      condition = "$.inArray('Density', input.GCPlotOptions) > -1", 
+                      condition = "$.inArray('Density', input.GCPlotOptions_genelist) > -1", 
                       h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
                       br(),
                       plotOutput(outputId = "GCdensityG", height = "500px",),
@@ -566,7 +581,7 @@ ui <- fluidPage(
                     # histogram
                     conditionalPanel(
                       br(),
-                      condition = "$.inArray('Histogram', input.GCPlotOptions) > -1", 
+                      condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1", 
                       h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
                       br(),
                       plotOutput(outputId = "GChistogramG", height = "500px",),
@@ -576,7 +591,7 @@ ui <- fluidPage(
                     # density (subset by clusters)
                     conditionalPanel(
                       br(),
-                      condition = "$.inArray('Clustered Density', input.GCPlotOptions) > -1", 
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions_genelist) > -1", 
                       h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
@@ -586,12 +601,94 @@ ui <- fluidPage(
                     # histogram (subset by clusters)
                     conditionalPanel(
                       br(),
-                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions) > -1", 
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1", 
                       h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
                       br(),
                     ),
+
+                    # density - upreg 
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Density', input.GCPlotOptions_upreg) > -1", 
+                      h5(id="GCdensityG_upreg_text", "Density Plot of Upregulated Gene Connectivity"), 
+                      br(),
+                      plotOutput(outputId = "GCdensityGupreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram - upreg 
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Histogram', input.GCPlotOptions_upreg) > -1", 
+                      h5(id="GChistogramG_upreg_text", "Histogram of Upregulated Gene Connectivity"),
+                      br(),
+                      plotOutput(outputId = "GChistogramGupreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # density (subset by clusters) - upreg 
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions_upreg) > -1", 
+                      h5(id="GCdensitySubsetG_upreg_text", "Density plot of Upregulated Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GCdensitySubsetGupreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram (subset by clusters) - upreg 
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1", 
+                      h5(id="GChistogramSubsetG_upreg_text", "Histogram of Upregulated Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GChistogramSubsetGupreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # density - downreg 
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Density', input.GCPlotOptions_downreg) > -1", 
+                      h5(id="GCdensityG_downreg_text", "Density Plot of Downregulated Gene Connectivity"), 
+                      br(),
+                      plotOutput(outputId = "GCdensityGdownreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram - downreg
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Histogram', input.GCPlotOptions_downreg) > -1", 
+                      h5(id="GChistogramG_downreg_text", "Histogram of Downregulated Gene Connectivity"),
+                      br(),
+                      plotOutput(outputId = "GChistogramGdownreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # density (subset by clusters) - downreg
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions_downreg) > -1", 
+                      h5(id="GCdensitySubsetG_downreg_text", "Density plot of Downregulated Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GCdensitySubsetGdownreg", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram (subset by clusters) - downreg
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1", 
+                      h5(id="GChistogramSubsetG_downreg_text", "Histogram of Dowregulated Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GChistogramSubsetGdownreg", height = "500px",),
+                      br(),
+                    ),
+
+
                   )
                 ),
                 
