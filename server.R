@@ -211,9 +211,12 @@ server <- function(input, output, session) {
     if (input$gene_list_selection == "Use DE results") { 
         # subnetwork from DE results 
         sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+        updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Upregulated Network", "Upregulated Heatmap", "Upregulated Binarized Heatmap", "Downregulated Network", "Downregulated Heatmap", "Downregulated Binarized Heatmap"))
+        
 
     } else { 
       # subnetwork from Gene List 
+      updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Network", "Heatmap", "Binarized Heatmap"))
       if (input$gene_list_selection == "Generate Gene List") {
 
         if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[1-9]") == FALSE && str_detect(input$chooseChrome, "chr1[0-9]") == FALSE && str_detect(input$chooseChrome, "chr2[0-2]") == FALSE) {
@@ -248,41 +251,6 @@ server <- function(input, output, session) {
 
 
 
-
-
-
-
-
-  
-
-  # # generate sub_nets
-  
-  # gene_list <- reactive(
-    
-  #   if (input$gene_list_selection == "Generate Gene List") {
-      
-  #     if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[1-9]") == FALSE && str_detect(input$chooseChrome, "chr1[0-9]") == FALSE && str_detect(input$chooseChrome, "chr2[0-2]") == FALSE) {
-  #       shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-  #       NULL
-  #     } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
-  #       shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
-  #       NULL
-  #     } else { 
-  #       sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-
-  #     }
-  #   } else {
-  #     read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
-  #   }
-  # )
-
-  # # generate subnetwork only when button is clicked
-  # sub_nets <- eventReactive(input$generate_subnet, {
-  #   if (!is.null(gene_list())) { 
-  #     subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-  #   } 
-  # })
-
   # Add the Run buttons 
   observeEvent(
     input$generate_subnet,
@@ -309,14 +277,24 @@ server <- function(input, output, session) {
 
   # clust_net
   clust_net <- reactive({
+
     sub_net <- sn$sub_nets$sub_net
     node_degrees <- sn$sub_nets$node_degrees
     medK <- as.numeric(sn$sub_nets$median)
 
     clust_net <- list() 
-    clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
-    return(clust_net)
+    if (input$gene_list_selection == "Use DE results") { 
+      # For DE data 
+      deg_sig <- sn$sub_nets$deg_sig
+      fc_sig  <- sn$sub_nets$fc_sig
+      clust_net[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
+      clust_net[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
 
+    } else { 
+      # For gene list 
+      clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
+    }
+    return(clust_net)
   })
   
   
@@ -342,15 +320,9 @@ server <- function(input, output, session) {
   observeEvent(
     {input$run},
     {
-      sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees
       medK <- as.numeric(sn$sub_nets$median)
-
-      clust_net <- list() 
-      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
-     
 
       # network output
       output$network <- renderPlot(
@@ -374,7 +346,45 @@ server <- function(input, output, session) {
         width = 500,
         height = 500
       )
-      
+
+      # upregulated network 
+      output$upregNetwork <- renderPlot(
+        {plot_network(sub_net$up, clust_net()$up, medK)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      # upregulated heatmap 
+      output$upregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net()$up, flag_plot_bin = FALSE)}, 
+        width = 500,
+        height = 500
+      )
+
+      # upregulated binarized heatmap 
+      output$upregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net()$up)}, 
+        width = 500, 
+        height = 500
+      )
+
+      output$downregNetwork <- renderPlot(
+        {plot_network(sub_net$down, clust_net()$down, medK)},
+        width = 500, 
+        height = 500
+      )
+
+      output$downregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net()$down, flag_plot_bin = FALSE)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      output$downregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net()$down)}, 
+        width = 500, 
+        height = 500
+      )
 
       # clustering genes table output
       output$CG_table <- renderDataTable(
