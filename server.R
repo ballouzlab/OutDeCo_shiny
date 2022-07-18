@@ -36,6 +36,15 @@ server <- function(input, output, session) {
   hide(id="CG_heatmap_text")
   hide(id="CG_bheatmap_text")
   hide(id="CG_table_text")
+  hide(id="CGupreg_network_text")
+  hide(id="CGupreg_heatmap_text")
+  hide(id="CGupreg_bheatmap_text")
+  hide(id="CGdownreg_network_text")
+  hide(id="CGdownreg_heatmap_text")
+  hide(id="CGdownreg_bheatmap_text")
+  hide(id="clusterPlotOptions_upreg")
+  hide(id="clusterPlotOptions_downreg")
+
   # Gene Connectivity
   hide(id="GCdensityG_text")
   hide(id="GChistogramG_text")
@@ -46,6 +55,8 @@ server <- function(input, output, session) {
   hide(id="FO_heatmap_text")
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
+
+
 
 
 
@@ -402,8 +413,9 @@ server <- function(input, output, session) {
     if (input$gene_list_selection == "Use DE results") { 
         # subnetwork from DE results 
         sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
-        updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Upregulated Network", "Upregulated Heatmap", "Upregulated Binarized Heatmap", "Downregulated Network", "Downregulated Heatmap", "Downregulated Binarized Heatmap"))
-        
+        show(id="clusterPlotOptions_upreg")
+        show(id="clusterPlotOptions_downreg")  
+        hide(id="clusterPlotOptions_genelist")      
 
     } else { 
       # subnetwork from Gene List 
@@ -562,6 +574,7 @@ server <- function(input, output, session) {
       )
 
       # upregulated network 
+      show(id="CGupreg_network_text")
       output$upregNetwork <- renderPlot(
         {plot_network(sub_net$up, clust_net()$up, medK)}, 
         width = 500, 
@@ -569,6 +582,7 @@ server <- function(input, output, session) {
       )
 
       # upregulated heatmap 
+      show(id="CGupreg_heatmap_text")
       output$upregHeatmap <- renderPlot(
         {plot_coexpression_heatmap(sub_net$up, clust_net()$up, flag_plot_bin = FALSE)}, 
         width = 500,
@@ -576,24 +590,31 @@ server <- function(input, output, session) {
       )
 
       # upregulated binarized heatmap 
+      show(id="CGupreg_bheatmap_text")
       output$upregbinHeatmap <- renderPlot(
         {plot_coexpression_heatmap(sub_net$up, clust_net()$up)}, 
         width = 500, 
         height = 500
       )
-
+      
+      # downregulated network 
+      show(id="CGdownreg_network_text")
       output$downregNetwork <- renderPlot(
         {plot_network(sub_net$down, clust_net()$down, medK)},
         width = 500, 
         height = 500
       )
 
+      # downregulated heatmap
+      show(id="CGdownreg_heatmap_text")
       output$downregHeatmap <- renderPlot(
         {plot_coexpression_heatmap(sub_net$down, clust_net()$down, flag_plot_bin = FALSE)}, 
         width = 500, 
         height = 500 
       )
 
+      # downregulated binarized heatmap
+      show(id="CGdownreg_bheatmap_text")
       output$downregbinHeatmap <- renderPlot(
         {plot_coexpression_heatmap(sub_net$down, clust_net()$down)}, 
         width = 500, 

@@ -384,9 +384,23 @@ ui <- fluidPage(
 
                       # select plots
                       awesomeCheckboxGroup(
-                        inputId = "clusterPlotOptions",
+                        inputId = "clusterPlotOptions_genelist",
                         label = tags$h4("Select Plots"), 
-                        choices = c("Network", "Heatmap", "Binarized Heatmap", "Upregulated Network", "Upregulated Heatmap", "Upregulated Binarized Heatmap", "Downregulated Network", "Downregulated Heatmap", "Downregulated Binarized Heatmap"),
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                        status = ""
+                      ),
+
+                      awesomeCheckboxGroup(
+                        inputId = "clusterPlotOptions_upreg", 
+                        label = tags$h4("Upregulated"),
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                        status = ""
+                      ), 
+
+                      awesomeCheckboxGroup(
+                        inputId = "clusterPlotOptions_downreg", 
+                        label = tags$h4("Downregulated"), 
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"), 
                         status = ""
                       ),
 
@@ -409,7 +423,7 @@ ui <- fluidPage(
 
                         # network
                         conditionalPanel(
-                          condition = "$.inArray('Network', input.clusterPlotOptions) > -1", 
+                          condition = "$.inArray('Network', input.clusterPlotOptions_genelist) > -1", 
                           h5(id="CG_network_text", "Network of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
@@ -417,7 +431,7 @@ ui <- fluidPage(
                         
                         # heatmap
                         conditionalPanel(
-                          condition = "$.inArray('Heatmap', input.clusterPlotOptions) > -1", 
+                          condition = "$.inArray('Heatmap', input.clusterPlotOptions_genelist) > -1", 
                           h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
                           br(),
                           plotOutput(outputId = "heatmap", height = "500px"),
@@ -425,50 +439,50 @@ ui <- fluidPage(
 
                         # binarized heatmap
                         conditionalPanel(
-                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions) > -1", 
+                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions_genelist) > -1", 
                           h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
                         ),
 
                         conditionalPanel(
-                          condition = "$.inArray('Upregulated Network', input.clusterPlotOptions) > -1", 
-                          h4("Network of Clustered, Upregulated Genes"), 
+                          condition = "$.inArray('Network', input.clusterPlotOptions_upreg) > -1", 
+                          h5(id="CGupreg_network_text", "Network of Clustered, Upregulated Genes"), 
                           br(), 
                           plotOutput(outputId = "upregNetwork", height = "500px"), 
                         ),
 
                         conditionalPanel(
-                          condition = "$.inArray('Upregulated Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Heatmap of Clustered, Upregulated Genes"), 
+                          condition = "$.inArray('Heatmap', input.clusterPlotOptions_upreg) > -1", 
+                          h5(id="CGupreg_heatmap_text","Heatmap of Clustered, Upregulated Genes"), 
                           br(), 
                           plotOutput(outputId = "upregHeatmap", height = "500px"),
                         ),
 
                         conditionalPanel(
-                          condition = "$.inArray('Upregulated Binarized Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Binarized Hatmap of Clustered, Upregulated Genes"), 
+                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions_upreg) > -1", 
+                          h5(id="CGupreg_bheatmap_text","Binarized Hatmap of Clustered, Upregulated Genes"), 
                           br(),
                           plotOutput(outputId = "upregbinHeatmap", height = "500px"), 
                         ), 
 
                         conditionalPanel(
-                          condition = "$.inArray('Downregulated Network', input.clusterPlotOptions) > -1",
-                          h4("Network of Clustered, Downregulated Genes"), 
+                          condition = "$.inArray('Network', input.clusterPlotOptions_downreg) > -1",
+                          h5(id="CGdownreg_network_text", "Network of Clustered, Downregulated Genes"), 
                           br(), 
                           plotOutput(outputId = "downregNetwork", height = "500px"),
                         ), 
 
                         conditionalPanel(
-                          condition = "$.inArray('Downregulated Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Heatmap of Clustered, Downregulated Genes"), 
+                          condition = "$.inArray('Heatmap', input.clusterPlotOptions_downreg) > -1", 
+                          h5(id="CGdownreg_heatmap_text", "Heatmap of Clustered, Downregulated Genes"), 
                           br(), 
                           plotOutput(outputId = "downregHeatmap", height = "500px"),
                         ), 
 
                         conditionalPanel(
-                          condition = "$.inArray('Downregulated Binarized Heatmap', input.clusterPlotOptions) > -1", 
-                          h4("Binarized Heatmap of Clustered, Downregulated Genes"), 
+                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions_downreg) > -1", 
+                          h5(id="CGdownreg_bheatmap_text", "Binarized Heatmap of Clustered, Downregulated Genes"), 
                           br(), 
                           plotOutput(outputId = "downregbinHeatmap", height = "500px"),    
                         ),
