@@ -611,16 +611,10 @@ server <- function(input, output, session) {
   observeEvent(
     {input$runGC},
     {
-      if (is.null(sn$sub_nets)) {
-        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-        
-      }
+      
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
-
-      clust_net <- list() 
-      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
       m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
 
 
@@ -684,16 +678,10 @@ server <- function(input, output, session) {
   observeEvent(
     {input$runFO},
     {
-      if (is.null(sn$sub_nets)) {
-        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list(), tolower(input$network_type), dir="../networks/")
-        
-      }
+
       sub_net <- sn$sub_nets$sub_net
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
-
-      clust_net <- list() 
-      clust_net[["genes"]] <- cluster_coexp( sub_net$genes, medK = medK, flag_plot = FALSE )
 
       sub_net <- sn$sub_nets$sub_net
       filt_min <- input$filtmin
