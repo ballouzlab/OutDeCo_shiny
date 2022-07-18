@@ -257,16 +257,18 @@ ui <- fluidPage(
                       #textOutput("DE_V_text"),
                       h4(id="vol"," Volcano Plot", style="text-align: center;"),
                       column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
+                      
                     ),
                     fluidPage(
                       #textOutput("DE_MA_text"),
                       h4(id="MA"," MA Plot", style="text-align: center;"),
                       column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center"),
-                      actionButton(inputId="assess_run_de", label = "Assess Run DE") 
+                      
                     )
                           
-                    )
-                    # 
+                    ), 
+                    actionButton(inputId="assess_run_de", label = "Assess DE Data"), 
+                  
                   
                  
                  ),

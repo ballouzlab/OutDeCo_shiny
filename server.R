@@ -326,7 +326,8 @@ server <- function(input, output, session) {
 
   observeEvent(input$assess_run_de, { 
     updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
-    updateRadioButtons(session, inputId="gene_list_selection", choices=c("Upload Gene List", "Generate Gene List", "Use DE results"))
+    updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
+    updateRadioButtons(session, inputId="gene_list_selection", choices=c("Upload Gene List", "Generate Gene List", "Use DE results"), selected = "Use DE results")
   })
 
   observe({
@@ -441,7 +442,13 @@ server <- function(input, output, session) {
     }
   })
   
-
+  observeEvent(input$gene_list_selection, {
+    if (input$gene_list_selection == "Upload Gene List") {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
+    } else {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
+    }
+  })
 
 
 
