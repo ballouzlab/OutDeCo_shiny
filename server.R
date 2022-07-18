@@ -64,8 +64,13 @@ server <- function(input, output, session) {
   #Functional Outliers
   hide(id="FO_network_text")
   hide(id="FO_heatmap_text")
+  hide(id="FOnetwork_upreg_text")
+  hide(id="FOheatmap_upreg_text")
+  hide(id="FOnetwork_downreg_text")
+  hide(id="FOheatmap_downreg_text")
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
+  hide(id="FOPlotOptions_DE")
 
 
 
@@ -430,6 +435,8 @@ server <- function(input, output, session) {
         show(id="GCPlotOptions_upreg")
         show(id="GCPlotOptions_downreg")
         hide(id="GCPlotOptions_genelist")   
+        show(id="FOPlotOptions_DE")
+        hide(id="FOPlotOptions_genelist")
 
     } else { 
       # subnetwork from Gene List 
@@ -826,13 +833,8 @@ server <- function(input, output, session) {
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
 
-      sub_net <- sn$sub_nets$sub_net
       filt_min <- input$filtmin
-      clust_size <- plyr::count(clust_net()$genes$clusters$labels)
-      clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-      genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
-      medK <- as.numeric(sn$sub_nets$median)
-
+     
 
       # heatmap output
       show(id="FO_heatmap_text")
@@ -850,10 +852,41 @@ server <- function(input, output, session) {
         height = 500
       )
 
+      show(id="FOheatmap_upreg_text")
+      output$FOheatmap_upreg <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net()$up, filt = TRUE, flag_plot_bin = FALSE)}, 
+        width = 500,
+        height = 500 
+      )
+
+      show(id="FOnetwork_upreg_text")
+      output$FOnetwork_upreg <- renderPlot(
+        {plot_network(1-sub_net$up, clust_net()$up, 1 - medK)}, 
+        width = 500, 
+        height = 500
+      )
+
+      show(id="FOheatmap_downreg_text")
+      output$FOheatmap_downreg <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net()$down, filt = TRUE, flag_plot_bin = FALSE)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      show(id="FOnetwork_downreg_text")
+      output$FOnetwork_downreg <- renderPlot(
+        {plot_network(1 - sub_net$down, clust_net()$down, 1 - medK)}, 
+        width = 500, 
+        height = 500
+      )
+
       # genes in module table output
       show(id="genes_not_keep_table_text")
       output$genes_not_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+        { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
@@ -861,7 +894,10 @@ server <- function(input, output, session) {
       # functional outliers table output
       show(id="genes_keep_table_text")
       output$genes_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+        { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
       

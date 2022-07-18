@@ -707,9 +707,16 @@ ui <- fluidPage(
 
                       # select plots
                       awesomeCheckboxGroup(
-                        inputId = "FOPlotOptions",
+                        inputId = "FOPlotOptions_genelist",
                         label = tags$h4("Select Plots"),
                         choices = c("Network", "Heatmap"),
+                        status = ""
+                      ),
+
+                      awesomeCheckboxGroup(
+                        inputId = "FOPlotOptions_DE", 
+                        label = tags$h4("Select Plots"),
+                        choices = c("Upregulated Network", "Upregulated Heatmap", "Downregulated Network", "Downregulated Heatmap"), 
                         status = ""
                       ),
 
@@ -754,18 +761,43 @@ ui <- fluidPage(
                       
                       # heatmap
                       conditionalPanel(
-                        condition = "$.inArray('Network', input.FOPlotOptions) > -1", 
+                        condition = "$.inArray('Network', input.FOPlotOptions_genelist) > -1", 
                         h5(id="FO_network_text", "Network"), 
                         plotOutput(outputId = "FO_network", height = "500px"),
                       ),
 
                       # network
                       conditionalPanel(
-                        condition = "$.inArray('Heatmap', input.FOPlotOptions) > -1", 
+                        condition = "$.inArray('Heatmap', input.FOPlotOptions_genelist) > -1", 
                         h5(id="FO_heatmap_text", "Heatmap"), 
                         plotOutput(outputId = "FO_heatmap", height = "500px"),
-                        br(),
+                        
                       ),
+
+                      conditionalPanel(
+                        condition = "$.inArray('Upregulated Network', input.FOPlotOptions_DE) > -1", 
+                        h5(id="FOnetwork_upreg_text", "Upregulated Network"), 
+                        plotOutput(outputId = "FOnetwork_upreg", height = "500px"), 
+                      ), 
+
+                      conditionalPanel(
+                        condition = "$.inArray('Upregulated Heatmap', input.FOPlotOptions_DE) > -1",
+                        h5(id="FOheatmap_upreg_text", "Upregulated Heatmap"), 
+                        plotOutput(outputId = "FOheatmap_upreg", height = "500px"),
+                      ), 
+
+                      conditionalPanel(
+                        condition = "$.inArray('Downregulated Network', input.FOPlotOptions_DE) > -1", 
+                        h5(id="FOnetwork_downreg_text", "Downregulated Network"), 
+                        plotOutput(outputId = "FOnetwork_downreg", height = "500px"),
+                      ), 
+
+                      conditionalPanel(
+                        condition = "$.inArray('Downregulated Heatmap', input.FOPlotOptions_DE) > -1", 
+                        h5(id="FOheatmap_downreg_text", "Downregulated Heatmap"), 
+                        plotOutput(outputId = "FOheatmap_downreg", height = "500px"),
+                      ),
+
                     ),
 
                     # tables tab
