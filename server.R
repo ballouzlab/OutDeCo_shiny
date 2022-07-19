@@ -440,7 +440,14 @@ server <- function(input, output, session) {
 
     } else { 
       # subnetwork from Gene List 
-      updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Network", "Heatmap", "Binarized Heatmap"))
+      hide(id="clusterPlotOptions_upreg")
+      hide(id="clusterPlotOptions_downreg")  
+      show(id="clusterPlotOptions_genelist")   
+      hide(id="GCPlotOptions_upreg")
+      hide(id="GCPlotOptions_downreg")
+      show(id="GCPlotOptions_genelist")   
+      hide(id="FOPlotOptions_DE")
+      show(id="FOPlotOptions_genelist")
       if (input$gene_list_selection == "Generate Gene List") {
 
         if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
