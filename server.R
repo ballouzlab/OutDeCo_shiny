@@ -296,7 +296,7 @@ server <- function(input, output, session) {
       # No cases have been selected
       print(groups)
       print(check)
-      if (groups == check) {
+      if (identical(groups, check)) {
         shinyalert(title = "Invalid Input", text = "Please select cases to assess", type = "error")
       } else {
         deg <- calc_DE(counts_data, groups, input$DE_method) 
