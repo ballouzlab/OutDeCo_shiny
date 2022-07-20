@@ -355,6 +355,16 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
     updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
     updateRadioButtons(session, inputId="gene_list_selection", choices=c("Upload Gene List", "Generate Gene List", "Use DE results"), selected = "Use DE results")
+
+    sn$sub_nets <- NULL
+
+    # Remove any existing data from checkboxes
+    updateAwesomeCheckboxGroup(session, inputId = "GCPlotOptions_genelist", choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),)
+    updateAwesomeCheckboxGroup(session,  inputId = "FO_table_options", label = tags$h4("Select Tables"), choices = c("Functional Outliers", "Genes in Module"))
+    updateAwesomeCheckboxGroup(session,  inputId = "FOPlotOptions_genelist", label = tags$h4("Select Plots"), choices = c("Network", "Heatmap"))
+    updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions_genelist", choices=c("Network", "Heatmap", "Binarized Heatmap"))
+
+
   })
 
   observe({
@@ -429,25 +439,13 @@ server <- function(input, output, session) {
     if (input$gene_list_selection == "Use DE results") { 
         # subnetwork from DE results 
         sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
-        show(id="clusterPlotOptions_upreg")
-        show(id="clusterPlotOptions_downreg")  
-        hide(id="clusterPlotOptions_genelist")   
-        show(id="GCPlotOptions_upreg")
-        show(id="GCPlotOptions_downreg")
-        hide(id="GCPlotOptions_genelist")   
-        show(id="FOPlotOptions_DE")
-        hide(id="FOPlotOptions_genelist")
+        
 
     } else { 
       # subnetwork from Gene List 
-      hide(id="clusterPlotOptions_upreg")
-      hide(id="clusterPlotOptions_downreg")  
-      show(id="clusterPlotOptions_genelist")   
-      hide(id="GCPlotOptions_upreg")
-      hide(id="GCPlotOptions_downreg")
-      show(id="GCPlotOptions_genelist")   
-      hide(id="FOPlotOptions_DE")
-      show(id="FOPlotOptions_genelist")
+      print(input$chooseChrome)
+      
+
       if (input$gene_list_selection == "Generate Gene List") {
 
         if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
@@ -461,6 +459,7 @@ server <- function(input, output, session) {
 
           } else {
             gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+            print(gene_list)
           }
 
         } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
@@ -490,7 +489,28 @@ server <- function(input, output, session) {
     }
   })
 
+  observeEvent(input$generate_subnet, {
+    if (input$gene_list_selection == "Use DE results") { 
+      show(id="clusterPlotOptions_upreg")
+      show(id="clusterPlotOptions_downreg")  
+      hide(id="clusterPlotOptions_genelist")   
+      show(id="GCPlotOptions_upreg")
+      show(id="GCPlotOptions_downreg")
+      hide(id="GCPlotOptions_genelist")   
+      show(id="FOPlotOptions_DE")
+      hide(id="FOPlotOptions_genelist")
 
+    } else { 
+      hide(id="clusterPlotOptions_upreg")
+      hide(id="clusterPlotOptions_downreg")  
+      show(id="clusterPlotOptions_genelist")   
+      hide(id="GCPlotOptions_upreg")
+      hide(id="GCPlotOptions_downreg")
+      show(id="GCPlotOptions_genelist")   
+      hide(id="FOPlotOptions_DE")
+      show(id="FOPlotOptions_genelist")
+    }
+  })
 
 
 
