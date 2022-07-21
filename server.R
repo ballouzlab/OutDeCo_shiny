@@ -69,7 +69,6 @@ server <- function(input, output, session) {
   hide(id="FOheatmap_downreg_text")
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
-  hide(id="FOPlotOptions_DE")
 
 
 
@@ -408,7 +407,7 @@ server <- function(input, output, session) {
     show(id = "GC_dropdown_DE")
     hide(id = "GC_error_DE")
     show(id = "FO_dropdown_DE")
-    hide(ID = "FO_error_DE")
+    hide(id = "FO_error_DE")
   })
 
 
