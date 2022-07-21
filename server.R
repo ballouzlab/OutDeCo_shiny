@@ -12,10 +12,11 @@ server <- function(input, output, session) {
 
   # Removing elements that are not functional without subnetwork
   hide(id = "GC_dropdown")
-  hide(id = "GC_dropdown_GE")
+  hide(id = "GC_dropdown_DE")
   hide(id = "CG_dropdown")
   hide(id = "CG_dropdown_DE")
   hide(id = "FO_dropdown")
+  hide(id = "FO_dropdown_DE")
   hide(id = "assess_run_de")
 
 
@@ -406,6 +407,8 @@ server <- function(input, output, session) {
     hide(id = "CG_error_DE")
     show(id = "GC_dropdown_DE")
     hide(id = "GC_error_DE")
+    show(id = "FO_dropdown_DE")
+    hide(ID = "FO_error_DE")
   })
 
 
@@ -1167,6 +1170,10 @@ server <- function(input, output, session) {
   output$FO_error <- renderText({
     print("Please upload/generate a gene list in OPTIONS")
   }) 
+
+  output$FO_error_DE <- renderText({
+    print("Please upload/use DE Data in OPTIONS")
+  })
 
 }
 

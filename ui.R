@@ -575,17 +575,9 @@ ui <- fluidPage(
 
                     # options dropdown
                     dropdown(
-                      inputId = "FO_dropdown",
+                      inputId = "FO_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
                       status = "primary", width = "300px", size = "sm",
-
-                      # select plots
-                      awesomeCheckboxGroup(
-                        inputId = "FOPlotOptions_genelist",
-                        label = tags$h4("Select Plots"),
-                        choices = c("Network", "Heatmap"),
-                        status = ""
-                      ),
 
                       awesomeCheckboxGroup(
                         inputId = "FOPlotOptions_DE", 
@@ -595,12 +587,12 @@ ui <- fluidPage(
                       ),
 
                       # select tables
-                      awesomeCheckboxGroup(
-                          inputId = "FO_table_options",
-                          label = tags$h4("Select Tables"),
-                          choices = c("Functional Outliers", "Genes in Module"),
-                          status = ""
-                      ),
+                      # awesomeCheckboxGroup(
+                      #     inputId = "FO_table_options",
+                      #     label = tags$h4("Select Tables"),
+                      #     choices = c("Functional Outliers", "Genes in Module"),
+                      #     status = ""
+                      # ),
 
                       # other options
                       tags$h4("Other"),
@@ -613,14 +605,14 @@ ui <- fluidPage(
                       br(),
                       
                       # run button
-                      actionButton(inputId = "runFO", label = "Run", ),
+                      actionButton(inputId = "runFODE", label = "Run", ),
 
                     ),
 
                     br(),
                     
                     # error message
-                    textOutput("FO_error"),
+                    textOutput("FO_error_DE"),
 
                   ),
                   br(),
@@ -974,7 +966,53 @@ ui <- fluidPage(
                 ), 
 
                 tabPanel(
-                  title = "Functional Outliers"
+                  title = "Functional Outliers",
+                  mainPanel(
+                    h3("Functional Outliers"),
+
+                    # options dropdown
+                    dropdown(
+                      inputId = "FO_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+
+                      # select plots
+                      awesomeCheckboxGroup(
+                        inputId = "FOPlotOptions_genelist",
+                        label = tags$h4("Select Plots"),
+                        choices = c("Network", "Heatmap"),
+                        status = ""
+                      ),
+
+                      # select tables
+                      awesomeCheckboxGroup(
+                          inputId = "FO_table_options",
+                          label = tags$h4("Select Tables"),
+                          choices = c("Functional Outliers", "Genes in Module"),
+                          status = ""
+                      ),
+
+                      # other options
+                      tags$h4("Other"),
+                      
+                      # filt_min slider
+                      sliderInput("filtmin", label = "Number of Genes to form Module",
+                          min = 0, max = 20, value = 6, step = 1
+                      ),
+
+                      br(),
+                      
+                      # run button
+                      actionButton(inputId = "runFO", label = "Run", ),
+
+                    ),
+
+                    br(),
+                    
+                    # error message
+                    textOutput("FO_error"),
+
+                  ), 
                 ), 
 
                 tabPanel(
