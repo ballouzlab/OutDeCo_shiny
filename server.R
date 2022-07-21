@@ -392,14 +392,108 @@ server <- function(input, output, session) {
   
   ##########################################################################################
   #                                                                                        #
-  #                                        ASSESS DE                                       #
+  #                                    ASSESS DE DATA                                      #
   #                                                                                        #
   ##########################################################################################
 
   # sub_nets
   sn <- reactiveValues(
-    sub_nets = NULL,
+    sub_nets_DE = NULL,
+    sub_nets_GL = NULL, 
   )
+
+  observeEvent(input$generate_subnet_DE, {
+    sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+  })
+
+  observeEvent(
+    input$generate_subnet_DE, 
+    {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
+  )
+  
+
+  # observeEvent(input$generate_subnet, {
+  #   if (input$gene_list_selection == "Use DE results") { 
+  #       # subnetwork from DE results 
+  #       sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+        
+
+  #   } else { 
+  #     # subnetwork from Gene List 
+  #     print(input$chooseChrome)
+      
+
+  #     if (input$gene_list_selection == "Generate Gene List") {
+
+  #       if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
+  #         shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
+  #         gene_list <- NULL
+
+  #       } else if (str_detect(substring(input$chooseChrome,4), "[0-9]")) {
+  #         if (strtoi(substring(input$chooseChrome,4)) < 1 || strtoi(substring(input$chooseChrome,4)) > 22) {
+  #           shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
+  #           gene_list <- NULL
+
+  #         } else {
+  #           gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+  #           print(gene_list)
+  #         }
+
+  #       } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
+  #         shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
+  #         gene_list <- NULL
+
+  #       } else { 
+  #         gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+
+  #       }
+        
+  #     } else {
+  #       gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
+  #     }
+
+  #     if (!is.null(gene_list)) { 
+  #       sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
+  #     } 
+  #   }
+  # })
+  
+  # observeEvent(input$gene_list_selection, {
+  #   if (input$gene_list_selection == "Upload Gene List") {
+  #     updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
+  #   } else {
+  #     updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
+  #   }
+  # })
+
+  # observeEvent(input$generate_subnet, {
+  #   if (input$gene_list_selection == "Use DE results") { 
+  #     show(id="clusterPlotOptions_upreg")
+  #     show(id="clusterPlotOptions_downreg")  
+  #     hide(id="clusterPlotOptions_genelist")   
+  #     show(id="GCPlotOptions_upreg")
+  #     show(id="GCPlotOptions_downreg")
+  #     hide(id="GCPlotOptions_genelist")   
+  #     show(id="FOPlotOptions_DE")
+  #     hide(id="FOPlotOptions_genelist")
+
+  #   } else { 
+  #     hide(id="clusterPlotOptions_upreg")
+  #     hide(id="clusterPlotOptions_downreg")  
+  #     show(id="clusterPlotOptions_genelist")   
+  #     hide(id="GCPlotOptions_upreg")
+  #     hide(id="GCPlotOptions_downreg")
+  #     show(id="GCPlotOptions_genelist")   
+  #     hide(id="FOPlotOptions_DE")
+  #     show(id="FOPlotOptions_genelist")
+  #   }
+  # })
+
+  ##########################################################################################
+  #                                                                                        #
+  #                                  ASSESS GENE LIST                                      #
+  #                                                                                        #
+  ##########################################################################################
 
   # reactive converts the upload file into a reactive expression known as data
   DEData <- reactive({
@@ -434,87 +528,6 @@ server <- function(input, output, session) {
   output$UIDEContent <- renderUI({
     tableOutput("DEFileContent")
   })
-
-  observeEvent(input$generate_subnet, {
-    if (input$gene_list_selection == "Use DE results") { 
-        # subnetwork from DE results 
-        sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
-        
-
-    } else { 
-      # subnetwork from Gene List 
-      print(input$chooseChrome)
-      
-
-      if (input$gene_list_selection == "Generate Gene List") {
-
-        if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
-          shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-          gene_list <- NULL
-
-        } else if (str_detect(substring(input$chooseChrome,4), "[0-9]")) {
-          if (strtoi(substring(input$chooseChrome,4)) < 1 || strtoi(substring(input$chooseChrome,4)) > 22) {
-            shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-            gene_list <- NULL
-
-          } else {
-            gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-            print(gene_list)
-          }
-
-        } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
-          shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
-          gene_list <- NULL
-
-        } else { 
-          gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-
-        }
-        
-      } else {
-        gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
-      }
-
-      if (!is.null(gene_list)) { 
-        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
-      } 
-    }
-  })
-  
-  observeEvent(input$gene_list_selection, {
-    if (input$gene_list_selection == "Upload Gene List") {
-      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
-    } else {
-      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
-    }
-  })
-
-  observeEvent(input$generate_subnet, {
-    if (input$gene_list_selection == "Use DE results") { 
-      show(id="clusterPlotOptions_upreg")
-      show(id="clusterPlotOptions_downreg")  
-      hide(id="clusterPlotOptions_genelist")   
-      show(id="GCPlotOptions_upreg")
-      show(id="GCPlotOptions_downreg")
-      hide(id="GCPlotOptions_genelist")   
-      show(id="FOPlotOptions_DE")
-      hide(id="FOPlotOptions_genelist")
-
-    } else { 
-      hide(id="clusterPlotOptions_upreg")
-      hide(id="clusterPlotOptions_downreg")  
-      show(id="clusterPlotOptions_genelist")   
-      hide(id="GCPlotOptions_upreg")
-      hide(id="GCPlotOptions_downreg")
-      show(id="GCPlotOptions_genelist")   
-      hide(id="FOPlotOptions_DE")
-      show(id="FOPlotOptions_genelist")
-    }
-  })
-
-
-
-  
 
 
 
@@ -570,10 +583,7 @@ server <- function(input, output, session) {
   
   
   # Output of subnetwork table
-  observeEvent(
-    input$generate_subnet, 
-    {output$subnetwork <- renderTable(sn$sub_nets)}
-  )
+  
 
   # output$subnetwork <- renderTable({
   #   sub_nets()

@@ -299,10 +299,10 @@ ui <- fluidPage(
                   selected = "Use DE Results"
                 ),
 
-                # generate gene list
+                
                 
                 # generate subnet button
-                actionButton("generate_subnet", "Generate Subnetwork",),
+                actionButton("generate_subnet_DE", "Generate Subnetwork",),
       
                 # side panel characteristics
                 style = "jelly", icon = "OPTIONS",
@@ -320,16 +320,16 @@ ui <- fluidPage(
                 tabPanel(
                   title="View Files",
                   tabsetPanel(
-                    id="subnetwork_file_tabset",
+                    id="subnetwork_file_tabset_DE",
                      # view file tab
-                    tabPanel(
-                      title="File",
-                      uiOutput("UIDEContent"),
-                    ),
+                    # tabPanel(
+                    #   title="File",
+                    #   uiOutput("UIDEContent"),
+                    # ),
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
-                      tableOutput("subnetwork")
+                      tableOutput("subnetwork_DE")
                     ),
 
                    
