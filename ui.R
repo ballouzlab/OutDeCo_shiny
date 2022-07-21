@@ -344,17 +344,9 @@ ui <- fluidPage(
 
                     # options dropdown
                     dropdown(
-                      inputId = "CG_dropdown",
+                      inputId = "CG_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
                       status = "primary", width = "300px", size = "sm",
-
-                      # select plots
-                      awesomeCheckboxGroup(
-                        inputId = "clusterPlotOptions_genelist",
-                        label = tags$h4("Select Plots"), 
-                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
-                        status = ""
-                      ),
 
                       awesomeCheckboxGroup(
                         inputId = "clusterPlotOptions_upreg", 
@@ -377,7 +369,7 @@ ui <- fluidPage(
                     br(),
 
                     # error message
-                    textOutput("CG_error"),
+                    textOutput("CG_error_DE"),
                     
                     tabsetPanel(
 
@@ -877,6 +869,55 @@ ui <- fluidPage(
 
                ),
 
-             ),
+               br(),
+        
+              navlistPanel(
+                widths = c(3, 9), well = FALSE,
+
+                tabPanel(
+                  title="View Files",
+                  tabsetPanel(
+                    id="subnetwork_file_tabset",
+                     # view file tab
+                    tabPanel(
+                      title="File",
+                      uiOutput("UIDEContent"),
+                    ),
+                    # view subnetwork tab
+                    tabPanel(
+                      title="Subnetwork", 
+                      tableOutput("subnetwork")
+                    ),
+
+                   
+                  ),
+                ),
+
+                tabPanel(
+                  title="Cluster Genes",
+                  mainPanel(
+                    dropdown(
+                      inputId = "CG_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+
+                      # select plots
+                      awesomeCheckboxGroup(
+                        inputId = "clusterPlotOptions_genelist",
+                        label = tags$h4("Select Plots"), 
+                        choices = c("Network", "Heatmap", "Binarized Heatmap"),
+                        status = ""
+                      ),
+
+                      # run button
+                      actionButton(inputId = "run", label = "Run",),
+                    ),  
+
+                  ), 
+                ), 
+
+              ),
+
+            ),
   )
 )

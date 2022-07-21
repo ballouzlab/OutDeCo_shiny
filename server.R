@@ -14,6 +14,7 @@ server <- function(input, output, session) {
   hide(id = "GC_dropdown")
   hide(id = "cluster_dropdown")
   hide(id = "CG_dropdown")
+  hide(id = "CG_dropdown_DE")
   hide(id = "FO_dropdown")
   hide(id = "assess_run_de")
 
@@ -42,8 +43,7 @@ server <- function(input, output, session) {
   hide(id="CGdownreg_network_text")
   hide(id="CGdownreg_heatmap_text")
   hide(id="CGdownreg_bheatmap_text")
-  hide(id="clusterPlotOptions_upreg")
-  hide(id="clusterPlotOptions_downreg")
+
 
   # Gene Connectivity
   hide(id="GCdensityG_text")
@@ -404,6 +404,8 @@ server <- function(input, output, session) {
 
   observeEvent(input$generate_subnet_DE, {
     sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+    show(id = "CG_dropdown_DE")
+    hide(id = "CG_error_DE")
   })
 
   observeEvent(
@@ -948,6 +950,10 @@ server <- function(input, output, session) {
 
   output$CG_error <- renderText({
     print("Please upload/generate a gene list in OPTIONS")
+  })
+
+  output$CG_error_DE <- renderText({
+    print("Please upload/use DE Data in OPTIONS")
   })
 
   output$GC_error <- renderText({
