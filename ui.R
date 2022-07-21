@@ -439,18 +439,12 @@ ui <- fluidPage(
                     
                     # options dropdown
                     dropdown(
-                      inputId = "GC_dropdown",
+                      inputId = "GC_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
                       status = "primary", width = "300px", size = "sm",
 
                       # select plots
-                      awesomeCheckboxGroup(
-                        inputId = "GCPlotOptions_genelist",
-                        label = tags$h4("Select Plots"), 
-                        choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
-                        status = ""
-                      ),
-
+                    
                       awesomeCheckboxGroup(
                         inputId = "GCPlotOptions_upreg", 
                         label = tags$h4("Upregulated"),
@@ -468,7 +462,7 @@ ui <- fluidPage(
                       
                       # filt_min slider
                       conditionalPanel(
-                        condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Histogram', input.GCPlotOptions_downreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1" ,
+                        condition = "$.inArray('Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Histogram', input.GCPlotOptions_downreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1" ,
                         sliderInput(
                           inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
@@ -479,54 +473,14 @@ ui <- fluidPage(
                       br(),
 
                       # run button
-                      actionButton(inputId = "runGC", label = "Run", ),
+                      actionButton(inputId = "runGCDE", label = "Run", ),
 
                     ),
                     
                     br(),
 
                     # error message
-                    textOutput("GC_error"),
-
-                    # density
-                    conditionalPanel(
-                      br(),
-                      condition = "$.inArray('Density', input.GCPlotOptions_genelist) > -1", 
-                      h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
-                      br(),
-                      plotOutput(outputId = "GCdensityG", height = "500px",),
-                      br(),
-                    ),
-
-                    # histogram
-                    conditionalPanel(
-                      br(),
-                      condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1", 
-                      h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
-                      br(),
-                      plotOutput(outputId = "GChistogramG", height = "500px",),
-                      br(),
-                    ),
-
-                    # density (subset by clusters)
-                    conditionalPanel(
-                      br(),
-                      condition = "$.inArray('Clustered Density', input.GCPlotOptions_genelist) > -1", 
-                      h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
-                      br(),
-                      plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
-                      br(),
-                    ),
-
-                    # histogram (subset by clusters)
-                    conditionalPanel(
-                      br(),
-                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1", 
-                      h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
-                      br(),
-                      plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
-                      br(),
-                    ),
+                    textOutput("GC_error_DE"),
 
                     # density - upreg 
                     conditionalPanel(
@@ -935,6 +889,97 @@ ui <- fluidPage(
 
                   ), 
                 ), 
+
+                tabPanel(
+                  title = "Gene Connectivity", 
+                  mainPanel(
+                    h3("Gene Connectivity"),
+                    # options dropdown
+                    dropdown(
+                      inputId = "GC_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+
+                      # select plots
+                      awesomeCheckboxGroup(
+                        inputId = "GCPlotOptions_genelist",
+                        label = tags$h4("Select Plots"), 
+                        choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+                        status = ""
+                      ),
+
+                      # filt_min slider
+                      conditionalPanel(
+                        condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1",
+                        sliderInput(
+                          inputId="xybreaks", 
+                          label = "Number of breaks for histogram:",
+                          min = 10, max = 150, value = 100, step = 10,
+                        ),
+                      ),
+                      
+                      br(),
+
+                      # run button
+                      actionButton(inputId = "runGC", label = "Run", ),
+
+                    ),
+
+                    br(),
+
+                    # error message
+                    textOutput("GC_error"),
+
+                    # density
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Density', input.GCPlotOptions_genelist) > -1", 
+                      h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
+                      br(),
+                      plotOutput(outputId = "GCdensityG", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1", 
+                      h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
+                      br(),
+                      plotOutput(outputId = "GChistogramG", height = "500px",),
+                      br(),
+                    ),
+
+                    # density (subset by clusters)
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Density', input.GCPlotOptions_genelist) > -1", 
+                      h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
+                      br(),
+                    ),
+
+                    # histogram (subset by clusters)
+                    conditionalPanel(
+                      br(),
+                      condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1", 
+                      h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
+                      br(),
+                      plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
+                      br(),
+                    ),
+
+                  ),
+                ), 
+
+                tabPanel(
+                  title = "Functional Outliers"
+                ), 
+
+                tabPanel(
+                  title = "Gene Set Enrichment Analysis"
+                ),
 
               ),
 
