@@ -625,20 +625,6 @@ ui <- fluidPage(
                       title="Plots",
                       br(),
                       
-                      # heatmap
-                      conditionalPanel(
-                        condition = "$.inArray('Network', input.FOPlotOptions_genelist) > -1", 
-                        h5(id="FO_network_text", "Network"), 
-                        plotOutput(outputId = "FO_network", height = "500px"),
-                      ),
-
-                      # network
-                      conditionalPanel(
-                        condition = "$.inArray('Heatmap', input.FOPlotOptions_genelist) > -1", 
-                        h5(id="FO_heatmap_text", "Heatmap"), 
-                        plotOutput(outputId = "FO_heatmap", height = "500px"),
-                        
-                      ),
 
                       conditionalPanel(
                         condition = "$.inArray('Upregulated Network', input.FOPlotOptions_DE) > -1", 
@@ -673,30 +659,30 @@ ui <- fluidPage(
                       br(),
 
                       # selected genes table output
-                      conditionalPanel(
-                        condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
-                        h5(id="genes_not_keep_table_text", "Genes in Module"), 
-                        br(),
-                        fluidRow(
-                          column( 11,
-                                  dataTableOutput("genes_not_keep_table"),
-                          )
-                        ),
-                      ),
+                      # conditionalPanel(
+                      #   condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
+                      #   h5(id="genes_not_keep_table_text", "Genes in Module"), 
+                      #   br(),
+                      #   fluidRow(
+                      #     column( 11,
+                      #             dataTableOutput("genes_not_keep_table"),
+                      #     )
+                      #   ),
+                      # ),
 
-                      br(),
+                      # br(),
 
-                      # unselected genes table output
-                      conditionalPanel(
-                        condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
-                        h5(id="genes_keep_table_text", "Outliers"), 
-                        br(),
-                        fluidRow(
-                          column( 11,
-                                  dataTableOutput("genes_keep_table"),
-                          )
-                        ),
-                      ),
+                      # # unselected genes table output
+                      # conditionalPanel(
+                      #   condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
+                      #   h5(id="genes_keep_table_text", "Outliers"), 
+                      #   br(),
+                      #   fluidRow(
+                      #     column( 11,
+                      #             dataTableOutput("genes_keep_table"),
+                      #     )
+                      #   ),
+                      # ),
                     )
                   ),
                 ),
@@ -1013,6 +999,72 @@ ui <- fluidPage(
                     textOutput("FO_error"),
 
                   ), 
+
+                  br(), 
+
+                  
+                  tabsetPanel(
+
+                    # plots tab
+                    tabPanel(
+                      br(),
+                      title="Plots",
+                      br(),
+                      
+                      # heatmap
+                      conditionalPanel(
+                        condition = "$.inArray('Network', input.FOPlotOptions_genelist) > -1", 
+                        h5(id="FO_network_text", "Network"), 
+                        plotOutput(outputId = "FO_network", height = "500px"),
+                      ),
+
+                      # network
+                      conditionalPanel(
+                        condition = "$.inArray('Heatmap', input.FOPlotOptions_genelist) > -1", 
+                        h5(id="FO_heatmap_text", "Heatmap"), 
+                        plotOutput(outputId = "FO_heatmap", height = "500px"),
+                        
+                      ),
+
+                      
+
+                    ),
+
+                    # tables tab
+                    tabPanel(
+                      br(),
+                      title="Tables", 
+                      br(),
+
+                      # selected genes table output
+                      conditionalPanel(
+                        condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
+                        h5(id="genes_not_keep_table_text", "Genes in Module"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_not_keep_table"),
+                          )
+                        ),
+                      ),
+
+                      br(),
+
+                      # unselected genes table output
+                      conditionalPanel(
+                        condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
+                        h5(id="genes_keep_table_text", "Outliers"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_keep_table"),
+                          )
+                        ),
+                      ),
+                    )
+                  ),
+
+
                 ), 
 
                 tabPanel(
