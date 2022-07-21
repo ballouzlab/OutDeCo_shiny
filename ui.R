@@ -464,7 +464,7 @@ ui <- fluidPage(
                       conditionalPanel(
                         condition = "$.inArray('Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Histogram', input.GCPlotOptions_downreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1" ,
                         sliderInput(
-                          inputId="xybreaks", 
+                          inputId="xybreaks_DE", 
                           label = "Number of breaks for histogram:",
                           min = 10, max = 150, value = 100, step = 10,
                         ),
@@ -790,6 +790,7 @@ ui <- fluidPage(
                 tabPanel(
                   title="Cluster Genes",
                   mainPanel(
+                    h3("Cluster Genes"),
                     dropdown(
                       inputId = "CG_dropdown",
                       style = "minimal", icon = "OPTIONS",
