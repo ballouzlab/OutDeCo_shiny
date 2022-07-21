@@ -412,6 +412,90 @@ server <- function(input, output, session) {
     input$generate_subnet_DE, 
     {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
   )
+
+  clust_net_DE <- reactive({
+
+    sub_net <- sn$sub_nets_DE$sub_net
+    node_degrees <- sn$sub_nets_DE$node_degrees
+    medK <- as.numeric(sn$sub_nets_DE$median)
+
+    clust_net_DE <- list() 
+    
+    # For DE data 
+    deg_sig <- sn$sub_nets_DE$deg_sig
+    fc_sig  <- sn$sub_nets_DE$fc_sig
+    clust_net_DE[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
+    clust_net_DE[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
+
+    return(clust_net_DE)
+  })
+
+  observeEvent(
+    {input$runCGDE},
+    {
+      sub_net <- sn$sub_nets_DE$sub_net
+      node_degrees <- sn$sub_nets_DE$node_degrees
+      medK <- as.numeric(sn$sub_nets_DE$median)
+
+      
+      # upregulated network 
+      show(id="CGupreg_network_text")
+      output$upregNetwork <- renderPlot(
+        {plot_network(sub_net$up, clust_net_DE()$up, medK)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      # upregulated heatmap 
+      show(id="CGupreg_heatmap_text")
+      output$upregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, flag_plot_bin = FALSE)}, 
+        width = 500,
+        height = 500
+      )
+
+      # upregulated binarized heatmap 
+      show(id="CGupreg_bheatmap_text")
+      output$upregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up)}, 
+        width = 500, 
+        height = 500
+      )
+      
+      # downregulated network 
+      show(id="CGdownreg_network_text")
+      output$downregNetwork <- renderPlot(
+        {plot_network(sub_net$down, clust_net_DE()$down, medK)},
+        width = 500, 
+        height = 500
+      )
+
+      # downregulated heatmap
+      show(id="CGdownreg_heatmap_text")
+      output$downregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, flag_plot_bin = FALSE)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      # downregulated binarized heatmap
+      show(id="CGdownreg_bheatmap_text")
+      output$downregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down)}, 
+        width = 500, 
+        height = 500
+      )
+
+      # clustering genes table output
+      # show(id="CG_table_text")
+      # output$CG_table <- renderDataTable(
+      #   {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
+      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      # )
+
+
+    }
+  )
   
 
   # observeEvent(input$generate_subnet, {
@@ -534,54 +618,54 @@ server <- function(input, output, session) {
 
 
   # Add the Run buttons 
-  observeEvent(
-    input$generate_subnet,
-    {
-      # cluster genes
-      show(id = "CG_dropdown")
-      show(id = "run")
-      hide(id = "CG_error")
+  # observeEvent(
+  #   input$generate_subnet,
+  #   {
+  #     # cluster genes
+  #     show(id = "CG_dropdown")
+  #     show(id = "run")
+  #     hide(id = "CG_error")
 
-      # gene connectivity
-      show(id = "GC_dropdown")
-      show(id = "runGC")
-      hide(id = "GC_error")
+  #     # gene connectivity
+  #     show(id = "GC_dropdown")
+  #     show(id = "runGC")
+  #     hide(id = "GC_error")
 
-      # functional outliers
-      show(id = "FO_dropdown")
-      show(id = "runFO")
-      hide(id = "FO_error")
-      if (input$gene_list_selection == "Generate Gene List") {
-        updateSliderInput(session, inputId = "xybreaks", min = 10, max = 150, value = input$chooseGeneNo, step = 10)
-      }
+  #     # functional outliers
+  #     show(id = "FO_dropdown")
+  #     show(id = "runFO")
+  #     hide(id = "FO_error")
+  #     if (input$gene_list_selection == "Generate Gene List") {
+  #       updateSliderInput(session, inputId = "xybreaks", min = 10, max = 150, value = input$chooseGeneNo, step = 10)
+  #     }
       
 
-    }
-  )
+  #   }
+  # )
 
 
 
   # clust_net
-  clust_net <- reactive({
+  # clust_net <- reactive({
 
-    sub_net <- sn$sub_nets$sub_net
-    node_degrees <- sn$sub_nets$node_degrees
-    medK <- as.numeric(sn$sub_nets$median)
+  #   sub_net <- sn$sub_nets$sub_net
+  #   node_degrees <- sn$sub_nets$node_degrees
+  #   medK <- as.numeric(sn$sub_nets$median)
 
-    clust_net <- list() 
-    if (input$gene_list_selection == "Use DE results") { 
-      # For DE data 
-      deg_sig <- sn$sub_nets$deg_sig
-      fc_sig  <- sn$sub_nets$fc_sig
-      clust_net[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
-      clust_net[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
+  #   clust_net <- list() 
+  #   if (input$gene_list_selection == "Use DE results") { 
+  #     # For DE data 
+  #     deg_sig <- sn$sub_nets$deg_sig
+  #     fc_sig  <- sn$sub_nets$fc_sig
+  #     clust_net[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
+  #     clust_net[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
 
-    } else { 
-      # For gene list 
-      clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
-    }
-    return(clust_net)
-  })
+  #   } else { 
+  #     # For gene list 
+  #     clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
+  #   }
+  #   return(clust_net)
+  # })
   
   
   # Output of subnetwork table
@@ -600,97 +684,97 @@ server <- function(input, output, session) {
 
   ##################### CLUSTER GENES #####################
 
-  observeEvent(
-    {input$run},
-    {
-      sub_net <- sn$sub_nets$sub_net
-      node_degrees <- sn$sub_nets$node_degrees
-      medK <- as.numeric(sn$sub_nets$median)
+  # observeEvent(
+  #   {input$run},
+  #   {
+  #     sub_net <- sn$sub_nets$sub_net
+  #     node_degrees <- sn$sub_nets$node_degrees
+  #     medK <- as.numeric(sn$sub_nets$median)
 
-      # network output
-      show(id="CG_network_text")
-      output$network <- renderPlot(
-        {plot_network(sub_net$genes, clust_net()$genes, medK)},
-        width = 500,
-        height = 500
-      )
-
-
-      # heatmap output
-      show(id="CG_heatmap_text")
-      output$heatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)},
-        width = 500,
-        height = 500
-      )
+  #     # network output
+  #     show(id="CG_network_text")
+  #     output$network <- renderPlot(
+  #       {plot_network(sub_net$genes, clust_net()$genes, medK)},
+  #       width = 500,
+  #       height = 500
+  #     )
 
 
-      # binarized heatmap output
-      show(id="CG_bheatmap_text")
-      output$Bheatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)},
-        width = 500,
-        height = 500
-      )
+  #     # heatmap output
+  #     show(id="CG_heatmap_text")
+  #     output$heatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)},
+  #       width = 500,
+  #       height = 500
+  #     )
 
-      # upregulated network 
-      show(id="CGupreg_network_text")
-      output$upregNetwork <- renderPlot(
-        {plot_network(sub_net$up, clust_net()$up, medK)}, 
-        width = 500, 
-        height = 500 
-      )
 
-      # upregulated heatmap 
-      show(id="CGupreg_heatmap_text")
-      output$upregHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$up, clust_net()$up, flag_plot_bin = FALSE)}, 
-        width = 500,
-        height = 500
-      )
+  #     # binarized heatmap output
+  #     show(id="CG_bheatmap_text")
+  #     output$Bheatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)},
+  #       width = 500,
+  #       height = 500
+  #     )
 
-      # upregulated binarized heatmap 
-      show(id="CGupreg_bheatmap_text")
-      output$upregbinHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$up, clust_net()$up)}, 
-        width = 500, 
-        height = 500
-      )
+  #     # upregulated network 
+  #     show(id="CGupreg_network_text")
+  #     output$upregNetwork <- renderPlot(
+  #       {plot_network(sub_net$up, clust_net()$up, medK)}, 
+  #       width = 500, 
+  #       height = 500 
+  #     )
+
+  #     # upregulated heatmap 
+  #     show(id="CGupreg_heatmap_text")
+  #     output$upregHeatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$up, clust_net()$up, flag_plot_bin = FALSE)}, 
+  #       width = 500,
+  #       height = 500
+  #     )
+
+  #     # upregulated binarized heatmap 
+  #     show(id="CGupreg_bheatmap_text")
+  #     output$upregbinHeatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$up, clust_net()$up)}, 
+  #       width = 500, 
+  #       height = 500
+  #     )
       
-      # downregulated network 
-      show(id="CGdownreg_network_text")
-      output$downregNetwork <- renderPlot(
-        {plot_network(sub_net$down, clust_net()$down, medK)},
-        width = 500, 
-        height = 500
-      )
+  #     # downregulated network 
+  #     show(id="CGdownreg_network_text")
+  #     output$downregNetwork <- renderPlot(
+  #       {plot_network(sub_net$down, clust_net()$down, medK)},
+  #       width = 500, 
+  #       height = 500
+  #     )
 
-      # downregulated heatmap
-      show(id="CGdownreg_heatmap_text")
-      output$downregHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$down, clust_net()$down, flag_plot_bin = FALSE)}, 
-        width = 500, 
-        height = 500 
-      )
+  #     # downregulated heatmap
+  #     show(id="CGdownreg_heatmap_text")
+  #     output$downregHeatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$down, clust_net()$down, flag_plot_bin = FALSE)}, 
+  #       width = 500, 
+  #       height = 500 
+  #     )
 
-      # downregulated binarized heatmap
-      show(id="CGdownreg_bheatmap_text")
-      output$downregbinHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$down, clust_net()$down)}, 
-        width = 500, 
-        height = 500
-      )
+  #     # downregulated binarized heatmap
+  #     show(id="CGdownreg_bheatmap_text")
+  #     output$downregbinHeatmap <- renderPlot(
+  #       {plot_coexpression_heatmap(sub_net$down, clust_net()$down)}, 
+  #       width = 500, 
+  #       height = 500
+  #     )
 
-      # clustering genes table output
-      show(id="CG_table_text")
-      output$CG_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
-        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
-      )
+  #     # clustering genes table output
+  #     show(id="CG_table_text")
+  #     output$CG_table <- renderDataTable(
+  #       {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
+  #       # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+  #     )
 
 
-    }
-  )
+  #   }
+  # )
 
 
 

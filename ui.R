@@ -363,7 +363,7 @@ ui <- fluidPage(
                       ),
 
                       # run button
-                      actionButton(inputId = "run", label = "Run",),
+                      actionButton(inputId = "runCGDE", label = "Run",),
                     ),  
 
                     br(),
@@ -379,30 +379,7 @@ ui <- fluidPage(
                         title="Plots",
                         br(),
 
-                        # network
-                        conditionalPanel(
-                          condition = "$.inArray('Network', input.clusterPlotOptions_genelist) > -1", 
-                          h5(id="CG_network_text", "Network of Clustered Genes"), 
-                          br(),
-                          plotOutput(outputId = "network", height = "500px"),
-                        ),
-                        
-                        # heatmap
-                        conditionalPanel(
-                          condition = "$.inArray('Heatmap', input.clusterPlotOptions_genelist) > -1", 
-                          h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
-                          br(),
-                          plotOutput(outputId = "heatmap", height = "500px"),
-                        ),
-
-                        # binarized heatmap
-                        conditionalPanel(
-                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions_genelist) > -1", 
-                          h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
-                          br(),
-                          plotOutput(outputId = "Bheatmap", height = "500px"), 
-                        ),
-
+                      
                         conditionalPanel(
                           condition = "$.inArray('Network', input.clusterPlotOptions_upreg) > -1", 
                           h5(id="CGupreg_network_text", "Network of Clustered, Upregulated Genes"), 
@@ -447,21 +424,6 @@ ui <- fluidPage(
 
                       ),
 
-                      # tables tab
-                      tabPanel(
-                        br(),
-                        title="Tables",
-                        br(),
-
-                        # clustering genes
-                        h5(id="CG_table_text", "Clustering Genes"), 
-                        br(),
-                        fluidRow(
-                          column(11,
-                                  dataTableOutput("CG_table"),
-                          )
-                        ),
-                      )
                       
                     )
 
@@ -912,6 +874,64 @@ ui <- fluidPage(
                       # run button
                       actionButton(inputId = "run", label = "Run",),
                     ),  
+
+                    br(),
+
+                    # error message
+                    textOutput("CG_error"),
+                    
+                    tabsetPanel(
+
+                      # plots tab
+                      tabPanel(
+                        br(),
+                        title="Plots",
+                        br(),
+
+                        # network
+                        conditionalPanel(
+                          condition = "$.inArray('Network', input.clusterPlotOptions_genelist) > -1", 
+                          h5(id="CG_network_text", "Network of Clustered Genes"), 
+                          br(),
+                          plotOutput(outputId = "network", height = "500px"),
+                        ),
+                        
+                        # heatmap
+                        conditionalPanel(
+                          condition = "$.inArray('Heatmap', input.clusterPlotOptions_genelist) > -1", 
+                          h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
+                          br(),
+                          plotOutput(outputId = "heatmap", height = "500px"),
+                        ),
+
+                        # binarized heatmap
+                        conditionalPanel(
+                          condition = "$.inArray('Binarized Heatmap', input.clusterPlotOptions_genelist) > -1", 
+                          h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
+                          br(),
+                          plotOutput(outputId = "Bheatmap", height = "500px"), 
+                        ),
+
+                      
+                      ),
+
+                      # tables tab
+                      tabPanel(
+                        br(),
+                        title="Tables",
+                        br(),
+
+                        # clustering genes
+                        h5(id="CG_table_text", "Clustering Genes"), 
+                        br(),
+                        fluidRow(
+                          column(11,
+                                  dataTableOutput("CG_table"),
+                          )
+                        ),
+                      ),
+                      
+                    ), 
 
                   ), 
                 ), 
