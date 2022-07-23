@@ -145,7 +145,7 @@ ui <- fluidPage(
               dropdown(
                 tags$h3("Options"), 
                 # side panel characteristics
-                style = "jelly", icon = "OPTIONS",
+                style = "jelly", icon = "FILE OPTIONS",
                 status = "primary", width = "300px", size = "sm",
                
                 # title of sidepanel
@@ -202,11 +202,11 @@ ui <- fluidPage(
                 tabPanel(
                   title="Plot DE",
                   h4("Plot Differential Expression"),
-                  p(id = "runDE_error", "Please upload counts and labels data in OPTIONS"),
+                  p(id = "runDE_error", "Please upload counts and labels data in FILE OPTIONS"),
                   dropdown(
                     inputId = "DE_options",
                     # side panel characteristics
-                    style = "minimal", icon = "ANALYSIS OPTIONS",
+                    style = "minimal", icon = "OPTIONS",
                     status = "primary", width = "600px", size = "sm",
 
                   selectInput(
@@ -245,7 +245,7 @@ ui <- fluidPage(
                     conditionalPanel(condition = "input.case_control_method == 'Choose Case/Controls individually'", 
                       h6(strong("Select Cases")),
                       dataTableOutput("UILabelContentSelection"),   
-                      h6(strong("Select Rows to ignore")),
+                      h6(strong("Select Conditions")),
                       dataTableOutput("UILabelContentRemoveSelection"),                   
                     ),
                     
@@ -340,7 +340,7 @@ ui <- fluidPage(
                 actionButton("generate_subnet", "Generate Subnetwork",),
       
                 # side panel characteristics
-                style = "jelly", icon = "OPTIONS",
+                style = "jelly", icon = "NETWORK OPTIONS",
                 status = "primary", width = "300px", size = "sm",
 
                ),
@@ -521,6 +521,7 @@ ui <- fluidPage(
                       # filt_min slider
                       conditionalPanel(
                         condition = "$.inArray('Histogram', input.GCPlotOptions) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions) > -1" ,
+                        tags$h4("Other"),
                         sliderInput(
                           inputId="xybreaks", 
                           label = "Number of breaks for histogram:",

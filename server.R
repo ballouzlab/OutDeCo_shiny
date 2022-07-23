@@ -221,7 +221,7 @@ server <- function(input, output, session) {
     input$UILabelContentSelection_rows_selected
   })
 
-  remove_selected <- reactive({
+  conditions_selected <- reactive({
     input$UILabelContentRemoveSelection_rows_selected
   })
 
@@ -278,28 +278,27 @@ server <- function(input, output, session) {
 
     } else {
       cases <- case_selected()
-      cases_removed <- remove_selected()
-      
-
+      conditions <- conditions_selected()
       
       #Initalise all values to 1
-      groups <- rep(1, nrow(labels))
-      check <- rep(1, nrow(labels))
+      groups <- rep(0, nrow(labels))
 
       for (c in cases) {
         groups[c] = 2
       }
       
-      for (d in cases_removed) {
-        groups[d] = 0
+      for (d in conditions) {
+        groups[d] = 1
       }
       # No cases have been selected
-      print(groups)
-      print(check)
-      if (identical(groups, check)) {
+      filt = groups != 0 
+      if (is.null(cases)) {
         shinyalert(title = "Invalid Input", text = "Please select cases to assess", type = "error")
+      } else if (is.null(conditions)) {
+        shinyalert(title = "Invalid Input", text = "Please select conditions to assess", type = "error")
+      # Valid input - cases and control selected
       } else {
-        deg <- calc_DE(counts_data, groups, input$DE_method) 
+        deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
         de$deg_output <- deg
       }
       
@@ -328,8 +327,9 @@ server <- function(input, output, session) {
               width = 450,
               height = 450
       )
-    }
     show(id = "assess_run_de")
+    }
+    
     }
   )
 
@@ -747,15 +747,15 @@ server <- function(input, output, session) {
   ##################### ERROR MESSAGES #####################
 
   output$CG_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   })
 
   output$GC_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
 
   output$FO_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
 
 }
