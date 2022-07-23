@@ -246,12 +246,21 @@ server <- function(input, output, session) {
     input$UILabelContentSelection_rows_selected
   })
 
-  remove_selected <- reactive({
+  conditions_selected <- reactive({
     input$UILabelContentRemoveSelection_rows_selected
   })
 
   
-  
+    
+  # Switch to labels tab if labels file is uploaded
+  observeEvent(input$labels_file, {
+    updateTabsetPanel(session, "counts_labels_tabset", selected = "Labels File")
+  })
+  # Switch to counts tab if counts file is uploaded
+  observeEvent(input$counts_file, {
+    updateTabsetPanel(session, "counts_labels_tabset", selected = "Counts File")
+  })
+
 
 
 
@@ -294,28 +303,27 @@ server <- function(input, output, session) {
 
     } else {
       cases <- case_selected()
-      cases_removed <- remove_selected()
-      
-
+      conditions <- conditions_selected()
       
       #Initalise all values to 1
-      groups <- rep(1, nrow(labels))
-      check <- rep(1, nrow(labels))
+      groups <- rep(0, nrow(labels))
 
       for (c in cases) {
         groups[c] = 2
       }
       
-      for (d in cases_removed) {
-        groups[d] = 0
+      for (d in conditions) {
+        groups[d] = 1
       }
       # No cases have been selected
-      print(groups)
-      print(check)
-      if (groups == check) {
+      filt = groups != 0 
+      if (is.null(cases)) {
         shinyalert(title = "Invalid Input", text = "Please select cases to assess", type = "error")
+      } else if (is.null(conditions)) {
+        shinyalert(title = "Invalid Input", text = "Please select conditions to assess", type = "error")
+      # Valid input - cases and control selected
       } else {
-        deg <- calc_DE(counts_data, groups, input$DE_method) 
+        deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
         de$deg_output <- deg
       }
       
@@ -344,8 +352,9 @@ server <- function(input, output, session) {
               width = 450,
               height = 450
       )
-    }
     show(id = "assess_run_de")
+    }
+    
     }
   )
 
@@ -391,13 +400,18 @@ server <- function(input, output, session) {
   )
 
   observeEvent(input$generate_subnet_DE, {
-    sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
-    show(id = "CG_dropdown_DE")
-    hide(id = "CG_error_DE")
-    show(id = "GC_dropdown_DE")
-    hide(id = "GC_error_DE")
-    show(id = "FO_dropdown_DE")
-    hide(id = "FO_error_DE")
+    if (is.null(de$deg_output)) {
+      shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
+      updateTabsetPanel(session, inputId="navpage", selected="Run DE")
+    } else {
+      sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+      show(id = "CG_dropdown_DE")
+      hide(id = "CG_error_DE")
+      show(id = "GC_dropdown_DE")
+      hide(id = "GC_error_DE")
+      show(id = "FO_dropdown_DE")
+      hide(id = "FO_error_DE")
+    }
   })
 
   observeEvent(
@@ -719,46 +733,90 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$generate_subnet, {
-    if (input$gene_list_selection == "Generate Gene List") {
+    gene_list <- NULL
+    if (is.null(input$gene_list_selection)) {
+      shinyalert(title = "Invalid Input", text = "Please choose a gene list method", type = "error")
+    } else {
+      # GENERATE GENE LIST
+      if (input$gene_list_selection == "Generate Gene List") {
 
-      if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
-        shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
-        gene_list <- NULL
-
-      } else if (str_detect(substring(input$chooseChrome,4), "[0-9]")) {
-        if (strtoi(substring(input$chooseChrome,4)) < 1 || strtoi(substring(input$chooseChrome,4)) > 22) {
+        if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
           shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
           gene_list <- NULL
 
-        } else {
+        } else if (str_detect(substring(input$chooseChrome,4), "[0-9]")) {
+          if (strtoi(substring(input$chooseChrome,4)) < 1 || strtoi(substring(input$chooseChrome,4)) > 22) {
+            shinyalert(title = "Invalid Input", text = "Please enter a Chromosome between 1 - 22, X, Y", type = "error")
+            gene_list <- NULL
+
+          } else {
+            gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+            print(gene_list)
+          }
+
+        } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
+          shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
+          gene_list <- NULL
+
+        } else { 
           gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-          print(gene_list)
+
+        }
+          
+      } else {
+        # Invalid Input - user hasn't uploaded file
+        if (is.null(input$DEFile)) {
+          shinyalert(title = "Invalid Input", text = "Please upload a gene list file", type = "error")
+        } else {
+          gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
         }
 
-      } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
-        shinyalert(title = "Invalid Input", text = "Please enter a valid number of Genes", type = "error")
-        gene_list <- NULL
-
-      } else { 
-        gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-
       }
-        
-    } else {
-      gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
-
+      #Valid Input
+      if (!is.null(gene_list)) { 
+        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
+        show(id = "CG_dropdown")
+        hide(id = "CG_error")
+        show(id = "GC_dropdown")
+        hide(id = "GC_error")
+        show(id = "FO_dropdown")
+        hide(id = "FO_error")
+        # Clear data
+        output$network <- NULL
+        output$heatmap <- NULL
+        output$Bheatmap <- NULL
+        output$CG_table <- NULL
+        output$GCdensityG <- NULL
+        output$GChistogramG <- NULL
+        output$GCdensitySubsetG<- NULL
+        output$GChistogramSubsetG <- NULL
+        output$FO_heatmap <- NULL
+        output$FO_network <- NULL
+        output$genes_not_keep_table <- NULL
+        output$genes_keep_table <- NULL
+        # Reset Checkboxes
+        updateAwesomeCheckboxGroup(
+          inputId = "clusterPlotOptions_genelist",
+          choices = c("Network", "Heatmap", "Binarized Heatmap"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "GCPlotOptions_genelist",
+          choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "FOPlotOptions_genelist",
+          choices = c("Network", "Heatmap"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "FO_table_options",
+          choices = c("Functional Outliers", "Genes in Module"),
+          status = ""
+        )
+      } 
     }
-
-    if (!is.null(gene_list)) { 
-      sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
-      show(id = "CG_dropdown")
-      hide(id = "CG_error")
-      show(id = "GC_dropdown")
-      hide(id = "GC_error")
-      show(id = "FO_dropdown")
-      hide(id = "FO_error")
-    } 
-    
   })
 
   observeEvent(
@@ -947,27 +1005,27 @@ server <- function(input, output, session) {
   ##################### ERROR MESSAGES #####################
 
   output$CG_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   })
 
   output$CG_error_DE <- renderText({
-    print("Please upload/use DE Data in OPTIONS")
+    print("Please upload/use DE Data in NETWORK OPTIONS")
   })
 
   output$GC_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
 
   output$GC_error_DE <- renderText({
-    print("Please upload/use DE Data in OPTIONS")
+    print("Please upload/use DE Data in NETWORK OPTIONS")
   })
 
   output$FO_error <- renderText({
-    print("Please upload/generate a gene list in OPTIONS")
+    print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
 
   output$FO_error_DE <- renderText({
-    print("Please upload/use DE Data in OPTIONS")
+    print("Please upload/use DE Data in NETWORK OPTIONS")
   })
 
 }

@@ -145,7 +145,7 @@ ui <- fluidPage(
               dropdown(
                 tags$h3("Options"), 
                 # side panel characteristics
-                style = "jelly", icon = "OPTIONS",
+                style = "jelly", icon = "FILE OPTIONS",
                 status = "primary", width = "300px", size = "sm",
                
                 # title of sidepanel
@@ -185,6 +185,7 @@ ui <- fluidPage(
                   title="View File",
 
                   tabsetPanel(
+                    id="counts_labels_tabset",
                     tabPanel(
                       title="Counts File",
                       dataTableOutput("UICountsContent")
@@ -201,11 +202,11 @@ ui <- fluidPage(
                 tabPanel(
                   title="Plot DE",
                   h4("Plot Differential Expression"),
-                  p(id = "runDE_error", "Please upload counts and labels data in OPTIONS"),
+                  p(id = "runDE_error", "Please upload counts and labels data in FILE OPTIONS"),
                   dropdown(
                     inputId = "DE_options",
                     # side panel characteristics
-                    style = "minimal", icon = "ANALYSIS OPTIONS",
+                    style = "minimal", icon = "OPTIONS",
                     status = "primary", width = "600px", size = "sm",
 
                   selectInput(
@@ -244,7 +245,7 @@ ui <- fluidPage(
                     conditionalPanel(condition = "input.case_control_method == 'Choose Case/Controls individually'", 
                       h6(strong("Select Cases")),
                       dataTableOutput("UILabelContentSelection"),   
-                      h6(strong("Select Rows to ignore")),
+                      h6(strong("Select Conditions")),
                       dataTableOutput("UILabelContentRemoveSelection"),                   
                     ),
                     
@@ -305,7 +306,7 @@ ui <- fluidPage(
                 actionButton("generate_subnet_DE", "Generate Subnetwork",),
       
                 # side panel characteristics
-                style = "jelly", icon = "OPTIONS",
+                style = "jelly", icon = "NETWORK OPTIONS",
                 status = "primary", width = "300px", size = "sm",
 
                ),
@@ -341,7 +342,7 @@ ui <- fluidPage(
                   title="Cluster Genes",
                   mainPanel(
                     h3("Cluster Genes"),
-
+                    br(),
                     # options dropdown
                     dropdown(
                       inputId = "CG_dropdown_DE",
@@ -365,11 +366,10 @@ ui <- fluidPage(
                       # run button
                       actionButton(inputId = "runCGDE", label = "Run",),
                     ),  
-
-                    br(),
-
+                    
                     # error message
                     textOutput("CG_error_DE"),
+                    br(),
                     
                     tabsetPanel(
 
@@ -460,7 +460,7 @@ ui <- fluidPage(
 
                       ),
                       
-                      # filt_min slider
+                      # histogram breaks slider
                       conditionalPanel(
                         condition = "$.inArray('Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1 || $.inArray('Histogram', input.GCPlotOptions_downreg) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1" ,
                         sliderInput(
@@ -758,7 +758,7 @@ ui <- fluidPage(
                 actionButton("generate_subnet", "Generate Subnetwork",),
       
                 # side panel characteristics
-                style = "jelly", icon = "OPTIONS",
+                style = "jelly", icon = "NETWORK OPTIONS",
                 status = "primary", width = "300px", size = "sm",
 
                ),
@@ -808,11 +808,9 @@ ui <- fluidPage(
                       actionButton(inputId = "run", label = "Run",),
                     ),  
 
-                    br(),
-
                     # error message
                     textOutput("CG_error"),
-                    
+                    br(),
                     tabsetPanel(
 
                       # plots tab
@@ -886,10 +884,11 @@ ui <- fluidPage(
                         choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
                         status = ""
                       ),
-
-                      # filt_min slider
+                      
+                      # breaks slider
                       conditionalPanel(
-                        condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1",
+                        condition = "$.inArray('Histogram', input.GCPlotOptions_genelist) > -1 || $.inArray('Clustered Histogram', input.GCPlotOptions_genelist) > -1" ,
+                        tags$h4("Other"),
                         sliderInput(
                           inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
@@ -904,7 +903,6 @@ ui <- fluidPage(
 
                     ),
 
-                    br(),
 
                     # error message
                     textOutput("GC_error"),
@@ -993,8 +991,6 @@ ui <- fluidPage(
                       actionButton(inputId = "runFO", label = "Run", ),
 
                     ),
-
-                    br(),
                     
                     # error message
                     textOutput("FO_error"),
