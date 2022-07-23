@@ -17,6 +17,7 @@ library(stringr)
 
 ui <- fluidPage(
   useShinyjs(),
+  chooseSliderSkin("Shiny",  color = "#3E3F3A"),
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
@@ -466,7 +467,7 @@ ui <- fluidPage(
                         sliderInput(
                           inputId="xybreaks_DE", 
                           label = "Number of breaks for histogram:",
-                          min = 10, max = 150, value = 100, step = 10,
+                          min = 10, max = 100, value = 100, step = 10,
                         ),
                       ),
                       
@@ -892,7 +893,7 @@ ui <- fluidPage(
                         sliderInput(
                           inputId="xybreaks", 
                           label = "Number of breaks for histogram:",
-                          min = 10, max = 150, value = 100, step = 10,
+                          min = 10, max = 100, value = 100, step = 10,
                         ),
                       ),
                       
