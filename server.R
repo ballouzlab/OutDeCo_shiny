@@ -362,6 +362,9 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
     updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
     sn$sub_nets <- NULL
+    output$DE_table <- renderDataTable(
+        {de$deg_output$degs},
+    )
   })
 
   observe({

@@ -330,6 +330,10 @@ ui <- fluidPage(
                     # ),
                     # view subnetwork tab
                     tabPanel(
+                      title = "DE Data", 
+                      dataTableOutput("DE_table"),
+                    ),
+                    tabPanel(
                       title="Subnetwork", 
                       tableOutput("subnetwork_DE")
                     ),
