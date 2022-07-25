@@ -285,13 +285,7 @@ ui <- fluidPage(
               dropdown(
 
                 # network selection
-                tags$h4("Network Selection"),
-                selectInput(
-                  inputId = "network_type_DE",
-                  label=NULL,
-                  choices = c("Blood", "Brain", "Generic"),
-                  selected = "Generic"
-                ),
+                uiOutput("select.folder"),
 
                 # gene list selection
                 radioButtons(
@@ -300,8 +294,6 @@ ui <- fluidPage(
                   choices = c("Use DE Results"),
                   selected = "Use DE Results"
                 ),
-
-                
                 
                 # generate subnet button
                 actionButton("generate_subnet_DE", "Generate Subnetwork",),

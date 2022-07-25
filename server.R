@@ -402,12 +402,34 @@ server <- function(input, output, session) {
     sub_nets = NULL, 
   )
 
+  # network upload UI output
+  output$select.folder <-
+    renderUI(expr = selectInput(inputId = 'folder.name',
+                                label = 'Network Name',
+                                choices = list.dirs(path = "../networks",
+                                                    full.names = FALSE,
+                                                    recursive = FALSE)))
+
+  # network upload select network
+  network_type <- reactive({
+    if (!is.null(input$folder.name)) {
+      return(input$folder.name)
+    }
+  })
+
+  network_path <- reactive({
+    attachDir <- paste0("../networks/", network_type())
+    path <- paste0(attachDir, "/")
+    print(path)
+    return(path)
+  }) 
+
   observeEvent(input$generate_subnet_DE, {
     if (is.null(de$deg_output)) {
       shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
       updateTabsetPanel(session, inputId="navpage", selected="Run DE")
     } else {
-      sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+      sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
       show(id = "CG_dropdown_DE")
       hide(id = "CG_error_DE")
       show(id = "GC_dropdown_DE")
