@@ -886,7 +886,9 @@ ui <- fluidPage(
                       ),
 
                       # run button
-                      downloadButton("downloadCG_genelist", label = "Download",),
+                      #downloadButton("downloadCG_genelist", label = "Download",),
+                      actionButton("downloadCG_genelist", label = "Download"),
+                    
                     ),  
                 ), 
 

@@ -871,8 +871,9 @@ server <- function(input, output, session) {
 
       # binarized heatmap output
       show(id="CG_bheatmap_text")
+      CG_bheatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)}
       output$Bheatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)},
+        {CG_bheatmap},
         width = 500,
         height = 500
       )
@@ -884,34 +885,53 @@ server <- function(input, output, session) {
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
-      output$downloadCG_genelist <- downloadHandler(
-        contentType = "image/png",
-        filename = function() {
-          paste("ClusteredNetwork", ".png")
-        },
-        content = function(file) {
-          png(file, width=500, height=500)
-          CG_network()
-          dev.off()
-        }
-      )
+      # output$downloadCG_genelist <- downloadHandler(
+      #   contentType = "image/png",
+      #   filename = function() {
+      #     paste("ClusteredNetwork", ".png")
+      #   },
+      #   content = function(file) {
+      #     png(file, width=500, height=500)
+      #     CG_network()
+      #     dev.off()
+      #   }
+      # )
 
-      output$downloadCG_genelist <- downloadHandler(
-        contentType = "image/png",
-        filename = function() {
-          paste("ClusteredHeatmap", ".png")
-        },
-        content = function(file) {
-          png(file, width=500, height=500)
-          CG_heatmap()
-          dev.off()
-        }
-      )
+    
     }
   )
+  https://stackoverflow.com/questions/62055419/how-to-download-multiple-plots-as-a-zip-file-in-r-shiny
+  mydata <- reactive(list(
+
+  ) # close list
+  ) # close reactive
+  nplots <- reactive(length(mydata()))
+  
+  observeEvent(input$download, {
+    lapply(1:nplots(), function(i){
+      ggsave(paste0("yplot",i,".png"), plot(mydata()[[i]]))
+    })
+  }, ignoreInit = TRUE)
 
   #Download Plots
-  
+  observeEvent(
+    {input$downloadCG_genelist}, {
+
+      if (input$CG_download_format == ".pdf") {
+        pdf_plots = list(CG_network, CG_heatmap, CG_bheatmap)
+        pdf("Cluster.pdf")
+        pdf_plots
+        dev.off()
+      }
+      lapply(1:nplots, function(i){
+      ggsave(paste0("yplot",i,".png"), plot(mydata[[i]]))
+    })
+    
+
+
+    }
+  )
+ 
 
 
  
