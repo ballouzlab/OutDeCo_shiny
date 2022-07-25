@@ -17,6 +17,8 @@ server <- function(input, output, session) {
   hide(id = "CG_dropdown_DE")
   hide(id = "FO_dropdown")
   hide(id = "FO_dropdown_DE")
+  hide(id = "DE_GSEA_dropdown")
+  hide(id = "GL_GSEA_dropdown")
   hide(id = "assess_run_de")
 
 
@@ -60,7 +62,7 @@ server <- function(input, output, session) {
   hide(id="GCdensitySubsetG_downreg_text")
   hide(id="GChistogramSubsetG_downreg_text")
 
-  #Functional Outliers
+  # Functional Outliers
   hide(id="FO_network_text")
   hide(id="FO_heatmap_text")
   hide(id="FOnetwork_upreg_text")
@@ -70,8 +72,10 @@ server <- function(input, output, session) {
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
 
-
-
+  # GSEA
+  hide(id="GSEA_heatmap_text")
+  hide(id="GSEA_up_heatmap_text")
+  hide(id="GSEA_down_heatmap_text")
 
 
   ##########################################################################################
@@ -414,6 +418,9 @@ server <- function(input, output, session) {
       hide(id = "GC_error_DE")
       show(id = "FO_dropdown_DE")
       hide(id = "FO_error_DE")
+      # GSEA
+      show(id = "DE_GSEA_dropdown")
+      hide(id = "DE_GSEA_error")
     }
   })
 
@@ -784,6 +791,9 @@ server <- function(input, output, session) {
         hide(id = "GC_error")
         show(id = "FO_dropdown")
         hide(id = "FO_error")
+        # GSEA
+        show(id = "GL_GSEA_dropdown")
+        hide(id = "GL_GSEA_error")
         # Clear data
         output$network <- NULL
         output$heatmap <- NULL
@@ -1004,6 +1014,93 @@ server <- function(input, output, session) {
 
 
 
+  ##################### GSEA #####################  
+
+
+  observeEvent(
+    {input$DE_GSEA_run},
+    {
+      # Standard GSEA
+      if ("Standard GSEA" %in% input$GSEA_type) {
+        data(go_slim)
+        data(go_voc)
+        
+        # upregulated heatmap
+        show(id="GSEA_up_heatmap_text")
+        output$GSEA_up_heatmap <- renderPlot(
+          {
+            filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
+            gene_list <- clust_net_DE()$up$clusters$genes[clust_net_DE()$up$order]
+            go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc) 
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim_entrez[filt,]) 
+          },
+          width = 500,
+          height = 500
+        )
+        
+        # downregulated heatmap
+        show(id="GSEA_down_heatmap_text")
+        output$GSEA_down_heatmap <- renderPlot(
+          {
+            filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
+            gene_list <- clust_net_DE()$down$clusters$genes[clust_net_DE()$down$order]
+            go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc) 
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim_entrez[filt,]) 
+          },
+          width = 500,
+          height = 500
+        )
+      }
+
+      # AUCs GSEA
+      if ("AUCs GSEA" %in% input$GSEA_type) {
+        
+        data(go_slim_entrez)
+      
+        gene_rankings <- order(log10(deg$degs$pvals), abs(deg$degs$log2_fc)) 
+        names(gene_rankings) <- rownames(deg$degs)
+        gene_rankings_rev <- rank(max(gene_rankings) - gene_rankings) 
+        
+        m <- match(rownames(go_slim_entrez), names(gene_rankings_rev))
+        f.g = !is.na(m)
+        f.r = m[f.g]
+        gene_sets = go_slim_entrez[f.g,]
+        gene_rankings_rev = rank(gene_rankings_rev[f.r])
+
+        gene_set_aucs <- gene_set_enrichment_aucs(gene_sets, gene_rankings_rev) 
+
+        # AUC graphs
+        output$GSEA_auc <- renderPlot(
+          {plot_gene_set_enrichment_ranked(gene_set_aucs, gene_rankings_rev, gene_list, go_slim_entrez)},
+          width = 500,
+          height = 500
+        )
+      }
+    }
+  )
+
+  # Gene List GSEA
+  observeEvent(
+    {input$GL_GSEA_run},
+    {
+      data(go_slim)
+      data(go_voc)
+
+      # heatmap
+      show(id="GSEA_heatmap_text")
+      output$GL_GSEA_heatmap <- renderPlot(
+        {
+          filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
+          gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
+          go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
+          plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])
+        },
+        width = 500,
+        height = 500
+      )
+    }
+  )
+
 
   ##################### ERROR MESSAGES #####################
 
@@ -1030,6 +1127,14 @@ server <- function(input, output, session) {
   output$FO_error_DE <- renderText({
     print("Please upload/use DE Data in NETWORK OPTIONS")
   })
+
+  output$DE_GSEA_error <- renderText({
+    print("Please generate a subnetwork in OPTIONS")
+  }) 
+
+  output$GL_GSEA_error <- renderText({
+    print("Please generate a subnetwork in OPTIONS")
+  }) 
 
 }
 

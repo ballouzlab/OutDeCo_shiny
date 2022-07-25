@@ -14,6 +14,8 @@ library(shinyjs)
 library(shinyalert)
 library(stringi)
 library(stringr)
+library(OutDeCo)
+library(EGAD)
 
 ui <- fluidPage(
   useShinyjs(),
@@ -489,82 +491,58 @@ ui <- fluidPage(
 
                     # density - upreg 
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Density', input.GCPlotOptions_upreg) > -1", 
                       h5(id="GCdensityG_upreg_text", "Density Plot of Upregulated Gene Connectivity"), 
-                      br(),
                       plotOutput(outputId = "GCdensityGupreg", height = "500px",),
-                      br(),
                     ),
 
                     # histogram - upreg 
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions_upreg) > -1", 
                       h5(id="GChistogramG_upreg_text", "Histogram of Upregulated Gene Connectivity"),
-                      br(),
                       plotOutput(outputId = "GChistogramGupreg", height = "500px",),
-                      br(),
                     ),
 
                     # density (subset by clusters) - upreg 
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Clustered Density', input.GCPlotOptions_upreg) > -1", 
                       h5(id="GCdensitySubsetG_upreg_text", "Density plot of Upregulated Gene Connectivity subset by their clusters"), 
-                      br(),
                       plotOutput(outputId = "GCdensitySubsetGupreg", height = "500px",),
-                      br(),
                     ),
 
                     # histogram (subset by clusters) - upreg 
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_upreg) > -1", 
                       h5(id="GChistogramSubsetG_upreg_text", "Histogram of Upregulated Gene Connectivity subset by their clusters"), 
-                      br(),
                       plotOutput(outputId = "GChistogramSubsetGupreg", height = "500px",),
-                      br(),
                     ),
 
                     # density - downreg 
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Density', input.GCPlotOptions_downreg) > -1", 
                       h5(id="GCdensityG_downreg_text", "Density Plot of Downregulated Gene Connectivity"), 
-                      br(),
                       plotOutput(outputId = "GCdensityGdownreg", height = "500px",),
-                      br(),
                     ),
 
                     # histogram - downreg
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Histogram', input.GCPlotOptions_downreg) > -1", 
                       h5(id="GChistogramG_downreg_text", "Histogram of Downregulated Gene Connectivity"),
-                      br(),
                       plotOutput(outputId = "GChistogramGdownreg", height = "500px",),
-                      br(),
                     ),
 
                     # density (subset by clusters) - downreg
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Clustered Density', input.GCPlotOptions_downreg) > -1", 
                       h5(id="GCdensitySubsetG_downreg_text", "Density plot of Downregulated Gene Connectivity subset by their clusters"), 
-                      br(),
                       plotOutput(outputId = "GCdensitySubsetGdownreg", height = "500px",),
-                      br(),
                     ),
 
                     # histogram (subset by clusters) - downreg
                     conditionalPanel(
-                      br(),
                       condition = "$.inArray('Clustered Histogram', input.GCPlotOptions_downreg) > -1", 
                       h5(id="GChistogramSubsetG_downreg_text", "Histogram of Dowregulated Gene Connectivity subset by their clusters"), 
-                      br(),
                       plotOutput(outputId = "GChistogramSubsetGdownreg", height = "500px",),
-                      br(),
                     ),
 
 
@@ -695,15 +673,105 @@ ui <- fluidPage(
                 # GENE SET ENRICHMENT ANALYSIS
                 tabPanel(
                   title="Gene Set Enrichment Analysis",
-                  "GSE Page",
+                  mainPanel(
+                    h3("Gene Set Enrichment Analysis"),
+                    
+                    # options dropdown
+                    dropdown(
+                      inputId = "DE_GSEA_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+                      
+                      # select GSEA type
+                      awesomeCheckboxGroup(
+                        inputId = "GSEA_type",
+                        label = tags$h4("GSEA Type"),
+                        choices = c("Standard GSEA", "AUCs GSEA"),
+                        selected = ""
+                      ),
+                      
+                      # standard GSEA options
+                      conditionalPanel(
+                        condition = "input.GSEA_type.includes('Standard GSEA')", 
+                        awesomeCheckboxGroup(
+                          inputId = "GSEA_std_PlotOptions",
+                          label = tags$h4("Standard GSEA"), 
+                          choices = c("Upregulated P-value Heatmap", "Downregulated P-value Heatmap"),
+                          status = ""
+                        ),
+                      ),
+                      
+                      br(),
+
+                      # run button
+                      actionButton(
+                        inputId = "DE_GSEA_run",
+                        label = "Run",
+                        style="color: #fff; background-color: #3E3F3A; border-color: #20201F"
+                      ),
+
+                    ),
+                    
+                    br(),
+
+                    # error message
+                    textOutput("DE_GSEA_error"),
+                  ),
+                  br(),
+                  
+                  tabsetPanel(
+
+                    # Standard GSEA tab
+                    tabPanel(
+                      title="Standard",
+                      mainPanel(
+
+                        # upregulated heatmap
+                        conditionalPanel(
+                          condition = "$.inArray('Upregulated P-value Heatmap', input.GSEA_std_PlotOptions) > -1", 
+                          h5(id="GSEA_up_heatmap_text", "Upregulated P-value Heatmap"), 
+                          br(),
+                          plotOutput(outputId = "GSEA_up_heatmap", height = "500px"),
+                        ),
+
+                        # downregulated heatmap
+                        conditionalPanel(
+                          condition = "$.inArray('Downregulated P-value Heatmap', input.GSEA_std_PlotOptions) > -1", 
+                          h5(id="GSEA_down_heatmap_text", "Downregulated P-value Heatmap"), 
+                          br(),
+                          plotOutput(outputId = "GSEA_down_heatmap", height = "500px"),
+                        ),
+
+                      )
+                    ),
+
+                    # AUCs GSEA tab
+                    tabPanel(
+                      title="AUC",
+                      mainPanel(
+                        # AUROC graph
+                        conditionalPanel(
+                          condition = "$.inArray('AUCs GSEA', input.GSEA_type) > -1", 
+                          plotOutput(outputId = "GSEA_auc", height = "500px"),
+                        ),
+                        br(),
+
+                      )
+                    ),
+                  )
+
                 ),
+
+
                ),
              ),
 
              ############################## ASSESS GENE LIST TAB ##################################################
+             
              tabPanel(
               title = "Assess Gene List",
 
+              # dropdown
               dropdown(
 
                 # network selection
@@ -766,13 +834,16 @@ ui <- fluidPage(
                 style = "jelly", icon = "NETWORK OPTIONS",
                 status = "primary", width = "300px", size = "sm",
 
-               ),
+              ),
 
-               br(),
+              br(),
         
+              
+              
               navlistPanel(
                 widths = c(3, 9), well = FALSE,
 
+                # VIEW FILES
                 tabPanel(
                   title="View Files",
                   tabsetPanel(
@@ -792,6 +863,7 @@ ui <- fluidPage(
                   ),
                 ),
 
+                # CLUSTER GENES
                 tabPanel(
                   title="Cluster Genes",
                   mainPanel(
@@ -872,6 +944,7 @@ ui <- fluidPage(
                   ), 
                 ), 
 
+                # GENE CONNECTIVITY
                 tabPanel(
                   title = "Gene Connectivity", 
                   mainPanel(
@@ -955,6 +1028,7 @@ ui <- fluidPage(
                   ),
                 ), 
 
+                # FUNCTIONAL OUTLIERS
                 tabPanel(
                   title = "Functional Outliers",
                   mainPanel(
@@ -1067,10 +1141,54 @@ ui <- fluidPage(
                   ),
 
 
-                ), 
+                ),
 
+                # GENE SET ENRICHMENT ANALYSIS
                 tabPanel(
-                  title = "Gene Set Enrichment Analysis"
+                  title="Gene Set Enrichment Analysis",
+                  mainPanel(
+                    h3("Gene Set Enrichment Analysis"),
+                    
+                    # options dropdown
+                    dropdown(
+                      inputId = "GL_GSEA_dropdown",
+                      style = "minimal", icon = "OPTIONS",
+                      status = "primary", width = "300px", size = "sm",
+                      
+                      # standard GSEA options
+                      awesomeCheckboxGroup(
+                        inputId = "GL_GSEA_std_PlotOptions",
+                        label = tags$h4("Standard GSEA"), 
+                        choices = c("P-value Heatmap"),
+                        status = ""
+                      ),
+                      
+                      br(),
+
+                      # run button
+                      actionButton(
+                        inputId = "GL_GSEA_run",
+                        label = "Run",
+                        style="color: #fff; background-color: #3E3F3A; border-color: #20201F"
+                      ),
+
+                    ),
+                    
+                    br(),
+
+                    # error message
+                    textOutput("GL_GSEA_error"),
+                  ),
+                  br(),
+                  
+                  # heatmap
+                  conditionalPanel(
+                    condition = "$.inArray('P-value Heatmap', input.GL_GSEA_std_PlotOptions) > -1", 
+                    h5(id="GSEA_heatmap_text", "P-value Heatmap"), 
+                    plotOutput(outputId = "GL_GSEA_heatmap", height = "500px"),
+                  ),
+                  br(),
+
                 ),
 
               ),
