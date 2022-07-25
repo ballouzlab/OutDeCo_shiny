@@ -12,9 +12,11 @@ server <- function(input, output, session) {
 
   # Removing elements that are not functional without subnetwork
   hide(id = "GC_dropdown")
-  hide(id = "cluster_dropdown")
+  hide(id = "GC_dropdown_DE")
   hide(id = "CG_dropdown")
+  hide(id = "CG_dropdown_DE")
   hide(id = "FO_dropdown")
+  hide(id = "FO_dropdown_DE")
   hide(id = "assess_run_de")
 
 
@@ -36,16 +38,39 @@ server <- function(input, output, session) {
   hide(id="CG_heatmap_text")
   hide(id="CG_bheatmap_text")
   hide(id="CG_table_text")
+  hide(id="CGupreg_network_text")
+  hide(id="CGupreg_heatmap_text")
+  hide(id="CGupreg_bheatmap_text")
+  hide(id="CGdownreg_network_text")
+  hide(id="CGdownreg_heatmap_text")
+  hide(id="CGdownreg_bheatmap_text")
+
+
   # Gene Connectivity
   hide(id="GCdensityG_text")
   hide(id="GChistogramG_text")
   hide(id="GCdensitySubsetG_text")
   hide(id="GChistogramSubsetG_text")
+  hide(id="GCdensityG_upreg_text")
+  hide(id="GChistogramG_upreg_text")
+  hide(id="GCdensitySubsetG_upreg_text")
+  hide(id="GChistogramSubsetG_upreg_text")
+  hide(id="GCdensityG_downreg_text")
+  hide(id="GChistogramG_downreg_text")
+  hide(id="GCdensitySubsetG_downreg_text")
+  hide(id="GChistogramSubsetG_downreg_text")
+
   #Functional Outliers
   hide(id="FO_network_text")
   hide(id="FO_heatmap_text")
+  hide(id="FOnetwork_upreg_text")
+  hide(id="FOheatmap_upreg_text")
+  hide(id="FOnetwork_downreg_text")
+  hide(id="FOheatmap_downreg_text")
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
+
+
 
 
 
@@ -335,8 +360,11 @@ server <- function(input, output, session) {
 
   observeEvent(input$assess_run_de, { 
     updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
-    updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
-    updateRadioButtons(session, inputId="gene_list_selection", choices=c("Upload Gene List", "Generate Gene List", "Use DE results"), selected = "Use DE results")
+    updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
+    sn$sub_nets <- NULL
+    output$DE_table <- renderDataTable(
+        {de$deg_output$degs},
+    )
   })
 
   observe({
@@ -364,14 +392,306 @@ server <- function(input, output, session) {
   
   ##########################################################################################
   #                                                                                        #
-  #                                        ASSESS DE                                       #
+  #                                    ASSESS DE DATA                                      #
   #                                                                                        #
   ##########################################################################################
 
   # sub_nets
   sn <- reactiveValues(
-    sub_nets = NULL,
+    sub_nets_DE = NULL,
+    sub_nets = NULL, 
   )
+
+  observeEvent(input$generate_subnet_DE, {
+    if (is.null(de$deg_output)) {
+      shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
+      updateTabsetPanel(session, inputId="navpage", selected="Run DE")
+    } else {
+      sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
+      show(id = "CG_dropdown_DE")
+      hide(id = "CG_error_DE")
+      show(id = "GC_dropdown_DE")
+      hide(id = "GC_error_DE")
+      show(id = "FO_dropdown_DE")
+      hide(id = "FO_error_DE")
+    }
+  })
+
+  observeEvent(
+    input$generate_subnet_DE, 
+    {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
+  )
+
+  clust_net_DE <- reactive({
+
+    sub_net <- sn$sub_nets_DE$sub_net
+    node_degrees <- sn$sub_nets_DE$node_degrees
+    medK <- as.numeric(sn$sub_nets_DE$median)
+
+    clust_net_DE <- list() 
+    
+    # For DE data 
+    deg_sig <- sn$sub_nets_DE$deg_sig
+    fc_sig  <- sn$sub_nets_DE$fc_sig
+    clust_net_DE[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
+    clust_net_DE[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
+
+    return(clust_net_DE)
+  })
+
+
+  ################################ CLUSTER GENES ########################################
+
+  observeEvent(
+    {input$runCGDE},
+    {
+      sub_net <- sn$sub_nets_DE$sub_net
+      node_degrees <- sn$sub_nets_DE$node_degrees
+      medK <- as.numeric(sn$sub_nets_DE$median)
+
+      
+      # upregulated network 
+      show(id="CGupreg_network_text")
+      output$upregNetwork <- renderPlot(
+        {plot_network(sub_net$up, clust_net_DE()$up, medK)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      # upregulated heatmap 
+      show(id="CGupreg_heatmap_text")
+      output$upregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, flag_plot_bin = FALSE)}, 
+        width = 500,
+        height = 500
+      )
+
+      # upregulated binarized heatmap 
+      show(id="CGupreg_bheatmap_text")
+      output$upregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up)}, 
+        width = 500, 
+        height = 500
+      )
+      
+      # downregulated network 
+      show(id="CGdownreg_network_text")
+      output$downregNetwork <- renderPlot(
+        {plot_network(sub_net$down, clust_net_DE()$down, medK)},
+        width = 500, 
+        height = 500
+      )
+
+      # downregulated heatmap
+      show(id="CGdownreg_heatmap_text")
+      output$downregHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, flag_plot_bin = FALSE)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      # downregulated binarized heatmap
+      show(id="CGdownreg_bheatmap_text")
+      output$downregbinHeatmap <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down)}, 
+        width = 500, 
+        height = 500
+      )
+
+      # clustering genes table output
+      # show(id="CG_table_text")
+      # output$CG_table <- renderDataTable(
+      #   {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
+      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      # )
+
+
+    }
+  )
+
+  ################################ GENE CONNECTIVITY ######################################
+
+  observeEvent(
+    {input$runGCDE},
+    {
+      
+      sub_net <- sn$sub_nets_DE$sub_net
+      node_degrees <- sn$sub_nets_DE$node_degrees  
+      medK <- as.numeric(sn$sub_nets_DE$median)
+      
+
+      # density - upreg
+      show(id="GCdensityG_upreg_text")
+      output$GCdensityGupreg <- renderPlot(
+        {plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
+                    node_degrees$up[,2]/node_degrees$n_genes_up, 
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram - upreg 
+      show(id="GChistogramG_upreg_text")
+      output$GChistogramGupreg <- renderPlot(
+        {plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
+                    node_degrees$up[,2]/node_degrees$n_genes_up, 
+                    xybreaks = input$xybreaks_DE,
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density by subsets - upreg 
+      show(id="GCdensitySubsetG_upreg_text")
+      output$GCdensitySubsetGupreg <- renderPlot(
+        {m <- match(clust_net_DE()$up$clusters$genes, rownames(sub_net$up))
+         plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$up[m,2]/node_degrees$n_genes_up, 
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net_DE()$up$clusters, flag = "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram by subsets - upreg 
+      show(id="GChistogramSubsetG_upreg_text")
+      output$GChistogramSubsetGupreg <- renderPlot(
+        {m <- match(clust_net_DE()$up$clusters$genes, rownames(sub_net$up))
+         plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$up[m,2]/node_degrees$n_genes_up, 
+                      xybreaks = input$xybreaks_DE,
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net_DE()$up$clusters, flag = "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density - downreg
+      show(id="GCdensityG_downreg_text")
+      output$GCdensityGdownreg <- renderPlot(
+        {plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
+                    node_degrees$down[,2]/node_degrees$n_genes_down, 
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram - downreg 
+      show(id="GChistogramG_downreg_text")
+      output$GChistogramGdownreg <- renderPlot(
+        {plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
+                    node_degrees$down[,2]/node_degrees$n_genes_down, 
+                    xybreaks = input$xybreaks_DE,
+                    xlab="Global node degree", 
+                    ylab="Local node degree", flag= "hist")},
+        width = 500,
+        height = 500
+      )
+
+      # density by subsets - downreg 
+      show(id="GCdensitySubsetG_downreg_text")
+      output$GCdensitySubsetGdownreg <- renderPlot(
+        {m <- match(clust_net_DE()$down$clusters$genes, rownames(sub_net$down))
+         plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$down[m,2]/node_degrees$n_genes_down, 
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net_DE()$down$clusters, flag = "density")},
+        width = 500,
+        height = 500
+      )
+
+      # histogram by subsets - downreg 
+      show(id="GChistogramSubsetG_downreg_text")
+      output$GChistogramSubsetGdownreg <- renderPlot(
+        {m <- match(clust_net_DE()$down$clusters$genes, rownames(sub_net$down))
+         plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
+                      node_degrees$down[m,2]/node_degrees$n_genes_down, 
+                      xybreaks = input$xybreaks_DE,
+                      xlab="Global node degree", 
+                      ylab="Local node degree", 
+                      clusters = clust_net_DE()$down$clusters, flag = "hist")},
+        width = 500,
+        height = 500
+      )
+
+    }
+  )
+
+  ################################ FUNCTIONAL OUTLIERS ######################################
+  observeEvent(
+    {input$runFODE},
+    {
+
+      sub_net <- sn$sub_nets_DE$sub_net
+      node_degrees <- sn$sub_nets_DE$node_degrees  
+      medK <- as.numeric(sn$sub_nets_DE$median)
+
+      filt_min <- input$filtmin
+
+      show(id="FOheatmap_upreg_text")
+      output$FOheatmap_upreg <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, filt = TRUE, flag_plot_bin = FALSE)}, 
+        width = 500,
+        height = 500 
+      )
+
+      show(id="FOnetwork_upreg_text")
+      output$FOnetwork_upreg <- renderPlot(
+        {plot_network(1-sub_net$up, clust_net_DE()$up, 1 - medK)}, 
+        width = 500, 
+        height = 500
+      )
+
+      show(id="FOheatmap_downreg_text")
+      output$FOheatmap_downreg <- renderPlot(
+        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE)}, 
+        width = 500, 
+        height = 500 
+      )
+
+      show(id="FOnetwork_downreg_text")
+      output$FOnetwork_downreg <- renderPlot(
+        {plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK)}, 
+        width = 500, 
+        height = 500
+      )
+
+      # # genes in module table output
+      # show(id="genes_not_keep_table_text")
+      # output$genes_not_keep_table <- renderDataTable(
+      #   { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
+      #     clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+      #     genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
+      #     EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      # )
+
+
+      # # functional outliers table output
+      # show(id="genes_keep_table_text")
+      # output$genes_keep_table <- renderDataTable(
+      #   { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
+      #     clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+      #     genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
+      #     EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      # )
+      
+    }
+  )
+  
+
+  ##########################################################################################
+  #                                                                                        #
+  #                                  ASSESS GENE LIST                                      #
+  #                                                                                        #
+  ##########################################################################################
 
   # reactive converts the upload file into a reactive expression known as data
   DEData <- reactive({
@@ -407,16 +727,20 @@ server <- function(input, output, session) {
     tableOutput("DEFileContent")
   })
 
-  observeEvent(input$generate_subnet, {
-    if (input$gene_list_selection == "Use DE results") { 
-        # subnetwork from DE results 
-        sn$sub_nets <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
-        updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Upregulated Network", "Upregulated Heatmap", "Upregulated Binarized Heatmap", "Downregulated Network", "Downregulated Heatmap", "Downregulated Binarized Heatmap"))
-        
+  observeEvent(input$gene_list_selection, {
+    if (input$gene_list_selection == "Upload Gene List") {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
+    } else {
+      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
+    }
+  })
 
-    } else { 
-      # subnetwork from Gene List 
-      updateAwesomeCheckboxGroup(session, inputId="clusterPlotOptions", choices=c("Network", "Heatmap", "Binarized Heatmap"))
+  observeEvent(input$generate_subnet, {
+    gene_list <- NULL
+    if (is.null(input$gene_list_selection)) {
+      shinyalert(title = "Invalid Input", text = "Please choose a gene list method", type = "error")
+    } else {
+      # GENERATE GENE LIST
       if (input$gene_list_selection == "Generate Gene List") {
 
         if (str_detect(input$chooseChrome, "chr[XY]") == FALSE && str_detect(input$chooseChrome, "chr[0-9]") == FALSE) {
@@ -430,6 +754,7 @@ server <- function(input, output, session) {
 
           } else {
             gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
+            print(gene_list)
           }
 
         } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
@@ -440,62 +765,68 @@ server <- function(input, output, session) {
           gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
 
         }
-        
+          
       } else {
-        gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
-      }
+        # Invalid Input - user hasn't uploaded file
+        if (is.null(input$DEFile)) {
+          shinyalert(title = "Invalid Input", text = "Please upload a gene list file", type = "error")
+        } else {
+          gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
+        }
 
+      }
+      #Valid Input
       if (!is.null(gene_list)) { 
         sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
+        show(id = "CG_dropdown")
+        hide(id = "CG_error")
+        show(id = "GC_dropdown")
+        hide(id = "GC_error")
+        show(id = "FO_dropdown")
+        hide(id = "FO_error")
+        # Clear data
+        output$network <- NULL
+        output$heatmap <- NULL
+        output$Bheatmap <- NULL
+        output$CG_table <- NULL
+        output$GCdensityG <- NULL
+        output$GChistogramG <- NULL
+        output$GCdensitySubsetG<- NULL
+        output$GChistogramSubsetG <- NULL
+        output$FO_heatmap <- NULL
+        output$FO_network <- NULL
+        output$genes_not_keep_table <- NULL
+        output$genes_keep_table <- NULL
+        # Reset Checkboxes
+        updateAwesomeCheckboxGroup(
+          inputId = "clusterPlotOptions_genelist",
+          choices = c("Network", "Heatmap", "Binarized Heatmap"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "GCPlotOptions_genelist",
+          choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "FOPlotOptions_genelist",
+          choices = c("Network", "Heatmap"),
+          status = ""
+        )
+        updateAwesomeCheckboxGroup(
+          inputId = "FO_table_options",
+          choices = c("Functional Outliers", "Genes in Module"),
+          status = ""
+        )
       } 
     }
   })
-  
-  observeEvent(input$gene_list_selection, {
-    if (input$gene_list_selection == "Upload Gene List") {
-      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "File")
-    } else {
-      updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
-    }
-  })
 
-
-
-
-
-  
-
-
-
-  # Add the Run buttons 
   observeEvent(
-    input$generate_subnet,
-    {
-      # cluster genes
-      show(id = "CG_dropdown")
-      show(id = "run")
-      hide(id = "CG_error")
-
-      # gene connectivity
-      show(id = "GC_dropdown")
-      show(id = "runGC")
-      hide(id = "GC_error")
-
-      # functional outliers
-      show(id = "FO_dropdown")
-      show(id = "runFO")
-      hide(id = "FO_error")
-      if (input$gene_list_selection == "Generate Gene List") {
-        updateSliderInput(session, inputId = "xybreaks", min = 10, max = 150, value = input$chooseGeneNo, step = 10)
-      }
-      
-
-    }
+    input$generate_subnet, 
+    {output$subnetwork <- renderTable(sn$sub_nets)}
   )
 
-
-
-  # clust_net
   clust_net <- reactive({
 
     sub_net <- sn$sub_nets$sub_net
@@ -503,37 +834,11 @@ server <- function(input, output, session) {
     medK <- as.numeric(sn$sub_nets$median)
 
     clust_net <- list() 
-    if (input$gene_list_selection == "Use DE results") { 
-      # For DE data 
-      deg_sig <- sn$sub_nets$deg_sig
-      fc_sig  <- sn$sub_nets$fc_sig
-      clust_net[["down"]]  <- cluster_coexp(sub_net$down, medK = medK, flag_plot = FALSE)
-      clust_net[["up"]]  <- cluster_coexp( sub_net$up, medK = medK, flag_plot = FALSE)
-
-    } else { 
-      # For gene list 
-      clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
-    }
+    clust_net[["genes"]] <- cluster_coexp(sub_net$genes, medK = medK, flag_plot = FALSE)
+    
     return(clust_net)
+
   })
-  
-  
-  # Output of subnetwork table
-  observeEvent(
-    input$generate_subnet, 
-    {output$subnetwork <- renderTable(sn$sub_nets)}
-  )
-
-  # output$subnetwork <- renderTable({
-  #   sub_nets()
-  # })
-  
-  
-
-
-
-
-
 
   ##################### CLUSTER GENES #####################
 
@@ -570,45 +875,6 @@ server <- function(input, output, session) {
         height = 500
       )
 
-      # upregulated network 
-      output$upregNetwork <- renderPlot(
-        {plot_network(sub_net$up, clust_net()$up, medK)}, 
-        width = 500, 
-        height = 500 
-      )
-
-      # upregulated heatmap 
-      output$upregHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$up, clust_net()$up, flag_plot_bin = FALSE)}, 
-        width = 500,
-        height = 500
-      )
-
-      # upregulated binarized heatmap 
-      output$upregbinHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$up, clust_net()$up)}, 
-        width = 500, 
-        height = 500
-      )
-
-      output$downregNetwork <- renderPlot(
-        {plot_network(sub_net$down, clust_net()$down, medK)},
-        width = 500, 
-        height = 500
-      )
-
-      output$downregHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$down, clust_net()$down, flag_plot_bin = FALSE)}, 
-        width = 500, 
-        height = 500 
-      )
-
-      output$downregbinHeatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$down, clust_net()$down)}, 
-        width = 500, 
-        height = 500
-      )
-
       # clustering genes table output
       show(id="CG_table_text")
       output$CG_table <- renderDataTable(
@@ -616,10 +882,8 @@ server <- function(input, output, session) {
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
-
     }
   )
-
 
 
   ##################### GENE CONNECTIVITY #####################
@@ -632,7 +896,6 @@ server <- function(input, output, session) {
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
       m <- match(clust_net()$genes$clusters$genes, rownames(sub_net$genes))
-
 
       # density output
       show(id="GCdensityG_text")
@@ -684,7 +947,6 @@ server <- function(input, output, session) {
         height = 500
       )
 
-
     }
   )
 
@@ -699,13 +961,12 @@ server <- function(input, output, session) {
       node_degrees <- sn$sub_nets$node_degrees  
       medK <- as.numeric(sn$sub_nets$median)
 
-      sub_net <- sn$sub_nets$sub_net
       filt_min <- input$filtmin
+
       clust_size <- plyr::count(clust_net()$genes$clusters$labels)
       clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
       genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
-      medK <- as.numeric(sn$sub_nets$median)
-
+     
 
       # heatmap output
       show(id="FO_heatmap_text")
@@ -750,13 +1011,25 @@ server <- function(input, output, session) {
     print("Please upload/generate a gene list in NETWORK OPTIONS")
   })
 
+  output$CG_error_DE <- renderText({
+    print("Please upload/use DE Data in NETWORK OPTIONS")
+  })
+
   output$GC_error <- renderText({
     print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
 
+  output$GC_error_DE <- renderText({
+    print("Please upload/use DE Data in NETWORK OPTIONS")
+  })
+
   output$FO_error <- renderText({
     print("Please upload/generate a gene list in NETWORK OPTIONS")
   }) 
+
+  output$FO_error_DE <- renderText({
+    print("Please upload/use DE Data in NETWORK OPTIONS")
+  })
 
 }
 
