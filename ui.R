@@ -870,6 +870,24 @@ ui <- fluidPage(
                     ), 
 
                   ), 
+
+                  dropdown(
+                      inputId = "CG_download_dropdown",
+                      style = "jelly", icon = "DOWNLOAD",
+                      status = "primary", width = "300px", size = "sm", up = TRUE,
+
+
+                      selectInput(
+                        inputId = "CG_download_format",
+                        label= tags$h6("Choose Format"),
+                        choices = c(".png", ".pdf", ".Rdata"),
+                        selected = ".png",
+                        width = "600px",
+                      ),
+
+                      # run button
+                      downloadButton("downloadCG_genelist", label = "Download",),
+                    ),  
                 ), 
 
                 tabPanel(

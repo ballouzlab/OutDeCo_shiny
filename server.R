@@ -851,8 +851,9 @@ server <- function(input, output, session) {
 
       # network output
       show(id="CG_network_text")
+      CG_network <- function(){plot_network(sub_net$genes, clust_net()$genes, medK)}
       output$network <- renderPlot(
-        {plot_network(sub_net$genes, clust_net()$genes, medK)},
+        {CG_network()},
         width = 500,
         height = 500
       )
@@ -860,8 +861,9 @@ server <- function(input, output, session) {
 
       # heatmap output
       show(id="CG_heatmap_text")
+      CG_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)}
       output$heatmap <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)},
+        {CG_heatmap()},
         width = 500,
         height = 500
       )
@@ -882,8 +884,52 @@ server <- function(input, output, session) {
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
+      output$downloadCG_genelist <- downloadHandler(
+        contentType = "image/png",
+        filename = function() {
+          paste("ClusteredNetwork", ".png")
+        },
+        content = function(file) {
+          png(file, width=500, height=500)
+          CG_network()
+          dev.off()
+        }
+      )
+
+      output$downloadCG_genelist <- downloadHandler(
+        contentType = "image/png",
+        filename = function() {
+          paste("ClusteredHeatmap", ".png")
+        },
+        content = function(file) {
+          png(file, width=500, height=500)
+          CG_heatmap()
+          dev.off()
+        }
+      )
     }
   )
+
+  #Download Plots
+  
+
+
+ 
+   
+
+    
+  
+
+
+
+  
+  #Download Tables
+    # filename = function() {
+    #   paste("data-", Sys.Date(), ".csv", sep="")
+    # },
+    # content = function(file) {
+    #   write.csv(data, file)
+    # }
 
 
   ##################### GENE CONNECTIVITY #####################
