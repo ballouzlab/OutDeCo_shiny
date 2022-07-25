@@ -287,6 +287,14 @@ ui <- fluidPage(
                 # network selection
                 uiOutput("select.folder"),
 
+                # occr network selection
+                radioButtons(
+                  inputId = "is_occr",
+                  label = "Use occr network?",
+                  choices = c("Yes", "No"),
+                  selected = "No"
+                ),
+
                 # gene list selection
                 radioButtons(
                   inputId = "DE_data_selection",
@@ -294,7 +302,7 @@ ui <- fluidPage(
                   choices = c("Use DE Results"),
                   selected = "Use DE Results"
                 ),
-                
+
                 # generate subnet button
                 actionButton("generate_subnet_DE", "Generate Subnetwork",),
       
@@ -700,12 +708,7 @@ ui <- fluidPage(
 
                 # network selection
                 tags$h4("Network Selection"),
-                selectInput(
-                  inputId = "network_type",
-                  label=NULL,
-                  choices = c("Blood", "Brain", "Generic"),
-                  selected = "Generic"
-                ),
+                uiOutput("select.folder_gene_list"),
 
                 # gene list selection
                 radioButtons(
@@ -738,14 +741,6 @@ ui <- fluidPage(
                     inputId = "DEFile", 
                     label = "Choose Gene List File",
                     accept = c(".csv", ".tsv", ".txt")
-                  ),
-                  # div(style = "margin-top: -25px"),
-                  # select delimiter (default is nothing until file is selected and handled in server side)
-                  radioButtons(
-                    inputId = 'sepButton', 
-                    label = 'Delimiter Selector', 
-                    choices = c(Default=''), 
-                    selected = ''
                   ),
                 ),
 

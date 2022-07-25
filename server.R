@@ -420,7 +420,6 @@ server <- function(input, output, session) {
   network_path <- reactive({
     attachDir <- paste0("../networks/", network_type())
     path <- paste0(attachDir, "/")
-    print(path)
     return(path)
   }) 
 
@@ -428,8 +427,15 @@ server <- function(input, output, session) {
     if (is.null(de$deg_output)) {
       shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
       updateTabsetPanel(session, inputId="navpage", selected="Run DE")
-    } else {
-      sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
+    } 
+    else {
+      # is_occr checker
+      if (input$is_occr == "Yes") {
+        sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
+      }
+      else {
+        sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
+      }
       show(id = "CG_dropdown_DE")
       hide(id = "CG_error_DE")
       show(id = "GC_dropdown_DE")
@@ -757,6 +763,27 @@ server <- function(input, output, session) {
     }
   })
 
+  # network upload UI output
+  output$select.folder_gene_list <-
+    renderUI(expr = selectInput(inputId = 'folder.name_gene_list',
+                                label = 'Network Name',
+                                choices = list.dirs(path = "../networks",
+                                                    full.names = FALSE,
+                                                    recursive = FALSE)))
+
+  # network upload select network
+  network_type_gene_list <- reactive({
+    if (!is.null(input$folder.name_gene_list)) {
+      return(input$folder.name_gene_list)
+    }
+  })
+
+  network_path_gene_list <- reactive({
+    attachDir <- paste0("../networks/", network_type_gene_list())
+    path <- paste0(attachDir, "/")
+    return(path)
+  }) 
+
   observeEvent(input$generate_subnet, {
     gene_list <- NULL
     if (is.null(input$gene_list_selection)) {
@@ -799,7 +826,7 @@ server <- function(input, output, session) {
       }
       #Valid Input
       if (!is.null(gene_list)) { 
-        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(input$network_type), dir="../networks/")
+        sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
         show(id = "CG_dropdown")
         hide(id = "CG_error")
         show(id = "GC_dropdown")
