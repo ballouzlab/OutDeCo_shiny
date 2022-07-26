@@ -1050,7 +1050,7 @@ server <- function(input, output, session) {
           paste("plot_scatter_density_genes", input$download_format)
         },
         content = function(file) {
-          if (input$dowload_format == ".png") {
+          if (input$download_format == ".png") {
             png(file, width=1000, height=1000)
           } else if (input$download_format == ".pdf") {
             pdf(file)
@@ -1099,8 +1099,8 @@ server <- function(input, output, session) {
             png(file, width=1000, height=1000)
           } else if (input$download_format == ".pdf") {
             pdf(file)
-          }
-          GC_histogramSubset()
+          } GC
+          GC_histogramSubsetG()
           dev.off()
         }
       )
@@ -1154,6 +1154,38 @@ server <- function(input, output, session) {
       show(id="genes_keep_table_text")
       output$genes_keep_table <- renderDataTable(
         {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+      )
+
+     #------------------ DOWNLOAD ----------------------#
+    #Download plots    
+      output$FO_network_download <- downloadHandler(
+        filename = function() {
+          paste("plot_scatter_density_genes", input$download_format)
+        },
+        content = function(file) {
+          if (input$download_format == ".png") {
+            png(file, width=1000, height=1000)
+          } else if (input$download_format == ".pdf") {
+            pdf(file)
+          }
+          FO_network()
+          dev.off()
+        }
+      )
+
+      output$FO_heatmap_download <- downloadHandler(
+        filename = function() {
+          paste("plot_scatter_hist_genes", input$download_format)
+        },
+        content = function(file) {
+          if (input$download_format == ".png") {
+            png(file, width=1000, height=1000)
+          } else if (input$download_format == ".pdf") {
+            pdf(file)
+          }
+          FO_heatmap()
+          dev.off()
+        }
       )
       
     }

@@ -867,7 +867,7 @@ ui <- fluidPage(
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
 
-                          div(style="margin-left: 500px;", downloadLink("CG_network_download", label = "Download", class = "download_style")),
+                          div(style="margin-left: 450px;", downloadLink("CG_network_download", label = "Download", class = "download_style")),
                           
                         ),
                         
@@ -877,7 +877,7 @@ ui <- fluidPage(
                           h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
                           br(),
                           plotOutput(outputId = "heatmap", height = "500px"),
-                          div(style="margin-left: 500px;", downloadLink("CG_heatmap_download", label = "Download", class = "download_style")),
+                          div(style="margin-left: 450px;", downloadLink("CG_heatmap_download", label = "Download", class = "download_style")),
                         ),
 
                         # binarized heatmap
@@ -886,7 +886,7 @@ ui <- fluidPage(
                           h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
-                          div(style="margin-left: 500px;", downloadLink("CG_bheatmap_download", label = "Download", class = "download_style")),
+                          div(style="margin-left: 450px;", downloadLink("CG_bheatmap_download", label = "Download", class = "download_style")),
                         ),
 
 
@@ -964,7 +964,7 @@ ui <- fluidPage(
                       h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
                       br(),
                       plotOutput(outputId = "GCdensityG", height = "500px",),
-                      div(style="margin-left: 500px;", downloadLink("GC_density_download", label = "Download", class = "download_style")),
+                      div(style="margin-left: 450px;", downloadLink("GC_density_download", label = "Download", class = "download_style")),
                       br(),
                     ),
 
@@ -975,7 +975,7 @@ ui <- fluidPage(
                       h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
                       br(),
                       plotOutput(outputId = "GChistogramG", height = "500px",),
-                      div(style="margin-left: 500px;", downloadLink("GC_histogram_download", label = "Download", class = "download_style")),
+                      div(style="margin-left: 450px;", downloadLink("GC_histogram_download", label = "Download", class = "download_style")),
                       br(),
                     ),
 
@@ -986,7 +986,7 @@ ui <- fluidPage(
                       h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
-                      div(style="margin-left: 500px;", downloadLink("GC_densitySubset_download", label = "Download", class = "download_style")),
+                      div(style="margin-left: 450px;", downloadLink("GC_densitySubset_download", label = "Download", class = "download_style")),
                       br(),
                     ),
 
@@ -997,7 +997,7 @@ ui <- fluidPage(
                       h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
-                      div(style="margin-left: 500px;", downloadLink("GC_histogramSubset_download", label = "Download", class = "download_style")),
+                      div(style="margin-left: 450px;", downloadLink("GC_histogramSubset_download", label = "Download", class = "download_style")),
                       br(),
                     ),
 
@@ -1067,7 +1067,7 @@ ui <- fluidPage(
                         condition = "$.inArray('Network', input.FOPlotOptions_genelist) > -1", 
                         h5(id="FO_network_text", "Network"), 
                         plotOutput(outputId = "FO_network", height = "500px"),
-                        div(style="margin-left: 500px;", downloadLink("FO_network_download", label = "Download", class = "download_style")),
+                        div(style="margin-left: 450px;", downloadLink("FO_network_download", label = "Download", class = "download_style")),
                       ),
 
                       # network
@@ -1075,7 +1075,7 @@ ui <- fluidPage(
                         condition = "$.inArray('Heatmap', input.FOPlotOptions_genelist) > -1", 
                         h5(id="FO_heatmap_text", "Heatmap"), 
                         plotOutput(outputId = "FO_heatmap", height = "500px"),
-                        div(style="margin-left: 500px;", downloadLink("FO_heatmap_download", label = "Download", class = "download_style")),
+                        div(style="margin-left: 450px;", downloadLink("FO_heatmap_download", label = "Download", class = "download_style")),
                       ),
 
                       
