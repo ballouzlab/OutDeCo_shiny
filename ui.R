@@ -814,13 +814,7 @@ ui <- fluidPage(
                       # run button
                       actionButton(inputId = "run", label = "Run",),
 
-                      selectInput(
-                            inputId = "CG_download_format",
-                            label= tags$h6("Choose Download Format"),
-                            choices = c(".png", ".pdf", ".Rdata"),
-                            selected = ".png",
-                            width = "600px",
-                          ),
+                    
                     ),  
 
                     # error message
@@ -845,7 +839,7 @@ ui <- fluidPage(
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
 
-                          div(style="position:relative; left:calc(80%);", downloadLink("CG_network_download", label = "Download", class = "test")),
+                          div(style="margin-left: 500px;", downloadLink("CG_network_download", label = "Download", class = "test")),
                           
                         ),
                         
@@ -870,7 +864,7 @@ ui <- fluidPage(
 
                       
                       ),
-
+                      
                       # tables tab
                       tabPanel(
                         br(),
@@ -886,24 +880,6 @@ ui <- fluidPage(
                           )
                         ),
 
-                        dropdown(
-                          inputId = "CG_download_table_dropdown",
-                          style = "jelly", icon = "DOWNLOAD",
-                          status = "primary", width = "300px", size = "sm", up = TRUE,
-
-
-                          selectInput(
-                            inputId = "CG_download_table_format",
-                            label= tags$h6("Choose Format"),
-                            choices = c(".csv", ".tsv", ".txt"),
-                            selected = ".png",
-                            width = "600px",
-                          ),
-
-                          # run button
-                          
-
-                          ),  
                       ),
                       
                     ), 
@@ -960,6 +936,7 @@ ui <- fluidPage(
                       h5(id="GCdensityG_text", "Density Plot of Gene Connectivity"), 
                       br(),
                       plotOutput(outputId = "GCdensityG", height = "500px",),
+                      downloadLink("GC_density_download", label = "Download", class = "test"),
                       br(),
                     ),
 
@@ -970,6 +947,7 @@ ui <- fluidPage(
                       h5(id="GChistogramG_text", "Histogram of Gene Connectivity"),
                       br(),
                       plotOutput(outputId = "GChistogramG", height = "500px",),
+                      downloadLink("GC_histogram_download", label = "Download", class = "test"),
                       br(),
                     ),
 
@@ -980,6 +958,7 @@ ui <- fluidPage(
                       h5(id="GCdensitySubsetG_text", "Density plot of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GCdensitySubsetG", height = "500px",),
+                      downloadLink("GC_densitySubset_download", label = "Download", class = "test"),
                       br(),
                     ),
 
@@ -990,6 +969,7 @@ ui <- fluidPage(
                       h5(id="GChistogramSubsetG_text", "Histogram of Gene Connectivity subset by their clusters"), 
                       br(),
                       plotOutput(outputId = "GChistogramSubsetG", height = "500px",),
+                      downloadLink("GC_histogramSubset_download", label = "Download", class = "test"),
                       br(),
                     ),
 
@@ -1115,7 +1095,57 @@ ui <- fluidPage(
                 ),
 
               ),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              br(),
+              
+              
+                        dropdown(
+                          inputId = "download_dropdown",
+                          style = "minimal", icon = "DOWNLOAD OPTIONS",
+                          status = "primary", width = "300px", size = "sm", up = TRUE,
+
+
+                          selectInput(
+                            inputId = "download_format",
+                            label= tags$h6("Choose Plot Download Format"),
+                            choices = c(".png", ".pdf", ".Rdata"),
+                            selected = ".png",
+                            width = "600px",
+                          ),
+                          selectInput(
+                            inputId = "download_table_format",
+                            label= tags$h6("Choose Table Download Format"),
+                            choices = c(".csv", ".tsv", ".txt"),
+                            selected = ".png",
+                            width = "600px",
+                          ),
+
+                          # run button
+                          
+
+                          ),  
+              br(),
+
 
             ),
+            
+
+            
   )
 )
