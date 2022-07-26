@@ -287,6 +287,7 @@ ui <- fluidPage(
               dropdown(
 
                 # network selection
+                tags$h4("Network Selection"),
                 uiOutput("select.folder"),
 
                 # occr network selection
