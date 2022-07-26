@@ -712,7 +712,7 @@ ui <- fluidPage(
 
                 # occr network selection
                 radioButtons(
-                  inputId = "is_occr_gene_list)",
+                  inputId = "is_occr_gene_list",
                   label = "Use occr network?",
                   choices = c("Yes", "No"),
                   selected = "No"
