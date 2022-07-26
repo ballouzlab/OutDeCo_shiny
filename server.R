@@ -859,6 +859,7 @@ server <- function(input, output, session) {
       )
 
 
+
       # heatmap output
       show(id="CG_heatmap_text")
       CG_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)}
@@ -873,64 +874,94 @@ server <- function(input, output, session) {
       show(id="CG_bheatmap_text")
       CG_bheatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)}
       output$Bheatmap <- renderPlot(
-        {CG_bheatmap},
+        {CG_bheatmap()},
         width = 500,
         height = 500
       )
 
+
       # clustering genes table output
       show(id="CG_table_text")
+      CG_table <- function(){{EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]}}
       output$CG_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
+        {CG_table()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
-
-      # output$downloadCG_genelist <- downloadHandler(
-      #   contentType = "image/png",
-      #   filename = function() {
-      #     paste("ClusteredNetwork", ".png")
-      #   },
-      #   content = function(file) {
-      #     png(file, width=500, height=500)
-      #     CG_network()
-      #     dev.off()
-      #   }
-      # )
-
     
-    }
-  )
-  https://stackoverflow.com/questions/62055419/how-to-download-multiple-plots-as-a-zip-file-in-r-shiny
-  mydata <- reactive(list(
 
-  ) # close list
-  ) # close reactive
-  nplots <- reactive(length(mydata()))
+    #------------------ DOWNLOAD ----------------------#
+    #Download plots    
+      output$CG_network_download <- downloadHandler(
+        filename = function() {
+          paste("clustered_network", input$CG_download_format)
+        },
+        content = function(file) {
+          if (input$CG_download_format == ".png") {
+            png(file, width=1000, height=1000)
+          } else if (input$CG_download_format == ".pdf") {
+            pdf(file)
+          }
+          CG_network()
+          dev.off()
+        }
+      )
+      output$CG_heatmap_download <- downloadHandler(
   
-  observeEvent(input$download, {
-    lapply(1:nplots(), function(i){
-      ggsave(paste0("yplot",i,".png"), plot(mydata()[[i]]))
-    })
-  }, ignoreInit = TRUE)
+        filename = function() {
+          paste("clustered_heatmap", input$CG_download_format)
+        },
+        content = function(file) {
+          if (input$CG_download_format == ".png") {
+            png(file, width=1000, height=1000)
+          } else if (input$CG_download_format == ".pdf") {
+            pdf(file)
+          }
+          CG_heatmap()
+          dev.off()
+        }
+      )
 
-  #Download Plots
-  observeEvent(
-    {input$downloadCG_genelist}, {
-
-      if (input$CG_download_format == ".pdf") {
-        pdf_plots = list(CG_network, CG_heatmap, CG_bheatmap)
-        pdf("Cluster.pdf")
-        pdf_plots
-        dev.off()
-      }
-      lapply(1:nplots, function(i){
-      ggsave(paste0("yplot",i,".png"), plot(mydata[[i]]))
-    })
+      output$CG_bheatmap_download <- downloadHandler(
     
+        filename = function() {
+          paste("clustered_binarized_heatmap", input$CG_download_format)
+        },
+        content = function(file) {
+          if (input$CG_download_format == ".png") {
+            png(file, width=500, height=500)
+          } else if (input$CG_download_format == ".pdf") {
+            pdf(file)
+          }
+          CG_bheatmap()
+          dev.off()
+        }
+      )
 
-
+    #Download Table
+    separator <- NULL
+    if (input$CG_download_table_format ==  ".csv") {
+      separator = ","
+    } else if (input$CG_download_table_format ==  ".tsv") {
+      separator = "\t"
+    } else if (input$CG_download_table_format ==  ".txt") {
+      separator = " "
     }
+    
+    output$CG_download_table_genelist <- downloadHandler(
+      filename = function() {
+        paste("data", input$CG_download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(CG_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
+      }
+      )
+    }
+    
   )
+
+
+ 
+ 
  
 
 

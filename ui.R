@@ -14,7 +14,9 @@ library(shinyjs)
 library(shinyalert)
 library(stringi)
 library(stringr)
-
+library(ggplot2)
+library(ggplotify)
+library(vroom)
 ui <- fluidPage(
   useShinyjs(),
   chooseSliderSkin("Flat",  color = "#3E3F3A"),
@@ -811,13 +813,25 @@ ui <- fluidPage(
 
                       # run button
                       actionButton(inputId = "run", label = "Run",),
+
+                      selectInput(
+                            inputId = "CG_download_format",
+                            label= tags$h6("Choose Download Format"),
+                            choices = c(".png", ".pdf", ".Rdata"),
+                            selected = ".png",
+                            width = "600px",
+                          ),
                     ),  
 
                     # error message
                     textOutput("CG_error"),
                     br(),
+
+                    tags$head(tags$style(" .test{color: #1D89FF;} .test{font-family: Poppins}")),
+
                     tabsetPanel(
 
+                      
                       # plots tab
                       tabPanel(
                         br(),
@@ -830,6 +844,9 @@ ui <- fluidPage(
                           h5(id="CG_network_text", "Network of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "network", height = "500px"),
+
+                          div(style="position:relative; left:calc(80%);", downloadLink("CG_network_download", label = "Download", class = "test")),
+                          
                         ),
                         
                         # heatmap
@@ -838,6 +855,7 @@ ui <- fluidPage(
                           h5(id="CG_heatmap_text", "Heatmap of Clustered Genes"),
                           br(),
                           plotOutput(outputId = "heatmap", height = "500px"),
+                          downloadLink("CG_heatmap_download", label = "Download", class = "test"),
                         ),
 
                         # binarized heatmap
@@ -846,7 +864,9 @@ ui <- fluidPage(
                           h5(id="CG_bheatmap_text", "Binarized Heatmap of Clustered Genes"), 
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
+                          downloadLink("CG_bheatmap_download", label = "Download", class = "test"),
                         ),
+
 
                       
                       ),
@@ -865,31 +885,32 @@ ui <- fluidPage(
                                   dataTableOutput("CG_table"),
                           )
                         ),
+
+                        dropdown(
+                          inputId = "CG_download_table_dropdown",
+                          style = "jelly", icon = "DOWNLOAD",
+                          status = "primary", width = "300px", size = "sm", up = TRUE,
+
+
+                          selectInput(
+                            inputId = "CG_download_table_format",
+                            label= tags$h6("Choose Format"),
+                            choices = c(".csv", ".tsv", ".txt"),
+                            selected = ".png",
+                            width = "600px",
+                          ),
+
+                          # run button
+                          
+
+                          ),  
                       ),
                       
                     ), 
 
                   ), 
 
-                  dropdown(
-                      inputId = "CG_download_dropdown",
-                      style = "jelly", icon = "DOWNLOAD",
-                      status = "primary", width = "300px", size = "sm", up = TRUE,
 
-
-                      selectInput(
-                        inputId = "CG_download_format",
-                        label= tags$h6("Choose Format"),
-                        choices = c(".png", ".pdf", ".Rdata"),
-                        selected = ".png",
-                        width = "600px",
-                      ),
-
-                      # run button
-                      #downloadButton("downloadCG_genelist", label = "Download",),
-                      actionButton("downloadCG_genelist", label = "Download"),
-                    
-                    ),  
                 ), 
 
                 tabPanel(
