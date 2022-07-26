@@ -32,15 +32,57 @@ ui <- fluidPage(
                   success = "#325D88"),
 
   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: #3E3F3A}")),
-  #navbarPage is top menu bar
-  navbarPage(title=NULL, id="navpage", collapsible = FALSE,
+  # Style for Download Button
+  tags$head(tags$style(" .download_style{color: #1D89FF;} .download_style{font-family: Poppins}")),
+  # Style for all font
+  tags$head(tags$style(HTML('
+        body, label, input, button, select { 
+          font-family: "Poppins"; 
+        }'))),
+  
+  #navbarPage is top menu bar  
+  sidebarLayout(position = "right",
+    
+    # Sidebar with a slider input
+    sidebarPanel(width = 2, well = FALSE, class = "sidebar_style",
+
+                 dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf", ".Rdata"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ),  
+    ),
+    
+  mainPanel(width=10,
+  navbarPage(title=NULL, id="navpage", collapsible = FALSE, 
+
 
             ##################### HOME TAB #####################
             tabPanel(
-              
               title="Home",
               icon = icon("home"),
-
+  
               navlistPanel(
                 id = "Header", selected = NULL, well = FALSE, fluid = TRUE, widths = c(3, 9),
 
@@ -864,32 +906,6 @@ ui <- fluidPage(
                 status = "primary", width = "300px", size = "sm",
 
                ),
-              dropdown(
-                tags$h4("Download Options"),
-                inputId = "download_dropdown",
-                style = "minimal", icon = "DOWNLOAD OPTIONS",
-                status = "primary", width = "300px", size = "sm",
-
-
-                selectInput(
-                  inputId = "download_format",
-                  label= tags$h6("Choose Plot Download Format"),
-                  choices = c(".png", ".pdf", ".Rdata"),
-                  selected = ".png",
-                  width = "600px",
-                ),
-                selectInput(
-                            inputId = "download_table_format",
-                            label= tags$h6("Choose Table Download Format"),
-                            choices = c(".csv", ".tsv", ".txt"),
-                            selected = ".png",
-                            width = "600px",
-                          ),
-
-                          # run button
-                          
-
-              ),  
 
 
               br(),
@@ -947,8 +963,6 @@ ui <- fluidPage(
                     textOutput("CG_error"),
                     br(),
 
-                    tags$head(tags$style(" .download_style{color: #1D89FF;} .download_style{font-family: Poppins}")),
-
                     tabsetPanel(
 
                       
@@ -1003,6 +1017,7 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table"),
+                                  downloadLink("table_genelist_download", label = "Download", class = "download_style"),
                           )
                         ),
 
@@ -1196,6 +1211,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table"),
+                                  downloadLink("genes_not_keep_table_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -1210,6 +1226,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table"),
+                                  downloadLink("genes_keep_table_table_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -1281,5 +1298,7 @@ ui <- fluidPage(
             
 
             
+  )
+  )
   )
 )

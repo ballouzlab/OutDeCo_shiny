@@ -77,7 +77,17 @@ server <- function(input, output, session) {
   hide(id="GSEA_up_heatmap_text")
   hide(id="GSEA_down_heatmap_text")
 
-
+  #Download Table Separator
+  observe({
+    if (input$download_table_format ==  ".csv") {
+      separator <<- ","
+    } else if (input$download_table_format ==  ".tsv") {
+      separator <<- "\t"
+    } else if (input$download_table_format ==  ".txt") {
+      separator <<- " "
+    }
+  })
+    
   ##########################################################################################
   #                                                                                        #
   #                                    RUN DE                                              #
@@ -365,8 +375,9 @@ server <- function(input, output, session) {
   observeEvent(input$assess_run_de, { 
     updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
     updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
+    DE_table <- function(){de$deg_output$degs}
     output$DE_table <- renderDataTable(
-        {de$deg_output$degs},
+        {DE_table()},
     )
   })
 
@@ -1303,7 +1314,7 @@ server <- function(input, output, session) {
       )
     
 
-    #------------------ DOWNLOAD ----------------------#
+    #------------------ DOWNLOAD CG ----------------------#
     #Download plots    
       output$CG_network_download <- downloadHandler(
         filename = function() {
@@ -1350,19 +1361,9 @@ server <- function(input, output, session) {
         }
       )
 
-    #Download Table
-    separator <- NULL
-    if (input$download_table_format ==  ".csv") {
-      separator = ","
-    } else if (input$download_table_format ==  ".tsv") {
-      separator = "\t"
-    } else if (input$download_table_format ==  ".txt") {
-      separator = " "
-    }
-    
-    output$download_table_genelist <- downloadHandler(
+    output$table_genelist_download <- downloadHandler(
       filename = function() {
-        paste("data", input$download_table_format, sep="")
+        paste("clustered", input$download_table_format, sep="")
       },
       content = function(file) {
         write.table(CG_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
@@ -1439,7 +1440,7 @@ server <- function(input, output, session) {
       )
 
     
-    #------------------ DOWNLOAD ----------------------#
+    #------------------ DOWNLOAD GC ----------------------#
     #Download plots    
       output$GC_density_download <- downloadHandler(
         filename = function() {
@@ -1541,18 +1542,20 @@ server <- function(input, output, session) {
 
       # genes in module table output
       show(id="genes_not_keep_table_text")
+      FO_genes_not_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
       output$genes_not_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+        {FO_genes_not_keep()},
       )
 
 
       # functional outliers table output
       show(id="genes_keep_table_text")
+      FO_genes_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
       output$genes_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
+        {FO_genes_keep()},
       )
 
-     #------------------ DOWNLOAD ----------------------#
+     #------------------ DOWNLOAD FO ----------------------#
     #Download plots    
       output$FO_network_download <- downloadHandler(
         filename = function() {
