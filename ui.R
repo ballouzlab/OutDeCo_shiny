@@ -770,7 +770,7 @@ ui <- fluidPage(
                 status = "primary", width = "300px", size = "sm",
 
                ),
-              div(style="margin-left: 1000px;",                 dropdown(
+              dropdown(
                 tags$h4("Download Options"),
                 inputId = "download_dropdown",
                 style = "minimal", icon = "DOWNLOAD OPTIONS",
@@ -795,7 +795,7 @@ ui <- fluidPage(
                           # run button
                           
 
-              ),  ),
+              ),  
 
 
                br(),
