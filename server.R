@@ -665,15 +665,17 @@ server <- function(input, output, session) {
       )
 
       show(id="FOheatmap_downreg_text")
+      FO_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE)}
       output$FOheatmap_downreg <- renderPlot(
-        {plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE)}, 
+        {FO_down_heatmap()}, 
         width = 500, 
         height = 500 
       )
 
       show(id="FOnetwork_downreg_text")
+      FO_down_network <- function(){plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK)}
       output$FOnetwork_downreg <- renderPlot(
-        {plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK)}, 
+        {FO_down_network()}, 
         width = 500, 
         height = 500
       )
@@ -909,12 +911,12 @@ server <- function(input, output, session) {
     #Download plots    
       output$CG_network_download <- downloadHandler(
         filename = function() {
-          paste("clustered_network", input$CG_download_format)
+          paste("clustered_network", input$download_format)
         },
         content = function(file) {
-          if (input$CG_download_format == ".png") {
+          if (input$download_format == ".png") {
             png(file, width=1000, height=1000)
-          } else if (input$CG_download_format == ".pdf") {
+          } else if (input$download_format == ".pdf") {
             pdf(file)
           }
           CG_network()
@@ -924,12 +926,12 @@ server <- function(input, output, session) {
       output$CG_heatmap_download <- downloadHandler(
   
         filename = function() {
-          paste("clustered_heatmap", input$CG_download_format)
+          paste("clustered_heatmap", input$download_format)
         },
         content = function(file) {
-          if (input$CG_download_format == ".png") {
+          if (input$download_format == ".png") {
             png(file, width=1000, height=1000)
-          } else if (input$CG_download_format == ".pdf") {
+          } else if (input$download_format == ".pdf") {
             pdf(file)
           }
           CG_heatmap()
@@ -939,12 +941,12 @@ server <- function(input, output, session) {
 
       output$CG_bheatmap_download <- downloadHandler(
         filename = function() {
-          paste("clustered_binarized_heatmap", input$CG_download_format)
+          paste("clustered_binarized_heatmap", input$download_format)
         },
         content = function(file) {
-          if (input$CG_download_format == ".png") {
+          if (input$download_format == ".png") {
             png(file, width=500, height=500)
-          } else if (input$CG_download_format == ".pdf") {
+          } else if (input$download_format == ".pdf") {
             pdf(file)
           }
           CG_bheatmap()
@@ -1048,7 +1050,7 @@ server <- function(input, output, session) {
           paste("plot_scatter_density_genes", input$download_format)
         },
         content = function(file) {
-          if (input$donwload_format == ".png") {
+          if (input$dowload_format == ".png") {
             png(file, width=1000, height=1000)
           } else if (input$download_format == ".pdf") {
             pdf(file)
@@ -1098,7 +1100,7 @@ server <- function(input, output, session) {
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
-          GC_densityG()
+          GC_histogramSubset()
           dev.off()
         }
       )
