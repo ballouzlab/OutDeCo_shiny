@@ -431,7 +431,28 @@ server <- function(input, output, session) {
     else {
       # is_occr checker
       if (input$is_occr == "Yes") {
-        sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
+        occr <- paste0(network_type(), ".occr")
+        err_genes <- paste0(occr, ".genes.h5")
+        err_median <- paste0(occr, ".med.h5")
+        err_net <- paste0(occr, ".net.h5")
+        genes <- paste0(network_path(), occr, ".genes.h5")
+        median <- paste0(network_path(), occr, ".med.h5")
+        net <- paste0(network_path(), occr, ".net.h5")
+        if (!file.exists(genes)) {
+          errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else if (!file.exists(median)) {
+          errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else if (!file.exists(net)) {
+          errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else {
+          sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
+        }
       }
       else {
         sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
@@ -826,6 +847,7 @@ server <- function(input, output, session) {
       }
       #Valid Input
       if (!is.null(gene_list)) { 
+        # add occr + file checker TODO:
         sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
         show(id = "CG_dropdown")
         hide(id = "CG_error")

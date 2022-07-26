@@ -710,6 +710,14 @@ ui <- fluidPage(
                 tags$h4("Network Selection"),
                 uiOutput("select.folder_gene_list"),
 
+                # occr network selection
+                radioButtons(
+                  inputId = "is_occr_gene_list)",
+                  label = "Use occr network?",
+                  choices = c("Yes", "No"),
+                  selected = "No"
+                ),
+
                 # gene list selection
                 radioButtons(
                   inputId = "gene_list_selection",
