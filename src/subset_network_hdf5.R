@@ -82,17 +82,12 @@ subset_network_hdf5 <- function(deg, network_type = "generic",
             }
       }
     #}
-
     deg <- deg[is.finite(deg$log2_fc) ,]
-
-
-
     m <- match(rownames(deg), genes)
     f_m <- !is.na(m)
     f_am <- m[f_m]
-
     deg_sub <- deg[f_m,]
-
+    # location of bug #TODO
     m_cpm <- log2(deg_sub[, 1])
     fc    <- deg_sub[, 2]
     padj  <- p.adjust(deg_sub[,3], method="fdr" )
@@ -101,7 +96,6 @@ subset_network_hdf5 <- function(deg, network_type = "generic",
     deg_sig <- list()
     fc_sig <- list()
     node_degrees <- list()
-
     if (method == "top") {
         fc_temp = fc
         fc_temp[ m_cpm <= log2(min_cpm)  ] = 0

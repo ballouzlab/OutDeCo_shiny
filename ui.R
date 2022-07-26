@@ -333,12 +333,12 @@ ui <- fluidPage(
                       title = "DE Data", 
                       dataTableOutput("DE_table"),
                     ),
+
+                    # subnetwork table of assess de
                     tabPanel(
                       title="Subnetwork", 
                       tableOutput("subnetwork_DE")
                     ),
-
-                   
                   ),
                 ),
 
@@ -426,12 +426,8 @@ ui <- fluidPage(
                           br(), 
                           plotOutput(outputId = "downregbinHeatmap", height = "500px"),    
                         ),
-
                       ),
-
-                      
                     )
-
                   )
                 ),
                 
@@ -780,10 +776,10 @@ ui <- fluidPage(
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
+
+                      # subnetwork table of assess gene list
                       tableOutput("subnetwork")
                     ),
-
-                   
                   ),
                 ),
 
@@ -842,8 +838,6 @@ ui <- fluidPage(
                           br(),
                           plotOutput(outputId = "Bheatmap", height = "500px"), 
                         ),
-
-                      
                       ),
 
                       # tables tab
@@ -861,9 +855,7 @@ ui <- fluidPage(
                           )
                         ),
                       ),
-                      
                     ), 
-
                   ), 
                 ), 
 
@@ -900,7 +892,6 @@ ui <- fluidPage(
 
                       # run button
                       actionButton(inputId = "runGC", label = "Run", ),
-
                     ),
 
 

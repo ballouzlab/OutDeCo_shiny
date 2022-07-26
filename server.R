@@ -488,7 +488,9 @@ server <- function(input, output, session) {
   })
 
   observeEvent(
-    input$generate_subnet_DE, 
+    input$generate_subnet_DE,
+
+    # assess DE subnet table output
     {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
   )
 
@@ -845,7 +847,6 @@ server <- function(input, output, session) {
 
           } else {
             gene_list <- sample( EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo,)
-            print(gene_list)
           }
 
         } else if (input$chooseGeneNo == "" || input$chooseGeneNo < 0) { 
@@ -891,10 +892,7 @@ server <- function(input, output, session) {
             shinyalert(title = "Missing network file", text = errorMess, type = "error")
           }
           else {
-            print(network_type_gene_list())
-            print(network_path_gene_list())
-            sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type_gene_list()), dir=network_path_gene_list())
-            print("testing")
+            sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
             show(id = "CG_dropdown")
             hide(id = "CG_error")
             show(id = "GC_dropdown")
@@ -938,50 +936,68 @@ server <- function(input, output, session) {
           }
         }
         else {
-          #TODO:
-          print("standarad")
           # standard network
-          sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
-          show(id = "CG_dropdown")
-          hide(id = "CG_error")
-          show(id = "GC_dropdown")
-          hide(id = "GC_error")
-          show(id = "FO_dropdown")
-          hide(id = "FO_error")
-          # Clear data
-          output$network <- NULL
-          output$heatmap <- NULL
-          output$Bheatmap <- NULL
-          output$CG_table <- NULL
-          output$GCdensityG <- NULL
-          output$GChistogramG <- NULL
-          output$GCdensitySubsetG<- NULL
-          output$GChistogramSubsetG <- NULL
-          output$FO_heatmap <- NULL
-          output$FO_network <- NULL
-          output$genes_not_keep_table <- NULL
-          output$genes_keep_table <- NULL
-          # Reset Checkboxes
-          updateAwesomeCheckboxGroup(
-            inputId = "clusterPlotOptions_genelist",
-            choices = c("Network", "Heatmap", "Binarized Heatmap"),
-            status = ""
-          )
-          updateAwesomeCheckboxGroup(
-            inputId = "GCPlotOptions_genelist",
-            choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
-            status = ""
-          )
-          updateAwesomeCheckboxGroup(
-            inputId = "FOPlotOptions_genelist",
-            choices = c("Network", "Heatmap"),
-            status = ""
-          )
-          updateAwesomeCheckboxGroup(
-            inputId = "FO_table_options",
-            choices = c("Functional Outliers", "Genes in Module"),
-            status = ""
-          )
+          err_genes <- paste0(network_type_gene_list(), ".genes.h5")
+          err_median <- paste0(network_type_gene_list(), ".med.h5")
+          err_net <- paste0(network_type_gene_list(), ".net.h5")
+          genes <- paste0(network_path_gene_list(), network_type_gene_list(), ".genes.h5")
+          median <- paste0(network_path_gene_list(), network_type_gene_list(), ".med.h5")
+          net <- paste0(network_path_gene_list(), network_type_gene_list(), ".net.h5")
+          if (!file.exists(genes)) {
+            errorMess <- paste("Please ensure", err_genes, "exists in", network_type_gene_list(), "folder")
+            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          }
+          else if (!file.exists(median)) {
+            errorMess <- paste("Please ensure", err_median, "exists in", network_type_gene_list(), "folder")
+            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          }
+          else if (!file.exists(net)) {
+            errorMess <- paste("Please ensure", err_net, "exists in", network_type_gene_list(), "folder")
+            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          }
+          else {
+            sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list(), flag_occr = FALSE)
+            show(id = "CG_dropdown")
+            hide(id = "CG_error")
+            show(id = "GC_dropdown")
+            hide(id = "GC_error")
+            show(id = "FO_dropdown")
+            hide(id = "FO_error")
+            # Clear data
+            output$network <- NULL
+            output$heatmap <- NULL
+            output$Bheatmap <- NULL
+            output$CG_table <- NULL
+            output$GCdensityG <- NULL
+            output$GChistogramG <- NULL
+            output$GCdensitySubsetG<- NULL
+            output$GChistogramSubsetG <- NULL
+            output$FO_heatmap <- NULL
+            output$FO_network <- NULL
+            output$genes_not_keep_table <- NULL
+            output$genes_keep_table <- NULL
+            # Reset Checkboxes
+            updateAwesomeCheckboxGroup(
+              inputId = "clusterPlotOptions_genelist",
+              choices = c("Network", "Heatmap", "Binarized Heatmap"),
+              status = ""
+            )
+            updateAwesomeCheckboxGroup(
+              inputId = "GCPlotOptions_genelist",
+              choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
+              status = ""
+            )
+            updateAwesomeCheckboxGroup(
+              inputId = "FOPlotOptions_genelist",
+              choices = c("Network", "Heatmap"),
+              status = ""
+            )
+            updateAwesomeCheckboxGroup(
+              inputId = "FO_table_options",
+              choices = c("Functional Outliers", "Genes in Module"),
+              status = ""
+            )
+          }
         }
       } 
     }
