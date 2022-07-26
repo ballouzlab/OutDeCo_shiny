@@ -455,7 +455,28 @@ server <- function(input, output, session) {
         }
       }
       else {
-        sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
+        # standard networks
+        err_genes <- paste0(network_type(), ".genes.h5")
+        err_median <- paste0(network_type(), ".med.h5")
+        err_net <- paste0(network_type(), ".net.h5")
+        genes <- paste0(network_path(), network_type(), ".genes.h5")
+        median <- paste0(network_path(), network_type(), ".med.h5")
+        net <- paste0(network_path(), network_type(), ".net.h5")
+        if (!file.exists(genes)) {
+          errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else if (!file.exists(median)) {
+          errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else if (!file.exists(net)) {
+          errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
+          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+        }
+        else {
+          sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
+        }
       }
       show(id = "CG_dropdown_DE")
       hide(id = "CG_error_DE")
