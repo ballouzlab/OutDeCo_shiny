@@ -1548,6 +1548,7 @@ server <- function(input, output, session) {
   }) 
 
   observeEvent(input$generate_subnet, {
+    success <- FALSE
     gene_list <- NULL
     # updateTabsetPanel()
     updateTabsetPanel(session, "assessGL_navList", selected = "View Files")
@@ -1615,51 +1616,9 @@ server <- function(input, output, session) {
           }
           else {
             sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
-            show(id = "CG_dropdown")
-            hide(id = "CG_error")
-            show(id = "GC_dropdown")
-            hide(id = "GC_error")
-            show(id = "FO_dropdown")
-            hide(id = "FO_error")
-            show(id = "GL_GSEA_dropdown")
-            hide(id = "GL_GSEA_error")
-            # Clear data
-            output$network <- NULL
-            output$heatmap <- NULL
-            output$Bheatmap <- NULL
-            output$CG_table <- NULL
-            output$GCdensityG <- NULL
-            output$GChistogramG <- NULL
-            output$GCdensitySubsetG<- NULL
-            output$GChistogramSubsetG <- NULL
-            output$FO_heatmap <- NULL
-            output$FO_network <- NULL
-            output$genes_not_keep_table <- NULL
-            output$genes_keep_table <- NULL
-            # Reset Checkboxes
-            updateAwesomeCheckboxGroup(
-              inputId = "clusterPlotOptions_genelist",
-              choices = c("Network", "Heatmap", "Binarized Heatmap"),
-              status = ""
-            )
-            updateAwesomeCheckboxGroup(
-              inputId = "GCPlotOptions_genelist",
-              choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"),
-              status = ""
-            )
-            updateAwesomeCheckboxGroup(
-              inputId = "FOPlotOptions_genelist",
-              choices = c("Network", "Heatmap"),
-              status = ""
-            )
-            updateAwesomeCheckboxGroup(
-              inputId = "FO_table_options",
-              choices = c("Functional Outliers", "Genes in Module"),
-              status = ""
-            )
+            success <- TRUE
           }
-        }
-        else {
+        } else {
           # standard network
           err_genes <- paste0(network_type_gene_list(), ".genes.h5")
           err_median <- paste0(network_type_gene_list(), ".med.h5")
@@ -1681,6 +1640,10 @@ server <- function(input, output, session) {
           }
           else {
             sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list(), flag_occr = FALSE)
+            success <- TRUE
+          }
+        }
+        if (success == TRUE) {
             show(id = "CG_dropdown")
             hide(id = "CG_error")
             show(id = "GC_dropdown")
@@ -1723,28 +1686,24 @@ server <- function(input, output, session) {
               choices = c("Functional Outliers", "Genes in Module"),
               status = ""
             )
-          }
+          
+          output$subnetwork <- renderTable(sn$sub_nets)
+
+          show(id="GL_subnet_download")
+          GL_subnet_table <- function(){sn$sub_nets}
+          output$GL_subnet_download <- downloadHandler(
+            filename = function() {
+              paste("gene_list_subnetwork", input$download_table_format, sep="")
+            },
+            content = function(file) {
+              write.table(GL_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+            }
+          )
         }
       } 
     }
   })
 
-  observeEvent(
-    input$generate_subnet, {
-      output$subnetwork <- renderTable(sn$sub_nets)
-      show(id="GL_subnet_download")
-      GL_subnet_table <- function(){sn$sub_nets}
-      output$GL_subnet_download <- downloadHandler(
-        filename = function() {
-          paste("gene_list_subnetwork", input$download_table_format, sep="")
-        },
-        content = function(file) {
-          write.table(GL_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
-        }
-        
-      )
-    }
-  )
 
   clust_net <- reactive({
 
