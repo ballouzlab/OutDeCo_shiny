@@ -771,7 +771,8 @@ ui <- fluidPage(
                         inputId = "GSEA_type",
                         label = tags$h4("GSEA Type"),
                         choices = c("Standard GSEA", "AUCs GSEA"),
-                        selected = ""
+                        selected = "",
+                        status = "",
                       ),
                       
                       # standard GSEA options

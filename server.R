@@ -325,7 +325,7 @@ server <- function(input, output, session) {
   observe({
     if (!is.null(input$labels_file) && !is.null(input$labels_file)) {
       show(id="DE_options")
-      show(id="runDE_error")
+      hide(id="runDE_error")
     }
   })
   
@@ -569,6 +569,7 @@ server <- function(input, output, session) {
   }) 
 
   observeEvent(input$generate_subnet_DE, {
+    success <- FALSE
     updateTabsetPanel(session, "assessDE_navList", selected = "View Files")
     updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
     if (input$DE_data_selection == "Use DE Results" && is.null(de$deg_output)) {
@@ -600,6 +601,7 @@ server <- function(input, output, session) {
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(DE(), tolower(network_type()), dir=network_path())
+          success <- TRUE
         }
       } else {
         # standard networks
@@ -623,6 +625,7 @@ server <- function(input, output, session) {
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(DE(), tolower(network_type()), dir=network_path(), flag_occr = FALSE)
+          success <- TRUE
         }
       }
       
@@ -650,15 +653,7 @@ server <- function(input, output, session) {
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
-          show(id = "CG_dropdown_DE")
-          hide(id = "CG_error_DE")
-          show(id = "GC_dropdown_DE")
-          hide(id = "GC_error_DE")
-          show(id = "FO_dropdown_DE")
-          hide(id = "FO_error_DE")
-          # GSEA
-          show(id = "DE_GSEA_dropdown")
-          hide(id = "DE_GSEA_error")
+          success <- TRUE
         }
       } else {
         # standard networks
@@ -682,18 +677,31 @@ server <- function(input, output, session) {
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
-          show(id = "CG_dropdown_DE")
-          hide(id = "CG_error_DE")
-          show(id = "GC_dropdown_DE")
-          hide(id = "GC_error_DE")
-          show(id = "FO_dropdown_DE")
-          hide(id = "FO_error_DE")
-          # GSEA
-          show(id = "DE_GSEA_dropdown")
-          hide(id = "DE_GSEA_error")
+          success <- TRUE
         }
+
+
       }
-    } 
+    }
+
+    if (success == TRUE) {
+      show(id = "CG_dropdown_DE")
+      hide(id = "CG_error_DE")
+      show(id = "GC_dropdown_DE")
+      hide(id = "GC_error_DE")
+      show(id = "FO_dropdown_DE")
+      hide(id = "FO_error_DE")
+      # GSEA
+      show(id = "DE_GSEA_dropdown")
+      hide(id = "DE_GSEA_error")
+      output$upregNetwork <- NULL
+      output$upregHeatmap <- NULL
+      output$upregbinHeatmap <- NULL
+      output$downregNetwork <- NULL
+      output$downregHeatmap <- NULL
+      output$downregbinHeatmap <- NULL
+    }
+
 
       
     
