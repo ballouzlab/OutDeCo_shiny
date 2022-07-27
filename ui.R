@@ -925,6 +925,7 @@ ui <- fluidPage(
               
               
               navlistPanel(
+                id = "assessGL_navList",
                 widths = c(3, 9), well = FALSE,
 
                 # VIEW FILES
@@ -1276,7 +1277,6 @@ ui <- fluidPage(
 
                     ),
                     
-                    br(),
 
                     # error message
                     textOutput("GL_GSEA_error"),

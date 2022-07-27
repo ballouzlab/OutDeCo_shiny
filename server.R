@@ -118,8 +118,6 @@ server <- function(input, output, session) {
   hide(id="GSEA_heatmap_download")
   
 
-  
-  show(id="GSEA_heatmap_download")
   #Download Table Separator
   observe({
     if (input$download_table_format ==  ".csv") {
@@ -1529,6 +1527,9 @@ server <- function(input, output, session) {
 
   observeEvent(input$generate_subnet, {
     gene_list <- NULL
+    # updateTabsetPanel()
+    updateTabsetPanel(session, "assessGL_navList", selected = "View Files")
+    updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
     if (is.null(input$gene_list_selection)) {
       shinyalert(title = "Invalid Input", text = "Please choose a gene list method", type = "error")
     } else {
@@ -2105,35 +2106,35 @@ server <- function(input, output, session) {
   ##################### ERROR MESSAGES #####################
 
   output$CG_error <- renderText({
-    print("Please upload/generate a gene list in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   })
 
   output$CG_error_DE <- renderText({
-    print("Please upload/use DE Data in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   })
 
   output$GC_error <- renderText({
-    print("Please upload/generate a gene list in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   }) 
 
   output$GC_error_DE <- renderText({
-    print("Please upload/use DE Data in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   })
 
   output$FO_error <- renderText({
-    print("Please upload/generate a gene list in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   }) 
 
   output$FO_error_DE <- renderText({
-    print("Please upload/use DE Data in NETWORK OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   })
 
   output$DE_GSEA_error <- renderText({
-    print("Please generate a subnetwork in OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   }) 
 
   output$GL_GSEA_error <- renderText({
-    print("Please generate a subnetwork in OPTIONS")
+    print("Please generate a subnetwork in NETWORK OPTIONS")
   }) 
 
 }
