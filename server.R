@@ -694,12 +694,39 @@ server <- function(input, output, session) {
       # GSEA
       show(id = "DE_GSEA_dropdown")
       hide(id = "DE_GSEA_error")
+
+      #Update Checkbox inputs
+      updateAwesomeCheckboxGroup(inputId = "clusterPlotOptions_upreg", choices = c("Network", "Heatmap", "Binarized Heatmap"),status = "")
+      updateAwesomeCheckboxGroup(inputId = "clusterPlotOptions_downreg", choices = c("Network", "Heatmap", "Binarized Heatmap"), status = "")
+      updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_upreg", choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
+      updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_downreg", choices =  c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
+      updateAwesomeCheckboxGroup(inputId = "FOPlotOptions_DE", choices = c("Upregulated Network", "Upregulated Heatmap", "Downregulated Network", "Downregulated Heatmap"), status = ""),
+      updateAwesomeCheckboxGroup(inputId = "GSEA_type",choices = c("Standard GSEA", "AUCs GSEA"),status = "",)
+      updateAwesomeCheckboxGroup(inputId = "GSEA_std_PlotOptions",choices = c("Upregulated P-value Heatmap", "Downregulated P-value Heatmap"),status = "")
+      # Clear plots
       output$upregNetwork <- NULL
       output$upregHeatmap <- NULL
       output$upregbinHeatmap <- NULL
       output$downregNetwork <- NULL
       output$downregHeatmap <- NULL
       output$downregbinHeatmap <- NULL
+      output$GCdensityGupreg <- NULL
+      output$GChistogramGupreg <- NULL
+      output$GCdensitySubsetGupreg <- NULL
+      output$GChistogramSubsetGupreg <- NULL
+      output$GCdensityGdownreg <- NULL
+      output$GChistogramGdownreg <- NULL
+      output$GCdensitySubsetGdownreg <- NULL
+      output$GChistogramSubsetGdownreg <- NULL
+      output$FOnetwork_upreg <- NULL
+      output$FOheatmap_upreg <- NULL
+      output$FOnetwork_downreg <- NULL
+      output$FOheatmap_downreg <- NULL
+      output$GSEA_up_heatmap <- NULL
+      output$GSEA_down_heatmap <- NULL
+      output$GSEA_auc <- NULL
+
+
     }
 
 
