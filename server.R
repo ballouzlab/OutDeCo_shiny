@@ -1313,6 +1313,47 @@ server <- function(input, output, session) {
     print("Please generate a subnetwork in OPTIONS")
   }) 
 
+  # Gene List GSEA
+  observeEvent(
+    {input$GL_GSEA_run},
+    {
+      # heatmap
+      show(id = "GL_GSEA_heatmap_text")
+
+      data(go_voc)
+      gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
+      
+      if (input$GL_gene_list_type == "Gene Names") {
+        data(go_slim)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      } else {
+        data(go_slim_entrez)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim_entrez[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      }
+      
+      
+
+      
+      
+    }
+  )
+
 }
 
 

@@ -815,9 +815,14 @@ ui <- fluidPage(
                     label = "Choose Gene List File",
                     accept = c(".csv", ".tsv", ".txt")
                   ),
-                ),
 
-                
+                  radioButtons( # select gene list type
+                    inputId = 'GL_gene_list_type', 
+                    label = 'Gene List Type', 
+                    choices = c("Gene Names", "Entrez Id"), 
+                    selected = ''
+                  ),
+                ),
                 
                 # generate subnet button
                 actionButton("generate_subnet", "Generate Subnetwork",),
