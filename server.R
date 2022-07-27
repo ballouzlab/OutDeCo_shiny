@@ -422,7 +422,7 @@ server <- function(input, output, session) {
       },
       content = function(file) {
         if (input$download_format == ".png") {
-          png(file, width=1000, height=1000)
+          png(file, width=1500, height=1500)
         } else if (input$download_format == ".pdf") {
           pdf(file)
         }
@@ -437,7 +437,7 @@ server <- function(input, output, session) {
       },
       content = function(file) {
         if (input$download_format == ".png") {
-          png(file, width=1000, height=1000)
+          png(file, width=1500, height=1500)
         } else if (input$download_format == ".pdf") {
           pdf(file)
         }
@@ -859,7 +859,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -874,7 +874,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -889,7 +889,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -904,7 +904,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -919,7 +919,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -934,7 +934,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1080,7 +1080,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1095,7 +1095,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1110,7 +1110,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1125,7 +1125,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1140,7 +1140,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1155,7 +1155,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1170,7 +1170,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1185,7 +1185,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1278,7 +1278,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1292,7 +1292,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1306,7 +1306,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1320,7 +1320,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1406,7 +1406,7 @@ server <- function(input, output, session) {
       },
       content = function(file) {
         if (input$download_format == ".png") {
-          png(file, width=1000, height=1000)
+          png(file, width=1500, height=1500)
         } else if (input$download_format == ".pdf") {
           pdf(file)
         }
@@ -1420,7 +1420,7 @@ server <- function(input, output, session) {
       },
       content = function(file) {
         if (input$download_format == ".png") {
-          png(file, width=1000, height=1000)
+          png(file, width=1500, height=1500)
         } else if (input$download_format == ".pdf") {
           pdf(file)
         }
@@ -1434,7 +1434,7 @@ server <- function(input, output, session) {
       },
       content = function(file) {
         if (input$download_format == ".png") {
-          png(file, width=1000, height=1000)
+          png(file, width=1500, height=1500)
         } else if (input$download_format == ".pdf") {
           pdf(file)
         }
@@ -1808,11 +1808,11 @@ server <- function(input, output, session) {
     #Download plots    
       output$CG_network_download <- downloadHandler(
         filename = function() {
-          paste("clustered_network", input$download_format)
+          paste("plot_coexpression_network_up", input$download_format)
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1823,11 +1823,11 @@ server <- function(input, output, session) {
       output$CG_heatmap_download <- downloadHandler(
   
         filename = function() {
-          paste("clustered_heatmap", input$download_format)
+          paste("plot_coexpression_heatmap_genes", input$download_format)
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1838,11 +1838,11 @@ server <- function(input, output, session) {
 
       output$CG_bheatmap_download <- downloadHandler(
         filename = function() {
-          paste("clustered_binarized_heatmap", input$download_format)
+          paste("plot_coexpression_binarized_heatmap_up", input$download_format)
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=500, height=500)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1942,7 +1942,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1957,7 +1957,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1972,7 +1972,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -1987,7 +1987,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           } 
@@ -2061,7 +2061,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -2076,7 +2076,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
@@ -2133,7 +2133,7 @@ server <- function(input, output, session) {
         },
         content = function(file) {
           if (input$download_format == ".png") {
-            png(file, width=1000, height=1000)
+            png(file, width=1500, height=1500)
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
