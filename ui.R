@@ -1133,53 +1133,48 @@ ui <- fluidPage(
                   ),
                 ),
 
-                # GENE SET ENRICHMENT ANALYSIS
-                tabPanel(
-                  title="Gene Set Enrichment Analysis",
+                 ########################### GSEA ###########################
+
+                tabPanel(title = "Gene Set Enrichment Analysis",
+
                   mainPanel(
                     h3("Gene Set Enrichment Analysis"),
                     
                     # options dropdown
                     dropdown(
-                      inputId = "GL_GSEA_dropdown",
+                      inputId = "GL_GSEA_options",
+
+                      # dropdown characteristics
                       style = "minimal", icon = "OPTIONS",
                       status = "primary", width = "300px", size = "sm",
                       
                       # standard GSEA options
                       awesomeCheckboxGroup(
-                        inputId = "GL_GSEA_std_PlotOptions",
+                        inputId = "GL_GSEA_options_std",
                         label = tags$h4("Standard GSEA"), 
                         choices = c("P-value Heatmap"),
                         status = ""
                       ),
                       
-                      br(),
-
                       # run button
-                      actionButton(
-                        inputId = "GL_GSEA_run",
-                        label = "Run",
-                        style="color: #fff; background-color: #3E3F3A; border-color: #20201F"
-                      ),
+                      actionButton(inputId = "GL_GSEA_run", label = "Run"),
 
                     ),
-                    
-                    br(),
 
                     # error message
-                    textOutput("GL_GSEA_error"),
-                  ),
-                  br(),
+                    p(id = "GL_GSEA_error", "Please generate a subnetwork in OPTIONS.", style = "color:red"),
+                    br(),
                   
-                  # heatmap
-                  conditionalPanel(
-                    condition = "$.inArray('P-value Heatmap', input.GL_GSEA_std_PlotOptions) > -1", 
-                    h5(id="GL_GSEA_heatmap_text", "P-value Heatmap"), 
-                    plotOutput(outputId = "GL_GSEA_heatmap", height = "500px"),
+                    # heatmap
+                    conditionalPanel(
+                      condition = "$.inArray('P-value Heatmap', input.GL_GSEA_options_std) > -1", 
+                      h5(id = "GL_GSEA_heatmap_text", "P-value Heatmap"), 
+                      plotOutput(outputId = "GL_GSEA_heatmap_plot", height = "500px"),
+                      br(),
+                    ),
                   ),
-                  br(),
-
                 ),
+
 
               ),
 
