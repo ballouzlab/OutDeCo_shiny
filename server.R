@@ -487,7 +487,7 @@ server <- function(input, output, session) {
 
   output$UIDE_loaded_Content <- renderDataTable(
     DE(), options = list(
-      pageLength = 100
+      pageLength = 10
     )
   )
 
