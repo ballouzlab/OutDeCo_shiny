@@ -1131,8 +1131,6 @@ ui <- fluidPage(
                       ),
                     )
                   ),
-
-
                 ),
 
                 # GENE SET ENRICHMENT ANALYSIS
@@ -1176,7 +1174,7 @@ ui <- fluidPage(
                   # heatmap
                   conditionalPanel(
                     condition = "$.inArray('P-value Heatmap', input.GL_GSEA_std_PlotOptions) > -1", 
-                    h5(id="GSEA_heatmap_text", "P-value Heatmap"), 
+                    h5(id="GL_GSEA_heatmap_text", "P-value Heatmap"), 
                     plotOutput(outputId = "GL_GSEA_heatmap", height = "500px"),
                   ),
                   br(),
