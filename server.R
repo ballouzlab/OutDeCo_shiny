@@ -348,21 +348,22 @@ server <- function(input, output, session) {
     # Volcano Plot
     if (!is.null(deg)) {
       show(id="vol")
-      output$DEplot <- renderPlot(
-              {plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
+      vol <- function(){plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
               pch=19, bty="n", 
-              xlab="log2 FC", ylab="-log10 p-vals" )},
+              xlab="log2 FC", ylab="-log10 p-vals" )}
+      output$DEplot <- renderPlot(
+              {vol()},
               width = 450,
               height = 450
       )
 
       #MA Plot
       show(id="MA")
-      #output$DE_MA_text = renderText("MA Plot")
-      output$DEplot_average <- renderPlot(
-              {plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
+      MA <- function(){plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
               pch=19, bty="n", 
-              ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")},
+              ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")}
+      output$DEplot_average <- renderPlot(
+              {MA()},
               width = 450,
               height = 450
       )
@@ -372,43 +373,127 @@ server <- function(input, output, session) {
     }
   )
 
-  observeEvent(input$assess_run_de, { 
-    updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
-    updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
-    DE_table <- function(){de$deg_output$degs}
-    output$DE_table <- renderDataTable(
-        {DE_table()},
-    )
-  })
 
-  observe({
-      # DEFile from fileInput() function
-      ServerDEFile <- req(input$DEFile)
-      
-      # extensions tool for format validation
-      extDEFile <- tools::file_ext(ServerDEFile$datapath)
-      if (is.null(input$DEFile)) {
-        return ()
-      } else{
-        if (extDEFile == "txt") {
-          label = paste("Delimiters for", extDEFile, "file")
-          choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
-        } else if (extDEFile == "tsv") {
-          label = paste("Delimiter: Tab")
-          choice <- (Tab="\t")
-        } else {
-          label = paste("Delimiter: Comma")
-          choice <- (Comma=",")
+    #------------------ DOWNLOAD ----------------------#
+    #Download plots    
+    output$volcano_download <- downloadHandler(
+      filename = function() {
+        paste("volcano_plot", input$download_format)
+      },
+      content = function(file) {
+        if (input$download_format == ".png") {
+          png(file, width=1000, height=1000)
+        } else if (input$download_format == ".pdf") {
+          pdf(file)
         }
-        updateRadioButtons(session, "sepButton", label = label, choices = choice)
+        vol()
+        dev.off()
       }
-    })
+    )
+
+    output$MA_download <- downloadHandler(
+      filename = function() {
+        paste("MA_plot", input$download_format)
+      },
+      content = function(file) {
+        if (input$download_format == ".png") {
+          png(file, width=1000, height=1000)
+        } else if (input$download_format == ".pdf") {
+          pdf(file)
+        }
+        MA()
+        dev.off()
+      }
+    )
   
   ##########################################################################################
   #                                                                                        #
   #                                    ASSESS DE DATA                                      #
   #                                                                                        #
   ##########################################################################################
+  # USE DE data from Run DE
+  observeEvent(input$assess_run_de, { 
+    updateTabsetPanel(session, inputId="navpage", selected="Assess DE")
+
+    updateRadioButtons(session,
+                  inputId = "DE_data_selection",
+                  choices = c("Use DE Results", "Upload DE Data"),
+                  selected = "Use DE Results"
+    )
+    DE_table <- function(){de$deg_output$degs}
+    output$DE_table <- renderDataTable(
+        {DE_table()},
+    )
+
+    # Download
+    output$DE_table_download <- downloadHandler(
+      filename = function() {
+        paste("DE_data", input$download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(DE_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
+      }
+    )
+  })
+
+  
+  # USE DE data from Run DE
+    DE <- reactive({
+    ServerDEFile <- input$DE_file
+    extDEFile <- tools::file_ext(ServerDEFile$datapath)
+    req(ServerDEFile)
+    validate(need(extDEFile == c("csv", "tsv", "txt"), "Please upload a csv, tsv or txt file."))
+    if (is.null(extDEFile)) {
+      return ()
+    }
+    if (extDEFile == "csv") {
+      read.table(file=ServerDEFile$datapath, sep=input$sepDEButton, header=TRUE, row.names = 1)
+    } else {
+      read.table(file=ServerDEFile$datapath, sep=input$sepDEButton, header=TRUE)
+    }
+    
+    
+  })
+
+
+
+  # Upload own DE data
+  observeEvent(input$DE_file, {updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "DE Data")}) 
+  observe({
+     # DE_file from fileInput() function
+    ServerDEFile <- req(input$DE_file)
+    
+  #   # extensions tool for format validation
+    extDEFile <- tools::file_ext(ServerDEFile$datapath)
+    if (is.null(input$DE_file)) {
+      return ()
+    } else {
+      if (extDEFile == "txt") {
+        label = paste("Delimiters for", extDEFile, "file")
+        choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+      } else if (extDEFile == "tsv") {
+        label = paste("Delimiter: Tab")
+        choice <- (Tab="\t")
+      } else {
+        label = paste("Delimiter: Comma")
+        choice <- (Comma=",")
+      }
+      updateRadioButtons(session, "sepDEButton", label = label, choices = choice)
+      }
+    })
+
+
+  # handles rendering DT table of DE file
+
+  output$UIDE_loaded_Content <- renderDataTable(
+    DE(), options = list(
+      pageLength = 100
+    )
+  )
+
+  
+
+#################################################
 
   # sub_nets
   sn <- reactiveValues(
@@ -417,10 +502,25 @@ server <- function(input, output, session) {
   )
 
   observeEvent(input$generate_subnet_DE, {
-    if (is.null(de$deg_output)) {
+    updateTabsetPanel(session, "assessDE_navList", selected = "View Files")
+    updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
+    if (input$DE_data_selection == "Use DE Results" && is.null(de$deg_output)) {
       shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
       updateTabsetPanel(session, inputId="navpage", selected="Run DE")
-    } else {
+    } else if (input$DE_data_selection == "Upload DE Data" && is.null(input$DE_file)) {
+      shinyalert(title = "Invalid Input", text = "Please upload a DE Data File", type = "error")
+    } else if (input$DE_data_selection == "Upload DE Data") {
+      sn$sub_nets_DE <- subset_network_hdf5(DE(), tolower(input$network_type), dir="../networks/")
+      show(id = "CG_dropdown_DE")
+      hide(id = "CG_error_DE")
+      show(id = "GC_dropdown_DE")
+      hide(id = "GC_error_DE")
+      show(id = "FO_dropdown_DE")
+      hide(id = "FO_error_DE")
+      # GSEA
+      show(id = "DE_GSEA_dropdown")
+      hide(id = "DE_GSEA_error")
+    } else if (input$DE_data_selection == "Use DE Results") {
       sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(input$network_type), dir="../networks/")
       show(id = "CG_dropdown_DE")
       hide(id = "CG_error_DE")
@@ -432,10 +532,12 @@ server <- function(input, output, session) {
       show(id = "DE_GSEA_dropdown")
       hide(id = "DE_GSEA_error")
     }
-  })
 
-  observeEvent(
-    input$generate_subnet_DE, 
+  })
+  
+    
+
+  observeEvent(input$generate_subnet_DE, 
     {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
   )
 
@@ -507,7 +609,7 @@ server <- function(input, output, session) {
       show(id="CGdownreg_heatmap_text")
       CG_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, flag_plot_bin = FALSE)}
       output$downregHeatmap <- renderPlot(
-        {CG_down_heatmap}, 
+        {CG_down_heatmap()}, 
         width = 500, 
         height = 500 
       )
@@ -1114,6 +1216,29 @@ server <- function(input, output, session) {
   #                                  ASSESS GENE LIST                                      #
   #                                                                                        #
   ##########################################################################################
+
+  observe({
+      # DEFile from fileInput() function
+      ServerDEFile <- req(input$DEFile)
+      
+      # extensions tool for format validation
+      extDEFile <- tools::file_ext(ServerDEFile$datapath)
+      if (is.null(input$DEFile)) {
+        return ()
+      } else{
+        if (extDEFile == "txt") {
+          label = paste("Delimiters for", extDEFile, "file")
+          choice <-c(Comma=",", Semicolon=";", Tab="\t", Space=" ")
+        } else if (extDEFile == "tsv") {
+          label = paste("Delimiter: Tab")
+          choice <- (Tab="\t")
+        } else {
+          label = paste("Delimiter: Comma")
+          choice <- (Comma=",")
+        }
+        updateRadioButtons(session, "sepButton", label = label, choices = choice)
+      }
+    })
 
   # reactive converts the upload file into a reactive expression known as data
   DEData <- reactive({

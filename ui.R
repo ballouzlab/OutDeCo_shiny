@@ -45,7 +45,6 @@ ui <- fluidPage(
     
     # Sidebar with a slider input
     sidebarPanel(width = 2, well = FALSE, class = "sidebar_style",
-
                  dropdown(right = TRUE,
                    tags$h4("Download Options"),
                    inputId = "download_dropdown",
@@ -194,7 +193,7 @@ ui <- fluidPage(
                 tags$h3("Options"), 
                 # side panel characteristics
                 style = "jelly", icon = "FILE OPTIONS",
-                status = "primary", width = "300px", size = "sm",
+                status = "primary", width = "325px", size = "sm",
                
                 # title of sidepanel
                 fluidPage(
@@ -306,12 +305,14 @@ ui <- fluidPage(
                       #textOutput("DE_V_text"),
                       h4(id="vol"," Volcano Plot", style="text-align: center;"),
                       column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
+                      div(style="margin-left: 375px;", downloadLink("volcano_download", label = "Download", class = "download_style")),
                       
                     ),
                     fluidPage(
                       #textOutput("DE_MA_text"),
                       h4(id="MA"," MA Plot", style="text-align: center;"),
                       column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center"),
+                      div(style="margin-left: 375px;", downloadLink("MA_download", label = "Download", class = "download_style")),
                       
                     )
                           
@@ -348,41 +349,59 @@ ui <- fluidPage(
                 radioButtons(
                   inputId = "DE_data_selection",
                   label = tags$h4("DE Data Selection"),
-                  choices = c("Use DE Results"),
-                  selected = "Use DE Results"
+                  choices = c("Use DE Results", "Upload DE Data"),
                 ),
 
-                
+                conditionalPanel(
+                  condition = "input.DE_data_selection == 'Upload DE Data'", 
+                  # upload file
+                  fileInput(
+                    inputId = "DE_file", 
+                    label = "Choose DE Data File",
+                    accept = c(".csv", ".tsv", ".txt")
+                  ),
+                  # div(style = "margin-top: -25px"),
+                  # select delimiter (default is nothing until file is selected and handled in server side)
+                  radioButtons(
+                    inputId = 'sepDEButton', 
+                    label = 'Delimiter Selector', 
+                    choices = c(Default=''), 
+                    selected = ''
+                  ),
+                ),
                 
                 # generate subnet button
                 actionButton("generate_subnet_DE", "Generate Subnetwork",),
       
                 # side panel characteristics
                 style = "jelly", icon = "NETWORK OPTIONS",
-                status = "primary", width = "300px", size = "sm",
+                status = "primary", width = "325px", size = "sm",
 
                ),
               
               
               br(),
-        
+               ################################ Assess DE - View Files ########################################
               navlistPanel(
-                widths = c(3, 9), well = FALSE,
+                id = "assessDE_navList",
+                widths = c(3, 9), well = FALSE, 
                 
                 # VIEW FILES
                 tabPanel(
                   title="View Files",
                   tabsetPanel(
                     id="subnetwork_file_tabset_DE",
-                     # view file tab
-                    # tabPanel(
-                    #   title="File",
-                    #   uiOutput("UIDEContent"),
-                    # ),
-                    # view subnetwork tab
+                    
                     tabPanel(
                       title = "DE Data", 
+                      conditionalPanel(condition = "input.DE_data_selection == 'Use DE Results'", 
                       dataTableOutput("DE_table"),
+                      downloadLink("DE_table_download", label = "Download", class = "download_style"),
+                      ),
+                      conditionalPanel(condition = "input.DE_data_selection == 'Upload DE Data'",
+                        dataTableOutput("UIDE_loaded_Content"),
+                      ),
+                      
                     ),
                     tabPanel(
                       title="Subnetwork", 
@@ -903,7 +922,7 @@ ui <- fluidPage(
       
                 # side panel characteristics
                 style = "jelly", icon = "NETWORK OPTIONS",
-                status = "primary", width = "300px", size = "sm",
+                status = "primary", width = "325px", size = "sm",
 
                ),
 
