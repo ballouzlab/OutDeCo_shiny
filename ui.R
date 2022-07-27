@@ -192,7 +192,7 @@ ui <- fluidPage(
                 tags$h3("Options"), 
                 # side panel characteristics
                 style = "jelly", icon = "FILE OPTIONS",
-                status = "primary", width = "325px", size = "sm",
+                status = "primary", width = "335px", size = "sm",
                
                 # title of sidepanel
                 fluidPage(
@@ -388,7 +388,7 @@ ui <- fluidPage(
       
                 # side panel characteristics
                 style = "jelly", icon = "NETWORK OPTIONS",
-                status = "primary", width = "325px", size = "sm",
+                status = "primary", width = "335px", size = "sm",
 
                ),
               
@@ -436,7 +436,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "CG_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       awesomeCheckboxGroup(
                         inputId = "clusterPlotOptions_upreg", 
@@ -532,7 +532,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "GC_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       # select plots
                     
@@ -651,7 +651,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "FO_dropdown_DE",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       awesomeCheckboxGroup(
                         inputId = "FOPlotOptions_DE", 
@@ -775,7 +775,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "DE_GSEA_dropdown",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
                       
                       # select GSEA type
                       awesomeCheckboxGroup(
@@ -926,7 +926,7 @@ ui <- fluidPage(
       
                 # side panel characteristics
                 style = "jelly", icon = "NETWORK OPTIONS",
-                status = "primary", width = "325px", size = "sm",
+                status = "primary", width = "335px", size = "sm",
 
                ),
 
@@ -970,7 +970,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "CG_dropdown",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -1064,7 +1064,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "GC_dropdown",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -1152,7 +1152,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "FO_dropdown",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
 
                       # select plots
                       awesomeCheckboxGroup(
@@ -1270,7 +1270,7 @@ ui <- fluidPage(
                     dropdown(
                       inputId = "GL_GSEA_dropdown",
                       style = "minimal", icon = "OPTIONS",
-                      status = "primary", width = "300px", size = "sm",
+                      status = "primary", width = "335px", size = "sm",
                       
                       # standard GSEA options
                       awesomeCheckboxGroup(

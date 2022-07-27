@@ -731,23 +731,6 @@ server <- function(input, output, session) {
       output$GSEA_up_heatmap <- NULL
       output$GSEA_down_heatmap <- NULL
       output$GSEA_auc <- NULL
-
-
-    }
-
-
-      
-    
-
-  })
-  
-    
-
-  observeEvent(
-    input$generate_subnet_DE,
-
-    # assess DE subnet table output
-    {
       DE_subnet_table <- function(){sn$sub_nets_DE}
       output$subnetwork_DE <- renderTable(sn$sub_nets_DE)
       show(id = "DE_subnet_download")
@@ -760,9 +743,18 @@ server <- function(input, output, session) {
         write.table(DE_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
       }
     )
-    
+
     }
-  )
+
+
+      
+    
+
+  })
+  
+    
+
+
 
   clust_net_DE <- reactive({
 
