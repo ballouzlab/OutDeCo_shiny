@@ -1496,6 +1496,8 @@ server <- function(input, output, session) {
             hide(id = "GC_error")
             show(id = "FO_dropdown")
             hide(id = "FO_error")
+            show(id = "GL_GSEA_dropdown")
+            hide(id = "GL_GSEA_error")
             # Clear data
             output$network <- NULL
             output$heatmap <- NULL
@@ -1560,6 +1562,8 @@ server <- function(input, output, session) {
             hide(id = "GC_error")
             show(id = "FO_dropdown")
             hide(id = "FO_error")
+            show(id = "GL_GSEA_dropdown")
+            hide(id = "GL_GSEA_error")
             # Clear data
             output$network <- NULL
             output$heatmap <- NULL
