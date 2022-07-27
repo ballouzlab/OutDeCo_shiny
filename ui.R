@@ -54,7 +54,7 @@ ui <- fluidPage(
                    selectInput(
                      inputId = "download_format",
                      label= tags$h6("Choose Plot Download Format"),
-                     choices = c(".png", ".pdf", ".Rdata"),
+                     choices = c(".png", ".pdf"),
                      selected = ".png",
                      width = "600px",
                    ),
@@ -246,9 +246,10 @@ ui <- fluidPage(
 
                  ),
                 tabPanel(
-                  title="Plot DE",
-                  h4("Plot Differential Expression"),
+                  title="Run Differential Expression",
+                  h3("Plot Differential Expression"),
                   p(id = "runDE_error", "Please upload counts and labels data in FILE OPTIONS"),
+
                   dropdown(
                     inputId = "DE_options",
                     # side panel characteristics
@@ -298,25 +299,35 @@ ui <- fluidPage(
                     actionButton(inputId="run_DE", label = "Run DE"),
                   
                   ),
-
-                    splitLayout(cellWidths = c("50%", "50%"), 
-                    fluidPage(
-                      #textOutput("DE_V_text"),
-                      h4(id="vol"," Volcano Plot", style="text-align: center;"),
-                      column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
-                      div(style="margin-left: 375px;", downloadLink("volcano_download", label = "Download", class = "download_style")),
-                      
-                    ),
-                    fluidPage(
-                      #textOutput("DE_MA_text"),
-                      h4(id="MA"," MA Plot", style="text-align: center;"),
-                      column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center"),
-                      div(style="margin-left: 375px;", downloadLink("MA_download", label = "Download", class = "download_style")),
-                      
-                    )
-                          
+                  br(),
+                  tabsetPanel(
+                    tabPanel(
+                      title = "Plots",
+                      splitLayout(cellWidths = c("50%", "50%"), 
+                      fluidPage(
+                        #textOutput("DE_V_text"),
+                        h4(id="vol"," Volcano Plot", style="text-align: center;"),
+                        column(12, plotOutput(outputId = "DEplot", height = "450px"), align = "center"), 
+                        div(style="margin-left: 375px;", downloadLink("volcano_download", label = "Download", class = "download_style")),
+                        
+                      ),
+                      fluidPage(
+                        #textOutput("DE_MA_text"),
+                        h4(id="MA"," MA Plot", style="text-align: center;"),
+                        column(12, plotOutput(outputId = "DEplot_average", height = "450px"), align = "center"),
+                        div(style="margin-left: 375px;", downloadLink("MA_download", label = "Download", class = "download_style")),
+                        
+                      ),
                     ), 
-                    actionButton(inputId="assess_run_de", label = "Assess DE Data"), 
+                    
+                  ), tabPanel(
+                      title = "Table",
+                      dataTableOutput("DE_table"),
+                      downloadLink("DE_table_download", label = "Download", class = "download_style"),
+                    ),
+                ),
+                br(),
+                  actionButton(inputId="assess_run_de", label = "Assess DE Data"), 
                   
                   
                  
@@ -397,8 +408,8 @@ ui <- fluidPage(
                     tabPanel(
                       title = "DE Data", 
                       conditionalPanel(condition = "input.DE_data_selection == 'Use DE Results'", 
-                      dataTableOutput("DE_table"),
-                      downloadLink("DE_table_download", label = "Download", class = "download_style"),
+                      dataTableOutput("AssessDE_table"),
+                      
                       ),
                       conditionalPanel(condition = "input.DE_data_selection == 'Upload DE Data'",
                         dataTableOutput("UIDE_loaded_Content"),

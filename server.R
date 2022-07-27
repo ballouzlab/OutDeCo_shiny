@@ -411,7 +411,23 @@ server <- function(input, output, session) {
               width = 450,
               height = 450
       )
+      DE_table <<- function(){de$deg_output$degs}
+      output$DE_table <- renderDataTable(
+          {DE_table()},
+      )
+      show(id="DE_table_download")
+
+      # Download
+      output$DE_table_download <- downloadHandler(
+        filename = function() {
+          paste("DE_data", input$download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(DE_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
+        }
+      )
     show(id = "assess_run_de")
+
     }
     
      #------------------ DOWNLOAD ----------------------#
@@ -463,21 +479,13 @@ server <- function(input, output, session) {
                   choices = c("Use DE Results", "Upload DE Data"),
                   selected = "Use DE Results"
     )
-    DE_table <- function(){de$deg_output$degs}
-    output$DE_table <- renderDataTable(
+    
+    output$AssessDE_table <- renderDataTable(
         {DE_table()},
     )
-    show(id="DE_table_download")
 
-    # Download
-    output$DE_table_download <- downloadHandler(
-      filename = function() {
-        paste("DE_data", input$download_table_format, sep="")
-      },
-      content = function(file) {
-        write.table(DE_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
-      }
-    )
+
+
   })
 
   
