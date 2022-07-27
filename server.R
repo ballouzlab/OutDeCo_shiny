@@ -2058,6 +2058,24 @@ server <- function(input, output, session) {
           dev.off()
         }
       )
+
+      output$genes_not_keep_table_download <- downloadHandler(
+      filename = function() {
+        paste("genes_not_keep", input$download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(FO_genes_not_keep, file, row.names = TRUE, sep = separator, col.names = TRUE)
+      }
+    )
+
+    output$genes_keep_table_table_download <- downloadHandler(
+      filename = function() {
+        paste("genes_keep", input$download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(FO_genes_keep(), file, row.names = TRUE, sep = separator, col.names = TRUE)
+      }
+    )
       
     }
   )

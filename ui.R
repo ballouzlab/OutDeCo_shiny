@@ -547,15 +547,14 @@ ui <- fluidPage(
                           min = 10, max = 100, value = 100, step = 10,
                         ),
                       ),
-                      
-                      br(),
+
 
                       # run button
                       actionButton(inputId = "runGCDE", label = "Run", ),
 
                     ),
                     
-                    br(),
+                  
 
                     # error message
                     textOutput("GC_error_DE"),
@@ -671,7 +670,7 @@ ui <- fluidPage(
 
                     ),
 
-                    br(),
+                   
                     
                     # error message
                     textOutput("FO_error_DE"),
@@ -796,7 +795,6 @@ ui <- fluidPage(
 
                     ),
                     
-                    br(),
 
                     # error message
                     textOutput("DE_GSEA_error"),
