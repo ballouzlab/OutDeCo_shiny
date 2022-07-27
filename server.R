@@ -116,7 +116,8 @@ server <- function(input, output, session) {
   hide(id="genes_not_keep_table_download")
   hide(id="genes_keep_table_table_download")
   hide(id="GSEA_heatmap_download")
-  
+  hide(id = "DE_subnet_download")
+  hide(id = "GL_subnet_download")
 
   #Download Table Separator
   observe({
@@ -738,7 +739,21 @@ server <- function(input, output, session) {
     input$generate_subnet_DE,
 
     # assess DE subnet table output
-    {output$subnetwork_DE <- renderTable(sn$sub_nets_DE)}
+    {
+      DE_subnet_table <- function(){sn$sub_nets_DE}
+      output$subnetwork_DE <- renderTable(sn$sub_nets_DE)
+      show(id = "DE_subnet_download")
+            
+      output$DE_subnet_download <- downloadHandler(
+      filename = function() {
+        paste("DE_subnetwork", input$download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(DE_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+      }
+    )
+    
+    }
   )
 
   clust_net_DE <- reactive({
@@ -1707,8 +1722,20 @@ server <- function(input, output, session) {
   })
 
   observeEvent(
-    input$generate_subnet, 
-    {output$subnetwork <- renderTable(sn$sub_nets)}
+    input$generate_subnet, {
+      output$subnetwork <- renderTable(sn$sub_nets)
+      show(id="GL_subnet_download")
+      GL_subnet_table <- function(){sn$sub_nets}
+      output$GL_subnet_download <- downloadHandler(
+        filename = function() {
+          paste("gene_list_subnetwork", input$download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(GL_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+        }
+        
+      )
+    }
   )
 
   clust_net <- reactive({

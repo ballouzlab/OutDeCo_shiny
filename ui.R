@@ -409,6 +409,8 @@ ui <- fluidPage(
                     # subnetwork table of assess de
                     tabPanel(
                       title="Subnetwork", 
+                      
+                      downloadLink("DE_subnet_download", label = "Download", class = "download_style"),
                       tableOutput("subnetwork_DE")
                     ),
                   ),
@@ -939,9 +941,12 @@ ui <- fluidPage(
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
-
+                      
                       # subnetwork table of assess gene list
+                      downloadLink("GL_subnet_download", label = "Download", class = "download_style"),
                       tableOutput("subnetwork")
+                      
+
                     ),
                   ),
                 ),
