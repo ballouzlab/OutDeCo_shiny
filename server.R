@@ -413,11 +413,7 @@ server <- function(input, output, session) {
     show(id = "assess_run_de")
     }
     
-    }
-  )
-
-
-    #------------------ DOWNLOAD ----------------------#
+     #------------------ DOWNLOAD ----------------------#
     #Download plots    
     output$volcano_download <- downloadHandler(
       filename = function() {
@@ -448,6 +444,9 @@ server <- function(input, output, session) {
         dev.off()
       }
     )
+    }
+  )
+
   
   ##########################################################################################
   #                                                                                        #
@@ -1075,7 +1074,7 @@ server <- function(input, output, session) {
         }
       )
 
-      output$GC_up_hist_download <- downloadHandler(
+      output$GC_up_histogram_download <- downloadHandler(
         filename = function() {
           paste("plot_scatter_hist_up", input$download_format)
         },
@@ -1145,7 +1144,7 @@ server <- function(input, output, session) {
           } else if (input$download_format == ".pdf") {
             pdf(file)
           }
-          GC_down_histogram()
+          GC_down_hist()
           dev.off()
         }
       )
@@ -2064,7 +2063,7 @@ server <- function(input, output, session) {
         paste("genes_not_keep", input$download_table_format, sep="")
       },
       content = function(file) {
-        write.table(FO_genes_not_keep, file, row.names = TRUE, sep = separator, col.names = TRUE)
+        write.table(FO_genes_not_keep(), file, row.names = TRUE, sep = separator, col.names = TRUE)
       }
     )
 
