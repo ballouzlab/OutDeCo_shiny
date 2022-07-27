@@ -256,13 +256,13 @@ ui <- fluidPage(
                     style = "minimal", icon = "OPTIONS",
                     status = "primary", width = "600px", size = "sm",
 
-                  selectInput(
-                    inputId = "DE_method",
-                    label= tags$h5("Choose DE Method"),
-                    choices = c("wilcox", "DESeq2", "edgeR"),
-                    selected = NULL,
-                    width = "600px",
-                  ),
+                    selectInput(
+                      inputId = "DE_method",
+                      label= tags$h5("Choose DE Method"),
+                      choices = c("wilcox", "DESeq2", "edgeR"),
+                      selected = NULL,
+                      width = "600px",
+                    ),
                   
                     
                     radioButtons(
@@ -338,11 +338,14 @@ ui <- fluidPage(
 
                 # network selection
                 tags$h4("Network Selection"),
-                selectInput(
-                  inputId = "network_type_DE",
-                  label=NULL,
-                  choices = c("Blood", "Brain", "Generic"),
-                  selected = "Generic"
+                uiOutput("select.folder"),
+
+                # occr network selection
+                radioButtons(
+                  inputId = "is_occr",
+                  label = "Use occr network?",
+                  choices = c("Yes", "No"),
+                  selected = "No"
                 ),
 
                 # gene list selection
@@ -403,12 +406,12 @@ ui <- fluidPage(
                       ),
                       
                     ),
+
+                    # subnetwork table of assess de
                     tabPanel(
                       title="Subnetwork", 
                       tableOutput("subnetwork_DE")
                     ),
-
-                   
                   ),
                 ),
 
@@ -502,12 +505,8 @@ ui <- fluidPage(
                           plotOutput(outputId = "downregbinHeatmap", height = "500px"),    
                           div(style="margin-left: 400px;", downloadLink("CG_down_bheatmap_download", label = "Download", class = "download_style")),
                         ),
-
                       ),
-
-                      
                     )
-
                   )
                 ),
                 
@@ -865,11 +864,14 @@ ui <- fluidPage(
 
                 # network selection
                 tags$h4("Network Selection"),
-                selectInput(
-                  inputId = "network_type",
-                  label=NULL,
-                  choices = c("Blood", "Brain", "Generic"),
-                  selected = "Generic"
+                uiOutput("select.folder_gene_list"),
+
+                # occr network selection
+                radioButtons(
+                  inputId = "is_occr_gene_list",
+                  label = "Use occr network?",
+                  choices = c("Yes", "No"),
+                  selected = "No"
                 ),
 
                 # gene list selection
@@ -903,14 +905,6 @@ ui <- fluidPage(
                     inputId = "DEFile", 
                     label = "Choose Gene List File",
                     accept = c(".csv", ".tsv", ".txt")
-                  ),
-                  # div(style = "margin-top: -25px"),
-                  # select delimiter (default is nothing until file is selected and handled in server side)
-                  radioButtons(
-                    inputId = 'sepButton', 
-                    label = 'Delimiter Selector', 
-                    choices = c(Default=''), 
-                    selected = ''
                   ),
                 ),
                 
@@ -947,10 +941,10 @@ ui <- fluidPage(
                     # view subnetwork tab
                     tabPanel(
                       title="Subnetwork", 
+
+                      # subnetwork table of assess gene list
                       tableOutput("subnetwork")
                     ),
-
-                   
                   ),
                 ),
 
@@ -1041,9 +1035,7 @@ ui <- fluidPage(
                         ),
 
                       ),
-                      
                     ), 
-
                   ), 
 
 
@@ -1051,8 +1043,8 @@ ui <- fluidPage(
 
                 # GENE CONNECTIVITY
                 tabPanel(
-                  title = "Gene Connectivity", 
-                  mainPanel(
+                   title = "Gene Connectivity", 
+                   mainPanel(
                     h3("Gene Connectivity"),
                     # options dropdown
                     dropdown(
@@ -1083,7 +1075,6 @@ ui <- fluidPage(
 
                       # run button
                       actionButton(inputId = "runGC", label = "Run", ),
-
                     ),
 
 
@@ -1134,7 +1125,7 @@ ui <- fluidPage(
                       br(),
                     ),
 
-                  ),
+                   ),
                 ), 
 
                 # FUNCTIONAL OUTLIERS
@@ -1292,7 +1283,6 @@ ui <- fluidPage(
                     textOutput("GL_GSEA_error"),
                   ),
                   br(),
-                  
                   # heatmap
                   conditionalPanel(
                     condition = "$.inArray('P-value Heatmap', input.GL_GSEA_std_PlotOptions) > -1", 
@@ -1307,12 +1297,7 @@ ui <- fluidPage(
               ),
 
               br(),
-              
-              
-  
               br(),
-
-
             ),
             
 
