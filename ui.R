@@ -16,7 +16,6 @@ library(stringi)
 library(stringr)
 library(ggplot2)
 library(ggplotify)
-library(vroom)
 library(OutDeCo)
 library(EGAD)
 
@@ -45,7 +44,7 @@ ui <- fluidPage(
     
     # Sidebar with a slider input
     sidebarPanel(width = 2, well = FALSE, class = "sidebar_style",
-                 dropdown(right = TRUE,
+    div(style="position:relative; left:calc(6%);",dropdown(right = TRUE,
                    tags$h4("Download Options"),
                    inputId = "download_dropdown",
                    style = "minimal", icon = "DOWNLOAD OPTIONS",
@@ -70,7 +69,7 @@ ui <- fluidPage(
                    # run button
                    
                    
-                 ),  
+                 ), ),               
     ),
     
   mainPanel(width=10,

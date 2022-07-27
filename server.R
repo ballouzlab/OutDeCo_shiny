@@ -77,6 +77,49 @@ server <- function(input, output, session) {
   hide(id="GSEA_up_heatmap_text")
   hide(id="GSEA_down_heatmap_text")
 
+
+  #Download Buttons
+  hide(id="volcano_download")
+  hide(id= "MA_download")
+  hide(id="DE_table_download")
+  hide(id="CG_up_network_download")
+  hide(id= "CG_up_heatmap_download")
+  hide(id="CG_up_bheatmap_download")
+  hide(id="CG_down_network_download")
+  hide(id="CG_down_heatmap_download")
+  hide(id="CG_down_bheatmap_download")
+  hide(id="GC_up_density_download")
+  hide(id="GC_up_histogram_download")
+  hide(id="GC_up_densitySubset_download")
+  hide(id="GC_up_histSubset_download")
+  hide(id="GC_down_density_download")
+  hide(id="GC_down_hist_download")
+  hide(id="GC_down_densitySubset_download")
+  hide(id="GC_down_histSubset_download")
+  hide(id="FO_up_network_download")
+  hide(id="FO_up_heatmap_download")
+  hide(id="FO_down_network_download")
+  hide(id="FO_down_heatmap_download")
+  hide(id="GSEA_up_heatmap_download")
+  hide(id="GSEA_down_heatmap_download")
+  hide(id="GSEAauc_download")
+  hide(id="CG_network_download")
+  hide(id="CG_heatmap_download")
+  hide(id="CG_bheatmap_download")
+  hide(id="table_genelist_download")
+  hide(id="GC_density_download")
+  hide(id="GC_histogram_download")
+  hide(id="GC_densitySubset_download")
+  hide(id="GC_histogramSubset_download")
+  hide(id="FO_network_download")
+  hide(id="FO_heatmap_download")
+  hide(id="genes_not_keep_table_download")
+  hide(id="genes_keep_table_table_download")
+  hide(id="GSEA_heatmap_download")
+  
+
+  
+  show(id="GSEA_heatmap_download")
   #Download Table Separator
   observe({
     if (input$download_table_format ==  ".csv") {
@@ -282,7 +325,7 @@ server <- function(input, output, session) {
   observe({
     if (!is.null(input$labels_file) && !is.null(input$labels_file)) {
       show(id="DE_options")
-      hide(id="runDE_error")
+      show(id="runDE_error")
     }
   })
   
@@ -348,6 +391,7 @@ server <- function(input, output, session) {
     # Volcano Plot
     if (!is.null(deg)) {
       show(id="vol")
+      show(id="volcano_download")
       vol <- function(){plot( deg$degs$log2_fc, -log10(deg$degs$pvals),  
               pch=19, bty="n", 
               xlab="log2 FC", ylab="-log10 p-vals" )}
@@ -359,6 +403,7 @@ server <- function(input, output, session) {
 
       #MA Plot
       show(id="MA")
+      show(id= "MA_download")
       MA <- function(){plot( log2(deg$degs$mean_cpm),  deg$degs$log2_fc,  
               pch=19, bty="n", 
               ylab="log2 FC", xlab="Average expression (log2 CPM + 1)")}
@@ -424,6 +469,7 @@ server <- function(input, output, session) {
     output$DE_table <- renderDataTable(
         {DE_table()},
     )
+    show(id="DE_table_download")
 
     # Download
     output$DE_table_download <- downloadHandler(
@@ -693,6 +739,7 @@ server <- function(input, output, session) {
       
       # upregulated network 
       show(id="CGupreg_network_text")
+      show(id="CG_up_network_download")
       CG_up_network <- function(){plot_network(sub_net$up, clust_net_DE()$up, medK)}
       output$upregNetwork <- renderPlot(
         {CG_up_network()}, 
@@ -702,6 +749,7 @@ server <- function(input, output, session) {
 
       # upregulated heatmap 
       show(id="CGupreg_heatmap_text")
+      show(id= "CG_up_heatmap_download")
       CG_up_heatmap <- function(){plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, flag_plot_bin = FALSE)}
       output$upregHeatmap <- renderPlot(
         {CG_up_heatmap()}, 
@@ -711,6 +759,7 @@ server <- function(input, output, session) {
 
       # upregulated binarized heatmap 
       show(id="CGupreg_bheatmap_text")
+      show(id="CG_up_bheatmap_download")
       CG_up_bheatmap <- function(){plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up)}
       output$upregbinHeatmap <- renderPlot(
         {CG_up_bheatmap()}, 
@@ -720,6 +769,7 @@ server <- function(input, output, session) {
       
       # downregulated network 
       show(id="CGdownreg_network_text")
+      show(id="CG_down_network_download")
       CG_down_network <- function(){plot_network(sub_net$down, clust_net_DE()$down, medK)}
       output$downregNetwork <- renderPlot(
         {CG_down_network()},
@@ -729,6 +779,7 @@ server <- function(input, output, session) {
 
       # downregulated heatmap
       show(id="CGdownreg_heatmap_text")
+      show(id="CG_down_heatmap_download")
       CG_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, flag_plot_bin = FALSE)}
       output$downregHeatmap <- renderPlot(
         {CG_down_heatmap()}, 
@@ -738,6 +789,7 @@ server <- function(input, output, session) {
 
       # downregulated binarized heatmap
       show(id="CGdownreg_bheatmap_text")
+      show(id="CG_down_bheatmap_download")
       CG_down_bheatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down)}
       output$downregbinHeatmap <- renderPlot(
         {CG_down_bheatmap()}, 
@@ -859,6 +911,7 @@ server <- function(input, output, session) {
 
       # density - upreg
       show(id="GCdensityG_upreg_text")
+      show(id="GC_up_density_download")
       GC_up_density <- function(){plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
                     node_degrees$up[,2]/node_degrees$n_genes_up, 
                     xlab="Global node degree", 
@@ -871,6 +924,7 @@ server <- function(input, output, session) {
 
       # histogram - upreg 
       show(id="GChistogramG_upreg_text")
+      show(id="GC_up_histogram_download")
       GC_up_histogram <- function(){plot_scatter(node_degrees$up[,1]/node_degrees$n_genes_total, 
                     node_degrees$up[,2]/node_degrees$n_genes_up, 
                     xybreaks = input$xybreaks_DE,
@@ -884,6 +938,7 @@ server <- function(input, output, session) {
 
       # density by subsets - upreg 
       show(id="GCdensitySubsetG_upreg_text")
+      show(id="GC_up_densitySubset_download")
       GC_up_densitySubset <- function(){m <- match(clust_net_DE()$up$clusters$genes, rownames(sub_net$up))
          plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
                       node_degrees$up[m,2]/node_degrees$n_genes_up, 
@@ -898,6 +953,7 @@ server <- function(input, output, session) {
 
       # histogram by subsets - upreg 
       show(id="GChistogramSubsetG_upreg_text")
+      show(id="GC_up_histSubset_download")
       GC_up_histSubset <- function(){m <- match(clust_net_DE()$up$clusters$genes, rownames(sub_net$up))
          plot_scatter(node_degrees$up[m,1]/node_degrees$n_genes_total, 
                       node_degrees$up[m,2]/node_degrees$n_genes_up, 
@@ -913,6 +969,7 @@ server <- function(input, output, session) {
 
       # density - downreg
       show(id="GCdensityG_downreg_text")
+      show(id="GC_down_density_download")
       GC_down_density <- function(){plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
                     node_degrees$down[,2]/node_degrees$n_genes_down, 
                     xlab="Global node degree", 
@@ -925,6 +982,7 @@ server <- function(input, output, session) {
 
       # histogram - downreg 
       show(id="GChistogramG_downreg_text")
+      show(id="GC_down_hist_download")
       GC_down_hist <- function(){plot_scatter(node_degrees$down[,1]/node_degrees$n_genes_total, 
                     node_degrees$down[,2]/node_degrees$n_genes_down, 
                     xybreaks = input$xybreaks_DE,
@@ -938,6 +996,7 @@ server <- function(input, output, session) {
 
       # density by subsets - downreg 
       show(id="GCdensitySubsetG_downreg_text")
+      show(id="GC_down_densitySubset_download")
       GC_down_densitySubset <- function(){m <- match(clust_net_DE()$down$clusters$genes, rownames(sub_net$down))
          plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
                       node_degrees$down[m,2]/node_degrees$n_genes_down, 
@@ -952,6 +1011,7 @@ server <- function(input, output, session) {
 
       # histogram by subsets - downreg 
       show(id="GChistogramSubsetG_downreg_text")
+      show(id="GC_down_histSubset_download")
       GC_down_histSubset <- function(){m <- match(clust_net_DE()$down$clusters$genes, rownames(sub_net$down))
          plot_scatter(node_degrees$down[m,1]/node_degrees$n_genes_total, 
                       node_degrees$down[m,2]/node_degrees$n_genes_down, 
@@ -1104,6 +1164,7 @@ server <- function(input, output, session) {
       filt_min <- input$filtmin
 
       show(id="FOnetwork_upreg_text")
+      show(id="FO_up_network_download")
       FO_up_network <- function(){plot_network(1-sub_net$up, clust_net_DE()$up, 1 - medK)}
       output$FOnetwork_upreg <- renderPlot(
         {FO_up_network()}, 
@@ -1112,6 +1173,7 @@ server <- function(input, output, session) {
       )
 
       show(id="FOheatmap_upreg_text")
+      show(id="FO_up_heatmap_download")
       FO_up_heatmap <- function(){plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, filt = TRUE, flag_plot_bin = FALSE)}
       output$FOheatmap_upreg <- renderPlot(
         {FO_up_heatmap()}, 
@@ -1120,6 +1182,7 @@ server <- function(input, output, session) {
       )
 
       show(id="FOnetwork_downreg_text")
+      show(id="FO_down_network_download")
       FO_down_network <- function(){plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK)}
       output$FOnetwork_downreg <- renderPlot(
         {FO_down_network()}, 
@@ -1128,6 +1191,7 @@ server <- function(input, output, session) {
       )
 
       show(id="FOheatmap_downreg_text")
+      show(id="FO_down_heatmap_download")
       FO_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE)}
       output$FOheatmap_downreg <- renderPlot(
         {FO_down_heatmap()}, 
@@ -1232,6 +1296,7 @@ server <- function(input, output, session) {
         
         # upregulated heatmap
         show(id="GSEA_up_heatmap_text")
+        show(id="GSEA_up_heatmap_download")
         GSEA_up_heatmap <- function(){
           filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
           gene_list <- clust_net_DE()$up$clusters$genes[clust_net_DE()$up$order]
@@ -1246,6 +1311,7 @@ server <- function(input, output, session) {
         
         # downregulated heatmap
         show(id="GSEA_down_heatmap_text")
+        show(id="GSEA_down_heatmap_download")
         GSEA_down_heatmap <- function(){filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
             gene_list <- clust_net_DE()$down$clusters$genes[clust_net_DE()$down$order]
             go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc) 
@@ -1275,6 +1341,7 @@ server <- function(input, output, session) {
         gene_set_aucs <- gene_set_enrichment_aucs(gene_sets, gene_rankings_rev) 
 
         # AUC graphs
+        show(id="GSEAauc_download")
         GSEAauc <- function(){plot_gene_set_enrichment_ranked(gene_set_aucs, gene_rankings_rev, gene_list, go_slim_entrez)}
         output$GSEA_auc <- renderPlot(
           {GSEAauc()},
@@ -1633,6 +1700,7 @@ server <- function(input, output, session) {
 
       # network output
       show(id="CG_network_text")
+      show(id="CG_network_download")
       CG_network <- function(){plot_network(sub_net$genes, clust_net()$genes, medK)}
       output$network <- renderPlot(
         {CG_network()},
@@ -1644,6 +1712,7 @@ server <- function(input, output, session) {
 
       # heatmap output
       show(id="CG_heatmap_text")
+      show(id="CG_heatmap_download")
       CG_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, flag_plot_bin = FALSE)}
       output$heatmap <- renderPlot(
         {CG_heatmap()},
@@ -1654,6 +1723,7 @@ server <- function(input, output, session) {
 
       # binarized heatmap output
       show(id="CG_bheatmap_text")
+      show(id="CG_bheatmap_download")
       CG_bheatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes)}
       output$Bheatmap <- renderPlot(
         {CG_bheatmap()},
@@ -1664,6 +1734,7 @@ server <- function(input, output, session) {
 
       # clustering genes table output
       show(id="CG_table_text")
+      show(id="table_genelist_download")
       CG_table <- function(){{EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]}}
       output$CG_table <- renderDataTable(
         {CG_table()},
@@ -1744,6 +1815,7 @@ server <- function(input, output, session) {
 
       # density output
       show(id="GCdensityG_text")
+      show(id="GC_density_download")
       GC_densityG <- function(){plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
                     xlab="Global node degree", 
@@ -1757,6 +1829,7 @@ server <- function(input, output, session) {
 
       # histogram output
       show(id="GChistogramG_text")
+      show(id="GC_histogram_download")
       GC_histogramG <- function(){plot_scatter(node_degrees$genes[,1]/node_degrees$n_genes_total, 
                     node_degrees$genes[,2]/node_degrees$n_genes, 
                     xybreaks = input$xybreaks,
@@ -1769,6 +1842,7 @@ server <- function(input, output, session) {
       )
 
       show(id="GCdensitySubsetG_text")
+      show(id="GC_densitySubset_download")
       # density output - subset by clusters
       GC_densitySubsetG <- function(){plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
@@ -1784,6 +1858,7 @@ server <- function(input, output, session) {
 
       # histogram output - subset by clusters
       show(id="GChistogramSubsetG_text")
+      show(id="GC_histogramSubset_download")
       GC_histogramSubsetG <- function(){plot_scatter(node_degrees$genes[m,1]/node_degrees$n_genes_total, 
                       node_degrees$genes[m,2]/node_degrees$n_genes, 
                       xybreaks = input$xybreaks,
@@ -1881,6 +1956,7 @@ server <- function(input, output, session) {
 
       # heatmap output
       show(id="FO_heatmap_text")
+      show(id="FO_network_download")
       FO_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt = TRUE, flag_plot_bin = FALSE)}
       output$FO_heatmap <- renderPlot(
         {FO_heatmap()},
@@ -1890,6 +1966,7 @@ server <- function(input, output, session) {
 
       # network output
       show(id="FO_network_text")
+      show(id="FO_heatmap_download")
       FO_network <- function(){plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK)}
       output$FO_network <- renderPlot(
         {FO_network()},
@@ -1899,6 +1976,7 @@ server <- function(input, output, session) {
 
       # genes in module table output
       show(id="genes_not_keep_table_text")
+      show(id="genes_not_keep_table_download")
       FO_genes_not_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
       output$genes_not_keep_table <- renderDataTable(
         {FO_genes_not_keep()},
@@ -1907,6 +1985,7 @@ server <- function(input, output, session) {
 
       # functional outliers table output
       show(id="genes_keep_table_text")
+      show(id="genes_keep_table_table_download")
       FO_genes_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
       output$genes_keep_table <- renderDataTable(
         {FO_genes_keep()},
@@ -1956,6 +2035,7 @@ server <- function(input, output, session) {
 
       # heatmap
       show(id="GSEA_heatmap_text")
+      show(id="GSEA_heatmap_download")
       GSEA_heatmap <- function(){filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
           gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
           go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
