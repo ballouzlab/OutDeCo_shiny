@@ -25,6 +25,7 @@ ui <- fluidPage(
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
+ 
   theme = bs_theme(version = 5, bootswatch = "sandstone", 
                   heading_font = font_google("Poppins"), 
                   base_font = font_collection(font_google("Roboto")),
