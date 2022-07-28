@@ -93,6 +93,7 @@ ui <- fluidPage(
 
                   br(),
                   h5("DE Methods:"),
+                  img(src="DE_method.png", height = 150),
                   h6(strong("wilcox")),
                   p("Compares means of two groups to analyse count data and test for differential expression."),
                   h6(strong("DESeq")),
@@ -102,6 +103,7 @@ ui <- fluidPage(
                   br(),
 
                   h5("Case/Conditions Selection:"),
+                  img(src="choose_label.jpg", height = 250),
                   h6(strong("By label")),
                   tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
                         "- Condition are the remaining rows", tags$br(), ),
@@ -117,12 +119,48 @@ ui <- fluidPage(
 
                 tabPanel(title="Generating a Subnetwork",
                 h3("Generating a Subnetwork"),
+                
                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon = ">GL", status = "default", size = "default")),
-                p("Generating a subnetwork with a chosen network produces a matrix of weights between genes."),
-                p("This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.") 
+                tags$div("Generating a subnetwork with a chosen network produces a matrix of weights between genes.",tags$br(),
+                        "This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.", p("")),
+
+                p(em("A subnetwork must be generated before assessing DE or a gene list")),
+
+                tags$div("1) Select ",  img(src="network_options.png", height = 30), "Button", p(""),
+                "2)", strong("Choose Network"), tags$br(), 
+                "Ensure the", code("networks"), "folder is in parent directory of the package.", tags$br(),
+                "Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format", tags$br(),
+                "Network Files are named after the folder and consist of...", tags$br(),
+                "a) matrix of network itself (suffix", code(".net.h5"), ")", tags$br(),
+                "b) the genes (suffix", code(".genes.h5"),")", tags$br(),
+                "c) the median value of their network (suffix", code(".med.h5"), ")", tags$br(),
+                 p(""),
+                "3) Select whether you wish to", strong("use occur or standard network"),tags$br(), 
+                "- Occr - a tally of how often we see genes co-expressed", tags$br(), 
+                "- Standard (not occr) - an average of the weights/edges of coexpression values", p(""), 
+
+                "4) Select ", strong("data"), p(""), 
+
+                "5) Click ", img(src="generate_subnetwork.png", height = 30), p(""), 
+                ),
+                h4("Data Selection"),
+                h5("Assess DE:"), 
+                h6(strong("Use DE Results")),
+                tags$div("Takes the data from RUN DE",tags$br(),),
                   
-                   
+                h6(strong("Upload DE Data")),
+                  tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Column required for", code("mean_cmp, lof2_fc, pvals, padj"), tags$br(),
+                       ),
+
+
+                h5("Assess Gene List:"),
+                h6(strong("Upload Gene List")),
+                h6(strong("Generate Gene List")),
+
+                br(),
+                
                 ),
 
                 # cluster genes
