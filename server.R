@@ -119,15 +119,73 @@ server <- function(input, output, session) {
   hide(id = "DE_subnet_download")
   hide(id = "GL_subnet_download")
 
+  #Hide return buttons
+  hide(id="CG_return")
+  hide(id="GC_return")
+  hide(id="FO_return")
+  hide(id="GSEA_return")
   #Download Table Separator
   observe({
-    if (input$download_table_format ==  ".csv") {
+    if (input$download_table_format ==  ".csv" || input$ASSESS_DE_download_table_format  ==  ".csv" || input$ASSESS_GENE_LIST_download_table_format ==  ".csv") {
       separator <<- ","
-    } else if (input$download_table_format ==  ".tsv") {
+    } else if (input$download_table_format ==  ".tsv" || input$ASSESS_DE_download_table_format ==  ".tsv"  || input$ASSESS_GENE_LIST_download_table_format ==  ".tsv" ) {
       separator <<- "\t"
-    } else if (input$download_table_format ==  ".txt") {
+    } else if (input$download_table_format ==  ".txt" || input$ASSESS_DE_download_table_format ==  ".txt" || input$ASSESS_GENE_LIST_download_table_format==  ".txt" ) {
       separator <<- " "
     }
+  })
+  #HELP BUTTON PRESSED
+  observeEvent(input$help, {
+   
+    if (input$navpage == "Run DE") {
+      updateTabsetPanel(session, "Header", selected = "Differential Expression Analysis")
+    } else if (input$navpage == "Assess DE") {
+      if (input$assessDE_navList == "View Files") {
+        updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+      } else if (input$assessDE_navList == "Cluster Genes") {
+        updateTabsetPanel(session, "Header", selected = "Cluster Genes")
+        show(id="CG_return")
+        observeEvent(input$CG_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Cluster Genes")
+          hide(id="CG_return")
+        })
+      } else if (input$assessDE_navList == "Gene Connectivity") {
+        updateTabsetPanel(session, "Header", selected = "Gene Connectivity")
+        #show(id="GC_return")
+      } else if (input$assessDE_navList == "Functional Outliers") {
+        updateTabsetPanel(session, "Header", selected = "Functional Outliers")
+        #show(id="FO_return")
+      } else if (input$assessDE_navList == "Gene Set Enrichment Analysis") {
+        updateTabsetPanel(session, "Header", selected = "Gene Set Enrichment Analysis")
+        #show(id="GSEA_return")
+      }
+      
+
+      
+  } else if (input$navpage == "Assess Gene List") {
+      if (input$assessGL_navList == "View Files") {
+        updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+      } else if (input$assessGL_navList == "Cluster Genes") {
+        updateTabsetPanel(session, "Header", selected = "Cluster Genes")
+      } else if (input$assessGL_navList == "Gene Connectivity") {
+        updateTabsetPanel(session, "Header", selected = "Gene Connectivity")
+      } else if (input$assessGL_navList == "Functional Outliers") {
+        updateTabsetPanel(session, "Header", selected = "Functional Outliers")
+      } else if (input$assessGL_navList == "Gene Set Enrichment Analysis") {
+        updateTabsetPanel(session, "Header", selected = "Gene Set Enrichment Analysis")
+      }
+
+    # Move to the home page
+
+
+    }
+    updateTabsetPanel(session, "navpage", selected = "Home")
+  })
+
+
+  observeEvent(input$DE_return, {
+        updateTabsetPanel(session, "navpage", selected = "Run DE")
   })
     
   ##########################################################################################
@@ -737,7 +795,7 @@ server <- function(input, output, session) {
             
       output$DE_subnet_download <- downloadHandler(
       filename = function() {
-        paste("DE_subnetwork", input$download_table_format, sep="")
+        paste("DE_subnetwork", input$ASSESS_DE_download_table_format, sep="")
       },
       content = function(file) {
         write.table(DE_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
@@ -855,12 +913,12 @@ server <- function(input, output, session) {
       #Download plots    
       output$CG_up_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_network_up", input$download_format)
+          paste("plot_coexpression_network_up", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_up_network()
@@ -870,12 +928,12 @@ server <- function(input, output, session) {
 
       output$CG_up_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_heatmap_up", input$download_format)
+          paste("plot_coexpression_heatmap_up", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_up_heatmap()
@@ -885,12 +943,12 @@ server <- function(input, output, session) {
 
       output$CG_up_bheatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_binarized_heatmap_up", input$download_format)
+          paste("plot_coexpression_binarized_heatmap_up", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_up_bheatmap()
@@ -900,12 +958,12 @@ server <- function(input, output, session) {
 
       output$CG_down_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_network_down", input$download_format)
+          paste("plot_coexpression_network_down", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_down_network()
@@ -915,12 +973,12 @@ server <- function(input, output, session) {
 
       output$CG_down_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_heatmap_down", input$download_format)
+          paste("plot_coexpression_heatmap_down", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_down_heatmap()
@@ -930,12 +988,12 @@ server <- function(input, output, session) {
 
       output$CG_down_bheatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_binarized_heatmap_down", input$download_format)
+          paste("plot_coexpression_binarized_heatmap_down", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           CG_down_bheatmap()
@@ -1076,12 +1134,12 @@ server <- function(input, output, session) {
       #Download plots    
       output$GC_up_density_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_up", input$download_format)
+          paste("plot_scatter_density_up", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_up_density()
@@ -1091,12 +1149,12 @@ server <- function(input, output, session) {
 
       output$GC_up_histogram_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_up", input$download_format)
+          paste("plot_scatter_hist_up", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_up_histogram()
@@ -1106,12 +1164,12 @@ server <- function(input, output, session) {
 
       output$GC_up_densitySubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_up_colored", input$download_format)
+          paste("plot_scatter_density_up_colored", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_up_densitySubset()
@@ -1121,12 +1179,12 @@ server <- function(input, output, session) {
 
       output$GC_up_histSubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_up_colored", input$download_format)
+          paste("plot_scatter_hist_up_colored", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_up_histSubset()
@@ -1136,12 +1194,12 @@ server <- function(input, output, session) {
 
       output$GC_down_density_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_down", input$download_format)
+          paste("plot_scatter_density_down", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_down_density()
@@ -1151,12 +1209,12 @@ server <- function(input, output, session) {
 
       output$GC_down_hist_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_down", input$download_format)
+          paste("plot_scatter_hist_down", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_down_hist()
@@ -1166,12 +1224,12 @@ server <- function(input, output, session) {
 
       output$GC_down_densitySubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_down_colored", input$download_format)
+          paste("plot_scatter_density_down_colored", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_down_densitySubset()
@@ -1181,12 +1239,12 @@ server <- function(input, output, session) {
 
       output$GC_down_histSubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_down_colored", input$download_format)
+          paste("plot_scatter_hist_down_colored", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           GC_down_histSubset()
@@ -1274,12 +1332,12 @@ server <- function(input, output, session) {
       #Download plots    
       output$FO_up_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_network_up_filtered", input$download_format)
+          paste("plot_coexpression_network_up_filtered", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           FO_up_network()
@@ -1288,12 +1346,12 @@ server <- function(input, output, session) {
       ) 
       output$FO_up_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_heatmap_up_filtered", input$download_format)
+          paste("plot_coexpression_heatmap_up_filtered", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           FO_up_heatmap()
@@ -1302,12 +1360,12 @@ server <- function(input, output, session) {
       ) 
       output$FO_down_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_network_down_filtered", input$download_format)
+          paste("plot_coexpression_network_down_filtered", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           FO_down_network()
@@ -1316,12 +1374,12 @@ server <- function(input, output, session) {
       ) 
       output$FO_down_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_heatmap_down_filtered", input$download_format)
+          paste("plot_coexpression_heatmap_down_filtered", input$ASSESS_DE_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_DE_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_DE_download_format == ".pdf") {
             pdf(file)
           }
           FO_down_heatmap()
@@ -1402,12 +1460,12 @@ server <- function(input, output, session) {
     #Download plots    
     output$GSEA_up_heatmap_download <- downloadHandler(
       filename = function() {
-        paste("GSEA_up", input$download_format)
+        paste("GSEA_up", input$ASSESS_DE_download_format)
       },
       content = function(file) {
-        if (input$download_format == ".png") {
+        if (input$ASSESS_DE_download_format == ".png") {
           png(file, width=1500, height=1500)
-        } else if (input$download_format == ".pdf") {
+        } else if (input$ASSESS_DE_download_format == ".pdf") {
           pdf(file)
         }
         GSEA_up_heatmap()
@@ -1416,12 +1474,12 @@ server <- function(input, output, session) {
     )
     output$GSEA_down_heatmap_download <- downloadHandler(
       filename = function() {
-        paste("GSEA_down", input$download_format)
+        paste("GSEA_down", input$ASSESS_DE_download_format)
       },
       content = function(file) {
-        if (input$download_format == ".png") {
+        if (input$ASSESS_DE_download_format == ".png") {
           png(file, width=1500, height=1500)
-        } else if (input$download_format == ".pdf") {
+        } else if (input$ASSESS_DE_download_format == ".pdf") {
           pdf(file)
         }
         GSEA_down_heatmap()
@@ -1430,12 +1488,12 @@ server <- function(input, output, session) {
     )
     output$GSEAauc_download <- downloadHandler(
       filename = function() {
-        paste("GSEA_auc", input$download_format)
+        paste("GSEA_auc", input$ASSESS_DE_download_format)
       },
       content = function(file) {
-        if (input$download_format == ".png") {
+        if (input$ASSESS_DE_download_format == ".png") {
           png(file, width=1500, height=1500)
-        } else if (input$download_format == ".pdf") {
+        } else if (input$ASSESS_DE_download_format == ".pdf") {
           pdf(file)
         }
         GSEAauc()
@@ -1685,7 +1743,7 @@ server <- function(input, output, session) {
           GL_subnet_table <- function(){sn$sub_nets}
           output$GL_subnet_download <- downloadHandler(
             filename = function() {
-              paste("gene_list_subnetwork", input$download_table_format, sep="")
+              paste("gene_list_subnetwork", input$ASSESS_GENE_LIST_download_table_format, sep="")
             },
             content = function(file) {
               write.table(GL_subnet_table(), file, row.names = FALSE, sep = separator, col.names = TRUE)
@@ -1767,12 +1825,12 @@ server <- function(input, output, session) {
     #Download plots    
       output$CG_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_network_up", input$download_format)
+          paste("plot_coexpression_network_up", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           CG_network()
@@ -1782,12 +1840,12 @@ server <- function(input, output, session) {
       output$CG_heatmap_download <- downloadHandler(
   
         filename = function() {
-          paste("plot_coexpression_heatmap_genes", input$download_format)
+          paste("plot_coexpression_heatmap_genes", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           CG_heatmap()
@@ -1797,12 +1855,12 @@ server <- function(input, output, session) {
 
       output$CG_bheatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_coexpression_binarized_heatmap_up", input$download_format)
+          paste("plot_coexpression_binarized_heatmap_up", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           CG_bheatmap()
@@ -1812,7 +1870,7 @@ server <- function(input, output, session) {
 
     output$table_genelist_download <- downloadHandler(
       filename = function() {
-        paste("clustered", input$download_table_format, sep="")
+        paste("clustered", input$ASSESS_GENE_LIST_download_table_format, sep="")
       },
       content = function(file) {
         write.table(CG_table(), file, row.names = TRUE, sep = separator, col.names = TRUE)
@@ -1897,12 +1955,12 @@ server <- function(input, output, session) {
     #Download plots    
       output$GC_density_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_genes", input$download_format)
+          paste("plot_scatter_density_genes", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           GC_densityG()
@@ -1912,12 +1970,12 @@ server <- function(input, output, session) {
 
       output$GC_histogram_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_genes", input$download_format)
+          paste("plot_scatter_hist_genes", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           GC_histogramG()
@@ -1927,12 +1985,12 @@ server <- function(input, output, session) {
 
       output$GC_densitySubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_genes_coloured", input$download_format)
+          paste("plot_scatter_density_genes_coloured", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           GC_densitySubsetG()
@@ -1942,12 +2000,12 @@ server <- function(input, output, session) {
 
       output$GC_histogramSubset_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_genes_coloured", input$download_format)
+          paste("plot_scatter_hist_genes_coloured", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           } 
           GC_histogramSubsetG()
@@ -2016,12 +2074,12 @@ server <- function(input, output, session) {
     #Download plots    
       output$FO_network_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_density_genes", input$download_format)
+          paste("plot_scatter_density_genes", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           FO_network()
@@ -2031,12 +2089,12 @@ server <- function(input, output, session) {
 
       output$FO_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("plot_scatter_hist_genes", input$download_format)
+          paste("plot_scatter_hist_genes", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           FO_heatmap()
@@ -2046,7 +2104,7 @@ server <- function(input, output, session) {
 
       output$genes_not_keep_table_download <- downloadHandler(
       filename = function() {
-        paste("genes_not_keep", input$download_table_format, sep="")
+        paste("genes_not_keep", input$ASSESS_GENE_LIST_download_table_format, sep="")
       },
       content = function(file) {
         write.table(FO_genes_not_keep(), file, row.names = TRUE, sep = separator, col.names = TRUE)
@@ -2055,7 +2113,7 @@ server <- function(input, output, session) {
 
     output$genes_keep_table_table_download <- downloadHandler(
       filename = function() {
-        paste("genes_keep", input$download_table_format, sep="")
+        paste("genes_keep", input$ASSESS_GENE_LIST_download_table_format, sep="")
       },
       content = function(file) {
         write.table(FO_genes_keep(), file, row.names = TRUE, sep = separator, col.names = TRUE)
@@ -2088,12 +2146,12 @@ server <- function(input, output, session) {
       #Download plots    
       output$GSEA_heatmap_download <- downloadHandler(
         filename = function() {
-          paste("GSEA_heatmap", input$download_format)
+          paste("GSEA_heatmap", input$ASSESS_GENE_LIST_download_format)
         },
         content = function(file) {
-          if (input$download_format == ".png") {
+          if (input$ASSESS_GENE_LIST_download_format == ".png") {
             png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
+          } else if (input$ASSESS_GENE_LIST_download_format == ".pdf") {
             pdf(file)
           }
           GSEA_heatmap()

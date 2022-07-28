@@ -18,6 +18,8 @@ library(OutDeCo)
 library(EGAD)
 
 ui <- fluidPage(
+  div(style = "display:inline-block; float:right", circleButton("help", icon = icon("question"), status = "default", size = "default")),
+
   useShinyjs(),
   chooseSliderSkin("Flat",  color = "#325D88"),
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
@@ -38,42 +40,7 @@ ui <- fluidPage(
         }'))),
   
   #navbarPage is top menu bar  
-  sidebarLayout(position = "right",
-    
-    # Sidebar with a slider input
-    sidebarPanel(width = 2, well = FALSE, class = "sidebar_style",
-    div(style="position:relative; left:calc(6%);",dropdown(right = TRUE,
-                   tags$h4("Download Options"),
-                   inputId = "download_dropdown",
-                   style = "minimal", icon = "DOWNLOAD OPTIONS",
-                   status = "primary", width = "300px", size = "sm",
-                   
-                   
-                   selectInput(
-                     inputId = "download_format",
-                     label= tags$h6("Choose Plot Download Format"),
-                     choices = c(".png", ".pdf"),
-                     selected = ".png",
-                     width = "600px",
-                   ),
-                   selectInput(
-                     inputId = "download_table_format",
-                     label= tags$h6("Choose Table Download Format"),
-                     choices = c(".csv", ".tsv", ".txt"),
-                     selected = ".png",
-                     width = "600px",
-                   ),
-                   
-                   # run button
-                   
-                   
-                 ), ),               
-    ),
-    
-  mainPanel(width=10,
   navbarPage(title=NULL, id="navpage", collapsible = FALSE, 
-
-
             ##################### HOME TAB #####################
             tabPanel(
               title="Home",
@@ -93,7 +60,8 @@ ui <- fluidPage(
                 ),
                 
                 # differential analysis
-                tabPanel(title="Differential Analysis",
+                tabPanel(title="Differential Expression Analysis",
+                  div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("arrow-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
                   h5("Methods:"),
@@ -108,8 +76,16 @@ ui <- fluidPage(
                    
                 ),
 
+                tabPanel(title="Generating a Subnetwork",
+                h3("Generating a Subnetwork"),
+                 
+                  
+                   
+                ),
+
                 # cluster genes
                 tabPanel(title="Cluster Genes",
+                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = "DE", status = "default", size = "default")),
                   h3("Cluster Genes"),
                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
                   h5("Plot Types"),
@@ -127,6 +103,7 @@ ui <- fluidPage(
 
                 # gene connectivity 
                 tabPanel(title="Gene Connectivity",
+                div(style = "display:inline-block; float:right", circleButton(inputId="GC_return", icon = icon("arrow-right"), status = "default", size = "default")),
                   h3("Gene Connectivity"),
                   p('Calculates node degrees to get a sense of the global and local connectivities of the gene'),
                   h5("Plot Types"),
@@ -145,6 +122,7 @@ ui <- fluidPage(
                  
                 # functional outliers
                 tabPanel(title="Functional Outliers",
+                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return", icon = icon("arrow-right"), status = "default", size = "default")),
                   h3("Functional Outliers"),
                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
                   They are the genes that are Differentially Expressed but do not show local co-expression"),
@@ -164,6 +142,7 @@ ui <- fluidPage(
                 
                 # GSEA
                 tabPanel(
+                  div(style = "display:inline-block; float:right", circleButton("GSEA_return", icon = icon("arrow-right"), status = "default", size = "default")),
                   title="Gene Set Enrichment Analysis",
                   h3("Gene Set Enrichment Analysis (GSEA)"),
                   p("GSEA is a process of ranking genes by how statistically significant their differential gene expression is. 
@@ -183,7 +162,9 @@ ui <- fluidPage(
 
             ##################### RUN DE TAB #####################
             tabPanel(
+              
               title="Run DE", 
+              
 
               # side panel for upload options
               dropdown(
@@ -220,6 +201,32 @@ ui <- fluidPage(
 
                 ), 
                ),
+               div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
 
 
                br(),
@@ -389,6 +396,32 @@ ui <- fluidPage(
                 status = "primary", width = "335px", size = "sm",
 
                ),
+               div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "ASSESS_DE_download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "ASSESS_DE_download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "ASSESS_DE_download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
               
               
               br(),
@@ -927,6 +960,32 @@ ui <- fluidPage(
                 status = "primary", width = "335px", size = "sm",
 
                ),
+                div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "ASSESS_GENE_LIST_download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "ASSESS_GENE_LIST_download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "ASSESS_GENE_LIST_download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
 
 
               br(),
@@ -1314,6 +1373,6 @@ ui <- fluidPage(
 
             
   )
-  )
-  )
+  
+  
 )
