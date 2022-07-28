@@ -1342,7 +1342,7 @@ server <- function(input, output, session) {
         data(go_voc)
         
         # upregulated heatmap
-        show(id="GSEA_up_heatmap_text")
+        show(id="DE_GSEA_up_heatmap_text")
         show(id="GSEA_up_heatmap_download")
         GSEA_up_heatmap <- function(){
           filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
@@ -1357,7 +1357,7 @@ server <- function(input, output, session) {
         )
         
         # downregulated heatmap
-        show(id="GSEA_down_heatmap_text")
+        show(id="DE_GSEA_down_heatmap_text")
         show(id="GSEA_down_heatmap_download")
         GSEA_down_heatmap <- function(){filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
             gene_list <- clust_net_DE()$down$clusters$genes[clust_net_DE()$down$order]
@@ -1392,8 +1392,8 @@ server <- function(input, output, session) {
         GSEAauc <- function(){plot_gene_set_enrichment_ranked(gene_set_aucs, gene_rankings_rev, gene_list, go_slim_entrez)}
         output$GSEA_auc <- renderPlot(
           {GSEAauc()},
-          width = 500,
-          height = 500
+          width = 1000,
+          height = 1000
         )
       }
 
@@ -1643,6 +1643,7 @@ server <- function(input, output, session) {
             show(id = "FO_dropdown")
             hide(id = "FO_error")
             show(id = "GL_GSEA_dropdown")
+            show(id = "GL_GSEA_options")
             hide(id = "GL_GSEA_error")
             # Clear data
             output$network <- NULL
@@ -2069,39 +2070,36 @@ server <- function(input, output, session) {
   observeEvent(
     {input$GL_GSEA_run},
     {
-      data(go_slim)
-      data(go_voc)
-
       # heatmap
-      show(id="GSEA_heatmap_text")
-      show(id="GSEA_heatmap_download")
-      GSEA_heatmap <- function(){filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
-          gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
-          go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
-          plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])}
-      output$GL_GSEA_heatmap <- renderPlot(
-        {GSEA_heatmap()},
-        width = 500,
-        height = 500
-      )
-      
-      #Download plots    
-      output$GSEA_heatmap_download <- downloadHandler(
-        filename = function() {
-          paste("GSEA_heatmap", input$download_format)
-        },
-        content = function(file) {
-          if (input$download_format == ".png") {
-            png(file, width=1500, height=1500)
-          } else if (input$download_format == ".pdf") {
-            pdf(file)
-          }
-          GSEA_heatmap()
-          dev.off()
-        }
-      )
-    
-    
+      show(id = "GL_GSEA_heatmap_text")
+
+      data(go_voc)
+      gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
+
+      if (input$gene_list_selection == "Generate Gene List" || input$GL_gene_list_type == "Gene Names") {
+        data(go_slim)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      } 
+      else {
+        data(go_slim_entrez)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim_entrez[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      }
     }
   )
 
@@ -2140,6 +2138,46 @@ server <- function(input, output, session) {
     print("Please generate a subnetwork in NETWORK OPTIONS")
   }) 
 
+  # Gene List GSEA
+  observeEvent(
+    {input$GL_GSEA_run},
+    {
+      # heatmap
+      show(id = "GL_GSEA_heatmap_text")
+
+      data(go_voc)
+      gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
+
+      if (input$GL_gene_list_type == "Gene Names") {
+        data(go_slim)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      } else {
+        data(go_slim_entrez)
+        output$GL_GSEA_heatmap_plot <- renderPlot(
+          {
+            filt <- colSums(go_slim_entrez) < 5000 & colSums(go_slim_entrez) >= 10
+            go_enrich <- gene_set_enrichment(gene_list, go_slim_entrez[filt,], go_voc)
+            plot_gene_set_enrichment(go_enrich, gene_list, go_slim_entrez[filt,])
+          },
+          width = 500,
+          height = 500
+        )
+      }
+
+
+
+
+
+    }
+  )
 }
 
 
