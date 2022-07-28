@@ -46,6 +46,8 @@ server <- function(input, output, session) {
   hide(id="CGdownreg_network_text")
   hide(id="CGdownreg_heatmap_text")
   hide(id="CGdownreg_bheatmap_text")
+  hide(id="CG_table_text_upreg")
+  hide(id="CG_table_text_downreg")
 
 
   # Gene Connectivity
@@ -71,6 +73,10 @@ server <- function(input, output, session) {
   hide(id="FOheatmap_downreg_text")
   hide(id="genes_not_keep_table_text")
   hide(id="genes_keep_table_text")
+  hide(id="genes_not_keep_table_text_upreg")
+  hide(id="genes_keep_table_text_upreg")
+  hide(id="genes_not_keep_table_text_downreg")
+  hide(id="genes_keep_table_text_downreg")
 
   # GSEA
   hide(id="GSEA_heatmap_text")
@@ -976,12 +982,18 @@ server <- function(input, output, session) {
       )
 
       # clustering genes table output
-      # show(id="CG_table_text")
-      # output$CG_table <- renderDataTable(
-      #   {EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]},
-      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
-      # )
+      show(id="CG_table_text_upreg")
+      output$CG_table_upreg <- renderDataTable(
+        {EGAD::attr.human[match(clust_net_DE()$up$clusters$genes, EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
 
+      show(id="CG_table_text_downreg")
+      output$CG_table_downreg <- renderDataTable(
+        {EGAD::attr.human[match(clust_net_DE()$down$clusters$genes, EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
+      
       #------------------ DOWNLOAD ----------------------#
       #Download plots    
       output$CG_up_network_download <- downloadHandler(
@@ -1379,27 +1391,42 @@ server <- function(input, output, session) {
 
 
       # # genes in module table output
-      # show(id="genes_not_keep_table_text")
-      # output$genes_not_keep_table <- renderDataTable(
-      #   { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
-      #     clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-      #     genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
-      #     EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
-      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
-      # )
-
+      show(id="genes_not_keep_table_text_upreg")
+      output$genes_not_keep_table_upreg <- renderDataTable(
+        { clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net_DE()$up$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
 
       # # functional outliers table output
-      # show(id="genes_keep_table_text")
-      # output$genes_keep_table <- renderDataTable(
-      #   { clust_size <- plyr::count(clust_net()$genes$clusters$labels)
-      #     clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-      #     genes_keep <- !is.na(match(clust_net()$genes$clusters$labels, clust_keep))
-      #     EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]},
-      #   # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
-      # )
+      show(id="genes_keep_table_text_upreg")
+      output$genes_keep_table_upreg <- renderDataTable(
+        { clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net_DE()$up$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
 
+      show(id="genes_not_keep_table_text_downreg")
+      output$genes_not_keep_table_downreg <- renderDataTable(
+        { clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
 
+      show(id="genes_keep_table_text_downreg")
+      output$genes_keep_table_downreg <- renderDataTable(
+        { clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
+          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+          genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
+          EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]},
+        # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
+      )
 
       #------------------ DOWNLOAD ----------------------#
       #Download plots    
@@ -1887,7 +1914,22 @@ server <- function(input, output, session) {
       # clustering genes table output
       show(id="CG_table_text")
       show(id="table_genelist_download")
-      CG_table <- function(){{EGAD::attr.human[match(clust_net()$genes$clusters$genes,EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome],input$chooseGeneNo),]}}
+      CG_table <- function(){{
+        is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$name),]
+            }
+
+          } 
+      }}
       output$CG_table <- renderDataTable(
         {CG_table()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
@@ -2109,7 +2151,7 @@ server <- function(input, output, session) {
       # heatmap output
       show(id="FO_heatmap_text")
       show(id="FO_network_download")
-      FO_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt = TRUE, flag_plot_bin = FALSE)}
+      FO_heatmap <- function(){plot_coexpression_heatmap(sub_net$genes, clust_net()$genes, filt = TRUE, flag_plot_bin = FALSE, filt_min = filt_min)}
       output$FO_heatmap <- renderPlot(
         {FO_heatmap()},
         width = 500,
@@ -2119,7 +2161,7 @@ server <- function(input, output, session) {
       # network output
       show(id="FO_network_text")
       show(id="FO_heatmap_download")
-      FO_network <- function(){plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK)}
+      FO_network <- function(){plot_network(1-sub_net$genes, clust_net()$genes, 1 - medK, filt_min = filt_min)}
       output$FO_network <- renderPlot(
         {FO_network()},
         width = 500,
@@ -2129,16 +2171,45 @@ server <- function(input, output, session) {
       # genes in module table output
       show(id="genes_not_keep_table_text")
       show(id="genes_not_keep_table_download")
-      FO_genes_not_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
+      FO_genes_not_keep <- function(){
+        is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name),]
+            }
+
+          }
+      }
       output$genes_not_keep_table <- renderDataTable(
         {FO_genes_not_keep()},
       )
 
-
       # functional outliers table output
       show(id="genes_keep_table_text")
       show(id="genes_keep_table_table_download")
-      FO_genes_keep <- function(){EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name[EGAD::attr.human$chr==input$chooseChrome], input$chooseGeneNo),]}
+      FO_genes_keep <- function(){
+        is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name),]
+            }
+
+          }
+      }
       output$genes_keep_table <- renderDataTable(
         {FO_genes_keep()},
       )
@@ -2200,13 +2271,14 @@ server <- function(input, output, session) {
   observeEvent(
     {input$GL_GSEA_run},
     {
-      data(go_slim)
+      # data(go_slim)
       data(go_voc)
 
       # heatmap
       show(id="GSEA_heatmap_text")
       show(id="GSEA_heatmap_download")
-      GSEA_heatmap <- function(){filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
+      GSEA_heatmap <- function(){
+          filt <- colSums(go_slim) < 5000 & colSums(go_slim) >= 10
           gene_list <- clust_net()$genes$clusters$genes[clust_net()$genes$order]
           go_enrich <- gene_set_enrichment(gene_list, go_slim[filt,], go_voc)
           plot_gene_set_enrichment(go_enrich, gene_list, go_slim[filt,])}
