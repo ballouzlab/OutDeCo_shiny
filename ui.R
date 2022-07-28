@@ -85,7 +85,8 @@ ui <- fluidPage(
 
                 # cluster genes
                 tabPanel(title="Cluster Genes",
-                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = "DE", status = "default", size = "default")),
+                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = ">DE", status = "default", size = "default")),
+                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Cluster Genes"),
                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
                   h5("Plot Types"),

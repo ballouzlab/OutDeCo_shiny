@@ -124,6 +124,7 @@ server <- function(input, output, session) {
   hide(id="GC_return")
   hide(id="FO_return")
   hide(id="GSEA_return")
+  hide(id="CG_return_GL")
   #Download Table Separator
   observe({
     if (input$download_table_format ==  ".csv" || input$ASSESS_DE_download_table_format  ==  ".csv" || input$ASSESS_GENE_LIST_download_table_format ==  ".csv") {
@@ -168,6 +169,12 @@ server <- function(input, output, session) {
         updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
       } else if (input$assessGL_navList == "Cluster Genes") {
         updateTabsetPanel(session, "Header", selected = "Cluster Genes")
+        show(id="CG_return_GL")
+        observeEvent(input$CG_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "Cluster Genes")
+          hide(id="CG_return_GL")
+        })
       } else if (input$assessGL_navList == "Gene Connectivity") {
         updateTabsetPanel(session, "Header", selected = "Gene Connectivity")
       } else if (input$assessGL_navList == "Functional Outliers") {
