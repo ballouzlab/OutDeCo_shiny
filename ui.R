@@ -431,6 +431,31 @@ ui <- fluidPage(
 
                       ),
 
+                      tabPanel(
+                        br(),
+                        title="Tables",
+                        br(),
+
+                        # clustering genes
+                        h5(id="CG_table_text_upreg", "Upregulated Clustering Genes"), 
+                        br(),
+                        fluidRow(
+                          column(11,
+                                  dataTableOutput("CG_table_upreg"),
+                          )
+                        ),
+
+                        h5(id="CG_table_text_downreg", "Downregulated Clustering Genes"), 
+                        br(),
+                        fluidRow(
+                          column(11,
+                                  dataTableOutput("CG_table_downreg"),
+                          )
+                        ),
+
+
+                      ),
+
                       
                     )
 
@@ -570,12 +595,12 @@ ui <- fluidPage(
                       ),
 
                       # select tables
-                      # awesomeCheckboxGroup(
-                      #     inputId = "FO_table_options",
-                      #     label = tags$h4("Select Tables"),
-                      #     choices = c("Functional Outliers", "Genes in Module"),
-                      #     status = ""
-                      # ),
+                      awesomeCheckboxGroup(
+                          inputId = "FO_table_options_DE",
+                          label = tags$h4("Select Tables"),
+                          choices = c("Upregulated Functional Outliers", "Upregulated Genes in Module", "Downregulated Functional Outliers", "Downregulated Genes in Module"),
+                          status = ""
+                      ),
 
                       # other options
                       tags$h4("Other"),
@@ -642,30 +667,58 @@ ui <- fluidPage(
                       br(),
 
                       # selected genes table output
-                      # conditionalPanel(
-                      #   condition = "$.inArray('Genes in Module', input.FO_table_options) > -1", 
-                      #   h5(id="genes_not_keep_table_text", "Genes in Module"), 
-                      #   br(),
-                      #   fluidRow(
-                      #     column( 11,
-                      #             dataTableOutput("genes_not_keep_table"),
-                      #     )
-                      #   ),
-                      # ),
+                      conditionalPanel(
+                        condition = "$.inArray('Upregulated Genes in Module', input.FO_table_options_DE) > -1", 
+                        h5(id="genes_not_keep_table_text_upreg", "Upregulated Genes in Module"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_not_keep_table_upreg"),
+                          )
+                        ),
+                      ),
 
-                      # br(),
+                      br(),
 
                       # # unselected genes table output
-                      # conditionalPanel(
-                      #   condition = "$.inArray('Functional Outliers', input.FO_table_options) > -1", 
-                      #   h5(id="genes_keep_table_text", "Outliers"), 
-                      #   br(),
-                      #   fluidRow(
-                      #     column( 11,
-                      #             dataTableOutput("genes_keep_table"),
-                      #     )
-                      #   ),
-                      # ),
+                      conditionalPanel(
+                        condition = "$.inArray('Upregulated Functional Outliers', input.FO_table_options_DE) > -1", 
+                        h5(id="genes_keep_table_text_upreg", "Upregulated Functional Outliers"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_keep_table_upreg"),
+                          )
+                        ),
+                      ),
+
+                      br(),
+
+                      conditionalPanel(
+                        condition = "$.inArray('Downregulated Genes in Module', input.FO_table_options_DE) > -1", 
+                        h5(id="genes_not_keep_table_text_downreg", "Downregulated Genes in Module"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_not_keep_table_downreg"),
+                          )
+                        ),
+                      ),
+
+                      br(),
+
+                      # # unselected genes table output
+                      conditionalPanel(
+                        condition = "$.inArray('Downregulated Functional Outliers', input.FO_table_options_DE) > -1", 
+                        h5(id="genes_keep_table_text_downreg", "Downregulated Functional Outliers"), 
+                        br(),
+                        fluidRow(
+                          column( 11,
+                                  dataTableOutput("genes_keep_table_downreg"),
+                          )
+                        ),
+                      ),
+
                     )
                   ),
                 ),
