@@ -916,7 +916,22 @@ server <- function(input, output, session) {
       # clustering genes table output
       show(id="CG_table_text")
       output$CG_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$name),]},
+        { is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes, EGAD::attr.human$name),]
+            }
+
+          }
+          
+        },
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
@@ -1025,15 +1040,44 @@ server <- function(input, output, session) {
       # genes in module table output
       show(id="genes_not_keep_table_text")
       output$genes_not_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name),]},
+        { is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[!genes_keep],EGAD::attr.human$name),]
+            }
+
+          }
+
+        },
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
-
 
       # functional outliers table output
       show(id="genes_keep_table_text")
       output$genes_keep_table <- renderDataTable(
-        {EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name),]},
+        { is_ENSG <- grep('^ENSG', head(clust_net()$genes$clusters$genes))
+          is_entrez <- grep("^\\d+", head (clust_net()$genes$clusters$genes))
+
+          if ( length(is_ENSG) > 0 ) { 
+            EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$ensemblID),]
+
+          } else { 
+            if ( length(is_entrez) > 0 ) {
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$entrezID),]
+            } else { 
+              EGAD::attr.human[match(clust_net()$genes$clusters$genes[genes_keep],EGAD::attr.human$name),]
+            }
+
+          }
+            
+        },
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
       
