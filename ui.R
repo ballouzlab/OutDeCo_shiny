@@ -62,7 +62,11 @@ ui <- fluidPage(
                      choices = c(".csv", ".tsv", ".txt"),
                      selected = ".png",
                      width = "600px",
-                   ),                   
+                   ),
+                   
+                   # run button
+                   
+                   
                  ), ),               
     ),
     
@@ -910,13 +914,10 @@ ui <- fluidPage(
                     label = "Choose Gene List File",
                     accept = c(".csv", ".tsv", ".txt")
                   ),
-                  radioButtons( # select gene list type
-                    inputId = 'GL_gene_list_type', 
-                    label = 'Gene List Type', 
-                    choices = c("Gene Names", "Entrez Id"), 
-                    selected = ''
-                  ),
-                ),                
+                ),
+                
+
+                
                 
                 # generate subnet button
                 actionButton("generate_subnet", "Generate Subnetwork",),
@@ -1257,47 +1258,61 @@ ui <- fluidPage(
 
                 ),
 
-                 ########################### GSEA ###########################
-
-                tabPanel(title = "Gene Set Enrichment Analysis",
+                # GENE SET ENRICHMENT ANALYSIS
+                tabPanel(
+                  title="Gene Set Enrichment Analysis",
                   mainPanel(
                     h3("Gene Set Enrichment Analysis"),
                     
                     # options dropdown
                     dropdown(
-                      inputId = "GL_GSEA_options",
-
-                      # dropdown characteristics
+                      inputId = "GL_GSEA_dropdown",
                       style = "minimal", icon = "OPTIONS",
                       status = "primary", width = "335px", size = "sm",
                       
                       # standard GSEA options
                       awesomeCheckboxGroup(
-                        inputId = "GL_GSEA_options_std",
+                        inputId = "GL_GSEA_std_PlotOptions",
                         label = tags$h4("Standard GSEA"), 
                         choices = c("P-value Heatmap"),
                         status = ""
                       ),
                       
+                      br(),
+
                       # run button
-                      actionButton(inputId = "GL_GSEA_run", label = "Run"),
+                      actionButton(
+                        inputId = "GL_GSEA_run",
+                        label = "Run",
+                        style="color: #fff; background-color: #3E3F3A; border-color: #20201F"
+                      ),
+
                     ),
                     
-                    # error message
-                    p(id = "GL_GSEA_error", "Please generate a subnetwork in OPTIONS.", style = "color:red"),
-                    br(),
-                  ),
 
-                    # heatmap
-                    conditionalPanel(
-                      condition = "$.inArray('P-value Heatmap', input.GL_GSEA_options_std) > -1", 
-                      h5(id = "GL_GSEA_heatmap_text", "P-value Heatmap"), 
-                      plotOutput(outputId = "GL_GSEA_heatmap_plot", height = "500px"),
-                      br(),
-                    ),
+                    # error message
+                    textOutput("GL_GSEA_error"),
+                  ),
+                  br(),
+                  # heatmap
+                  conditionalPanel(
+                    condition = "$.inArray('P-value Heatmap', input.GL_GSEA_std_PlotOptions) > -1", 
+                    h5(id="GSEA_heatmap_text", "P-value Heatmap"), 
+                    plotOutput(outputId = "GL_GSEA_heatmap", height = "500px"),
+                    div(style="margin-left: 400px;", downloadLink("GSEA_heatmap_download", label = "Download", class = "download_style")),
+                  ),
+                  br(),
+
                 ),
+
               ),
+
+              br(),
+              br(),
             ),
+            
+
+            
   )
   )
   )
