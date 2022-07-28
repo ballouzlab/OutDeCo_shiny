@@ -919,8 +919,6 @@ ui <- fluidPage(
                     selected = ''
                   ),
                 ),                
-
-                
                 
                 # generate subnet button
                 actionButton("generate_subnet", "Generate Subnetwork",),
