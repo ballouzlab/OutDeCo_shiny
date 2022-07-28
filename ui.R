@@ -55,9 +55,14 @@ ui <- fluidPage(
                   h3("What is OutDeCo?"),
                   p("Outlier detection through co-expression. Using the tools on this website you can:"),
                   p("- Run a differential expression (DE) analysis "),
-                  p("- Assess your DE results using gene co-expression properties"),
+                  p("- Assess your DE results or a gene list using gene co-expression properties"),
                   p("- Report a functional outlier assessment"),
-                  p("- Run a network connectivity analysis of DE results within a gene co-expression network"),
+                  p("- Run a network connectivity analysis of DE results or a gene list within a gene co-expression network"),
+                  br(),
+                  h5("Differential Expression (DE) vs Gene List (GL)"),
+                  p(" - Assess DE will have analysis options for up and down regulated genes"),
+                  p("- Assess Gene List will have analysis options for genes")
+
                 ),
                 
                 # differential analysis
@@ -65,7 +70,29 @@ ui <- fluidPage(
                   div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
-                  h5("Methods:"),
+                  h5("Files/Data:"),
+                  splitLayout(cellWidths = c("20%", "80%"), 
+                      fluidPage(
+                         img(src="run_de_file_options.jpg", height = 200),
+                      ),
+                      fluidPage(
+                        h6(strong("Counts")),
+
+                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Columns contain individual samples  labelled by sample ID", tags$br(),
+                        "- Rows contain genes                labelled by entrez ID ", ),
+                      
+                        h6(strong("Labels")),
+                         tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Columns  labelled by category/label", tags$br(),
+                        "- Rows  labelled by run", ),
+
+                      
+                      ),
+                    ), 
+
+                  br(),
+                  h5("DE Methods:"),
                   h6(strong("wilcox")),
                   p("Compares means of two groups to analyse count data and test for differential expression."),
                   h6(strong("DESeq")),
@@ -73,15 +100,27 @@ ui <- fluidPage(
                   h6(strong("edgeR")),
                   p("Uses weighted mean of log ratio to analyse count data and test for differential expression."),
                   br(),
-                  em("Note: This tool is under construction")
+
+                  h5("Case/Conditions Selection:"),
+                  h6(strong("By label")),
+                  tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
+                        "- Condition are the remaining rows", tags$br(), ),
+                  
+                  h6(strong("Individually")),
+                  p("Cases and Conditions are selected by clicking the associated row on the labels table"),
+                  
+                  br(),
+
+
                    
                 ),
 
                 tabPanel(title="Generating a Subnetwork",
                 h3("Generating a Subnetwork"),
-                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
+                div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon = ">GL", status = "default", size = "default")),
-                 
+                p("Generating a subnetwork with a chosen network produces a matrix of weights between genes."),
+                p("This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.") 
                   
                    
                 ),
