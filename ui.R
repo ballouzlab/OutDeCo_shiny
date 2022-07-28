@@ -61,7 +61,7 @@ ui <- fluidPage(
                 
                 # differential analysis
                 tabPanel(title="Differential Expression Analysis",
-                  div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("arrow-right"), status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
                   h5("Methods:"),
@@ -78,6 +78,8 @@ ui <- fluidPage(
 
                 tabPanel(title="Generating a Subnetwork",
                 h3("Generating a Subnetwork"),
+                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
+                div(style = "display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon = ">GL", status = "default", size = "default")),
                  
                   
                    
@@ -85,8 +87,8 @@ ui <- fluidPage(
 
                 # cluster genes
                 tabPanel(title="Cluster Genes",
-                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = ">DE", status = "default", size = "default")),
-                div(style = "display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon = ">GL", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Cluster Genes"),
                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
                   h5("Plot Types"),
@@ -104,7 +106,8 @@ ui <- fluidPage(
 
                 # gene connectivity 
                 tabPanel(title="Gene Connectivity",
-                div(style = "display:inline-block; float:right", circleButton(inputId="GC_return", icon = icon("arrow-right"), status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GC_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GC_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Gene Connectivity"),
                   p('Calculates node degrees to get a sense of the global and local connectivities of the gene'),
                   h5("Plot Types"),
@@ -123,7 +126,8 @@ ui <- fluidPage(
                  
                 # functional outliers
                 tabPanel(title="Functional Outliers",
-                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return", icon = icon("arrow-right"), status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Functional Outliers"),
                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
                   They are the genes that are Differentially Expressed but do not show local co-expression"),
@@ -143,7 +147,8 @@ ui <- fluidPage(
                 
                 # GSEA
                 tabPanel(
-                  div(style = "display:inline-block; float:right", circleButton("GSEA_return", icon = icon("arrow-right"), status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GSEA_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GSEA_return_GL", icon = ">GL", status = "default", size = "default")),
                   title="Gene Set Enrichment Analysis",
                   h3("Gene Set Enrichment Analysis (GSEA)"),
                   p("GSEA is a process of ranking genes by how statistically significant their differential gene expression is. 

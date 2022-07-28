@@ -120,11 +120,17 @@ server <- function(input, output, session) {
   hide(id = "GL_subnet_download")
 
   #Hide return buttons
+  hide(id="SN_return")
   hide(id="CG_return")
   hide(id="GC_return")
   hide(id="FO_return")
   hide(id="GSEA_return")
+  hide(id="SN_return_GL")
   hide(id="CG_return_GL")
+  hide(id="GC_return_GL")
+  hide(id="FO_return_GL")
+  hide(id="GSEA_return_GL")
+
   #Download Table Separator
   observe({
     if (input$download_table_format ==  ".csv" || input$ASSESS_DE_download_table_format  ==  ".csv" || input$ASSESS_GENE_LIST_download_table_format ==  ".csv") {
@@ -135,7 +141,11 @@ server <- function(input, output, session) {
       separator <<- " "
     }
   })
-  #HELP BUTTON PRESSED
+  ##########################################################################################
+  #                                                                                        #
+  #                                    HELP                                                #
+  #                                                                                        #
+  ##########################################################################################
   observeEvent(input$help, {
    
     if (input$navpage == "Run DE") {
@@ -143,23 +153,24 @@ server <- function(input, output, session) {
     } else if (input$navpage == "Assess DE") {
       if (input$assessDE_navList == "View Files") {
         updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+        show(id="SN_return")
+        
       } else if (input$assessDE_navList == "Cluster Genes") {
         updateTabsetPanel(session, "Header", selected = "Cluster Genes")
         show(id="CG_return")
-        observeEvent(input$CG_return, {
-          updateTabsetPanel(session, "navpage", selected = "Assess DE")
-          updateTabsetPanel(session, "assessDE_navList", selected = "Cluster Genes")
-          hide(id="CG_return")
-        })
+        
       } else if (input$assessDE_navList == "Gene Connectivity") {
         updateTabsetPanel(session, "Header", selected = "Gene Connectivity")
-        #show(id="GC_return")
+        show(id="GC_return")
+        
       } else if (input$assessDE_navList == "Functional Outliers") {
         updateTabsetPanel(session, "Header", selected = "Functional Outliers")
-        #show(id="FO_return")
+        show(id="FO_return")
+        
       } else if (input$assessDE_navList == "Gene Set Enrichment Analysis") {
         updateTabsetPanel(session, "Header", selected = "Gene Set Enrichment Analysis")
-        #show(id="GSEA_return")
+        show(id="GSEA_return")
+        
       }
       
 
@@ -167,34 +178,89 @@ server <- function(input, output, session) {
   } else if (input$navpage == "Assess Gene List") {
       if (input$assessGL_navList == "View Files") {
         updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+        show(id="SN_return_GL")
+        
       } else if (input$assessGL_navList == "Cluster Genes") {
         updateTabsetPanel(session, "Header", selected = "Cluster Genes")
         show(id="CG_return_GL")
-        observeEvent(input$CG_return_GL, {
-          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
-          updateTabsetPanel(session, "assessGL_navList", selected = "Cluster Genes")
-          hide(id="CG_return_GL")
-        })
+        
       } else if (input$assessGL_navList == "Gene Connectivity") {
         updateTabsetPanel(session, "Header", selected = "Gene Connectivity")
+        show(id="GC_return_GL")
+        
       } else if (input$assessGL_navList == "Functional Outliers") {
         updateTabsetPanel(session, "Header", selected = "Functional Outliers")
+        show(id="FO_return_GL")
+        
       } else if (input$assessGL_navList == "Gene Set Enrichment Analysis") {
         updateTabsetPanel(session, "Header", selected = "Gene Set Enrichment Analysis")
+        show(id="GSEA_return_GL")
+        
       }
 
     # Move to the home page
 
 
     }
-    updateTabsetPanel(session, "navpage", selected = "Home")
+  updateTabsetPanel(session, "navpage", selected = "Home")
   })
 
-
+  observeEvent(input$SN_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "View Files")
+          hide(id="SN_return")
+  })
   observeEvent(input$DE_return, {
         updateTabsetPanel(session, "navpage", selected = "Run DE")
   })
-    
+  
+  observeEvent(input$CG_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Cluster Genes")
+          hide(id="CG_return")
+  })
+  observeEvent(input$GC_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Gene Connectivity")
+          hide(id="GC_return")
+  })
+  observeEvent(input$FO_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Functional Outliers")
+          hide(id="FO_return")
+  })
+  observeEvent(input$FO_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
+         hide(id="GSEA_return")
+  })
+  observeEvent(input$SN_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "View Files")
+          hide(id="SN_return_GL")
+  })
+  observeEvent(input$CG_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "Cluster Genes")
+          hide(id="CG_return_GL")
+  })
+
+  observeEvent(input$GC_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "Gene Connectivity")
+          hide(id="GC_return_GL")
+  })
+  observeEvent(input$FO_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "Functional Outliers")
+          hide(id="FO_return_GL")
+  })
+  observeEvent(input$GSEA_return_GL, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessGL_navList", selected = "Gene Set Enrichment Analysis")
+          hide(id="GSEA_return_GL")
+  })
+
   ##########################################################################################
   #                                                                                        #
   #                                    RUN DE                                              #
