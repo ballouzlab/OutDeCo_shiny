@@ -1351,7 +1351,7 @@ server <- function(input, output, session) {
       node_degrees <- sn$sub_nets_DE$node_degrees  
       medK <- as.numeric(sn$sub_nets_DE$median)
 
-      filt_min <- input$filtmin
+      filt_min <- input$filtmin_DE
 
       show(id="FOnetwork_upreg_text")
       show(id="FO_up_network_download")

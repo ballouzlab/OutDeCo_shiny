@@ -774,7 +774,7 @@ ui <- fluidPage(
                       tags$h4("Other"),
                       
                       # filt_min slider
-                      sliderInput("filtmin", label = "Number of Genes to form Module",
+                      sliderInput("filtmin_DE", label = "Number of Genes to form Module",
                           min = 0, max = 20, value = 6, step = 1
                       ),
 
