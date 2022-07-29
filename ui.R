@@ -53,15 +53,23 @@ ui <- fluidPage(
                 # about
                 tabPanel(title="About",
                   h3("What is OutDeCo?"),
-                  p("Outlier detection through co-expression. Using the tools on this website you can:"),
-                  p("- Run a differential expression (DE) analysis "),
-                  p("- Assess your DE results or a gene list using gene co-expression properties"),
-                  p("- Report a functional outlier assessment"),
-                  p("- Run a network connectivity analysis of DE results or a gene list within a gene co-expression network"),
                   br(),
+                  p(strong("Outlier Detection through Co-expression"), "is an R package developed by Dr Sara Ballouz."),
+                  p("The purpose of this package is to assess genes - more specifically differentially expressed genes, with respect to their co-expression properties."),
+                  p("Using the tools on this website you can:"),
+                  tags$li("Run a differential expression (DE) analysis."),
+                  tags$li("Assess your DE results."),
+                  tags$li("Assess an uploaded/generated gene list."),
+                  # tags$li("Report a functional outlier assessment."),
+                  # tags$li("Run a network connectivity analysis of DE results within a gene co-expression network."),
+                  br(),
+                  
                   h5("Differential Expression (DE) vs Gene List (GL)"),
-                  p(" - Assess DE will have analysis options for up and down regulated genes"),
-                  p("- Assess Gene List will have analysis options for genes")
+                  tags$li("Assess DE will have analysis options for up and down regulated genes"),
+                  tags$li("Assess Gene List will have analysis options for genes"),
+                  br(),
+
+                  tags$a(href="https://github.com/ballouzlab/OutDeCo_lite", "Github source code"),
 
                 ),
                 
@@ -69,7 +77,7 @@ ui <- fluidPage(
                 tabPanel(title="Differential Expression Analysis",
                   div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
-                  p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
+                  p(strong("Differential Expression Analysis"), "is a statistical analysis to discover quantitative changes in expression levels between experimental groups."),
                   h4("User Guide"),
                   
                   h5("Files/Data:"),
@@ -85,7 +93,7 @@ ui <- fluidPage(
                         "- Rows contain genes                labelled by entrez ID ", ),
                       
                         h6(strong("Labels")),
-                         tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
                         "- Columns  labelled by category/label", tags$br(),
                         "- Rows  labelled by run", ),
 
@@ -116,6 +124,11 @@ ui <- fluidPage(
                   br(),
 
                   h4("Output"),
+                  h5("Plot Types:"),
+                  h6(strong("Volcano Plot")),
+                  img(src="volcano_plot.png", height=300),
+                  h6(strong("MA Plot")),
+                  img(src="MA_plot.png", height=300),
 
 
                    
@@ -137,13 +150,13 @@ ui <- fluidPage(
                 "Ensure the", code("networks"), "folder is in parent directory of the package.", tags$br(),
                 "Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format", tags$br(),
                 "Network Files are named after the folder and consist of...", tags$br(),
-                "a) matrix of network itself (suffix", code(".net.h5"), ")", tags$br(),
-                "b) the genes (suffix", code(".genes.h5"),")", tags$br(),
-                "c) the median value of their network (suffix", code(".med.h5"), ")", tags$br(),
+                tags$li("matrix of network itself (suffix", code(".net.h5"), ")"), 
+                tags$li("the genes (suffix", code(".genes.h5"),")"), 
+                tags$li("the median value of their network (suffix", code(".med.h5"), ")"), 
                  p(""),
                 "3) Select whether you wish to", strong("use occur or standard network"),tags$br(), 
-                "- Occr - a tally of how often we see genes co-expressed", tags$br(), 
-                "- Standard (not occr) - an average of the weights/edges of coexpression values", p(""), 
+                strong("Occr"), " - a tally of how often we see genes co-expressed", tags$br(), 
+                strong("Standard (not occr)"), "- an average of the weights/edges of coexpression values", p(""), 
 
                 "4) Select ", strong("data"), p(""), 
 
