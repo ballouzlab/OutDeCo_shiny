@@ -53,15 +53,23 @@ ui <- fluidPage(
                 # about
                 tabPanel(title="About",
                   h3("What is OutDeCo?"),
-                  p("Outlier detection through co-expression. Using the tools on this website you can:"),
-                  p("- Run a differential expression (DE) analysis "),
-                  p("- Assess your DE results or a gene list using gene co-expression properties"),
-                  p("- Report a functional outlier assessment"),
-                  p("- Run a network connectivity analysis of DE results or a gene list within a gene co-expression network"),
                   br(),
+                  p(strong("Outlier Detection through Co-expression"), "is an R package developed by Dr Sara Ballouz."),
+                  p("The purpose of this package is to assess genes - more specifically differentially expressed genes, with respect to their co-expression properties."),
+                  p("Using the tools on this website you can:"),
+                  tags$li("Run a differential expression (DE) analysis."),
+                  tags$li("Assess your DE results."),
+                  tags$li("Assess an uploaded/generated gene list."),
+                  # tags$li("Report a functional outlier assessment."),
+                  # tags$li("Run a network connectivity analysis of DE results within a gene co-expression network."),
+                  br(),
+                  
                   h5("Differential Expression (DE) vs Gene List (GL)"),
-                  p(" - Assess DE will have analysis options for up and down regulated genes"),
-                  p("- Assess Gene List will have analysis options for genes")
+                  tags$li("Assess DE will have analysis options for up and down regulated genes"),
+                  tags$li("Assess Gene List will have analysis options for genes"),
+                  br(),
+
+                  tags$a(href="https://github.com/ballouzlab/OutDeCo_lite", "Github source code"),
 
                 ),
                 
@@ -69,7 +77,9 @@ ui <- fluidPage(
                 tabPanel(title="Differential Expression Analysis",
                   div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
-                  p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
+                  p(strong("Differential Expression Analysis"), "is a statistical analysis to discover quantitative changes in expression levels between experimental groups."),
+                  h4("User Guide"),
+                  
                   h5("Files/Data:"),
                   splitLayout(cellWidths = c("20%", "80%"), 
                       fluidPage(
@@ -83,7 +93,7 @@ ui <- fluidPage(
                         "- Rows contain genes                labelled by entrez ID ", ),
                       
                         h6(strong("Labels")),
-                         tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
                         "- Columns  labelled by category/label", tags$br(),
                         "- Rows  labelled by run", ),
 
@@ -93,6 +103,7 @@ ui <- fluidPage(
 
                   br(),
                   h5("DE Methods:"),
+                  img(src="DE_method.png", height = 150),
                   h6(strong("wilcox")),
                   p("Compares means of two groups to analyse count data and test for differential expression."),
                   h6(strong("DESeq")),
@@ -102,6 +113,7 @@ ui <- fluidPage(
                   br(),
 
                   h5("Case/Conditions Selection:"),
+                  img(src="choose_label.jpg", height = 250),
                   h6(strong("By label")),
                   tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
                         "- Condition are the remaining rows", tags$br(), ),
@@ -111,18 +123,67 @@ ui <- fluidPage(
                   
                   br(),
 
+                  h4("Output"),
+                  h5("Plot Types:"),
+                  h6(strong("Volcano Plot")),
+                  img(src="volcano_plot.png", height=300),
+                  h6(strong("MA Plot")),
+                  img(src="MA_plot.png", height=300),
+
 
                    
                 ),
 
                 tabPanel(title="Generating a Subnetwork",
                 h3("Generating a Subnetwork"),
+                
                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
                 div(style = "display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon = ">GL", status = "default", size = "default")),
-                p("Generating a subnetwork with a chosen network produces a matrix of weights between genes."),
-                p("This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.") 
+                tags$div("Generating a subnetwork with a chosen network produces a matrix of weights between genes.",tags$br(),
+                        "This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.", p("")),
+
+                p(em("A subnetwork must be generated before assessing DE or a gene list")),
+                
+                h4("User Guide"),
+                tags$div("1) Select ",  img(src="network_options.png", height = 30), "Button", p(""),
+                "2)", strong("Choose Network"), tags$br(), 
+                "Ensure the", code("networks"), "folder is in parent directory of the package.", tags$br(),
+                "Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format", tags$br(),
+                "Network Files are named after the folder and consist of...", tags$br(),
+                tags$li("matrix of network itself (suffix", code(".net.h5"), ")"), 
+                tags$li("the genes (suffix", code(".genes.h5"),")"), 
+                tags$li("the median value of their network (suffix", code(".med.h5"), ")"), 
+                 p(""),
+                "3) Select whether you wish to", strong("use occur or standard network"),tags$br(), 
+                strong("Occr"), " - a tally of how often we see genes co-expressed", tags$br(), 
+                strong("Standard (not occr)"), "- an average of the weights/edges of coexpression values", p(""), 
+
+                "4) Select ", strong("data"), p(""), 
+
+                "5) Click ", img(src="generate_subnetwork.png", height = 30), p(""), 
+                ),
+                h5("Data Selection"),
+                strong("Assess DE:"), br(),
+                em("Use DE Results"),
+                tags$div("Takes the data from RUN DE",tags$br(),),
                   
-                   
+                em("Upload DE Data"),
+                  tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Column required for", code("mean_cmp, lof2_fc, pvals, padj"), tags$br(),
+                       ),
+
+
+                strong("Assess Gene List:"), br(),
+                em("Upload Gene List"), br(),
+                em("Generate Gene List"),
+
+                h4("Output"),
+                h5("Subnetwork Table"),
+                img(src="subnetwork_table.png", height = 100),
+                br(),
+                br(),
+                br(),
+                
                 ),
 
                 # cluster genes
@@ -633,6 +694,8 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_upreg"),
+                                  downloadLink("CG_table_upreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
 
@@ -641,6 +704,7 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_downreg"),
+                                  downloadLink("CG_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                         
@@ -873,6 +937,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_upreg"),
+                                  downloadLink("genes_not_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -887,6 +952,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_upreg"),
+                                  downloadLink("genes_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -900,6 +966,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_downreg"),
+                                  downloadLink("genes_not_keep_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -914,6 +981,8 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_downreg"),
+                                  downloadLink("genes_keep_table_downreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
                       ),
