@@ -18,11 +18,14 @@ library(OutDeCo)
 library(EGAD)
 
 ui <- fluidPage(
+  div(style = "display:inline-block; float:right", circleButton("help", icon = icon("question"), status = "default", size = "default")),
+
   useShinyjs(),
   chooseSliderSkin("Flat",  color = "#325D88"),
   add_busy_spinner(spin = "dots", position = "bottom-right", color = "#3E3F3A"),
   
   titlePanel(title=div(img(src="ODClogo.png", height = 80), "OutDeCo")),
+ 
   theme = bs_theme(version = 5, bootswatch = "sandstone", 
                   heading_font = font_google("Poppins"), 
                   base_font = font_collection(font_google("Roboto")),
@@ -38,42 +41,7 @@ ui <- fluidPage(
         }'))),
   
   #navbarPage is top menu bar  
-  sidebarLayout(position = "right",
-    
-    # Sidebar with a slider input
-    sidebarPanel(width = 2, well = FALSE, class = "sidebar_style",
-    div(style="position:relative; left:calc(6%);",dropdown(right = TRUE,
-                   tags$h4("Download Options"),
-                   inputId = "download_dropdown",
-                   style = "minimal", icon = "DOWNLOAD OPTIONS",
-                   status = "primary", width = "300px", size = "sm",
-                   
-                   
-                   selectInput(
-                     inputId = "download_format",
-                     label= tags$h6("Choose Plot Download Format"),
-                     choices = c(".png", ".pdf"),
-                     selected = ".png",
-                     width = "600px",
-                   ),
-                   selectInput(
-                     inputId = "download_table_format",
-                     label= tags$h6("Choose Table Download Format"),
-                     choices = c(".csv", ".tsv", ".txt"),
-                     selected = ".png",
-                     width = "600px",
-                   ),
-                   
-                   # run button
-                   
-                   
-                 ), ),               
-    ),
-    
-  mainPanel(width=10,
   navbarPage(title=NULL, id="navpage", collapsible = FALSE, 
-
-
             ##################### HOME TAB #####################
             tabPanel(
               title="Home",
@@ -87,16 +55,47 @@ ui <- fluidPage(
                   h3("What is OutDeCo?"),
                   p("Outlier detection through co-expression. Using the tools on this website you can:"),
                   p("- Run a differential expression (DE) analysis "),
-                  p("- Assess your DE results using gene co-expression properties"),
+                  p("- Assess your DE results or a gene list using gene co-expression properties"),
                   p("- Report a functional outlier assessment"),
-                  p("- Run a network connectivity analysis of DE results within a gene co-expression network"),
+                  p("- Run a network connectivity analysis of DE results or a gene list within a gene co-expression network"),
+                  br(),
+                  h5("Differential Expression (DE) vs Gene List (GL)"),
+                  p(" - Assess DE will have analysis options for up and down regulated genes"),
+                  p("- Assess Gene List will have analysis options for genes")
+
                 ),
                 
                 # differential analysis
-                tabPanel(title="Differential Analysis",
+                tabPanel(title="Differential Expression Analysis",
+                  div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
-                  h5("Methods:"),
+                  h4("User Guide"),
+                  
+                  h5("Files/Data:"),
+                  splitLayout(cellWidths = c("20%", "80%"), 
+                      fluidPage(
+                         img(src="run_de_file_options.jpg", height = 200),
+                      ),
+                      fluidPage(
+                        h6(strong("Counts")),
+
+                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Columns contain individual samples  labelled by sample ID", tags$br(),
+                        "- Rows contain genes                labelled by entrez ID ", ),
+                      
+                        h6(strong("Labels")),
+                         tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Columns  labelled by category/label", tags$br(),
+                        "- Rows  labelled by run", ),
+
+                      
+                      ),
+                    ), 
+
+                  br(),
+                  h5("DE Methods:"),
+                  img(src="DE_method.png", height = 150),
                   h6(strong("wilcox")),
                   p("Compares means of two groups to analyse count data and test for differential expression."),
                   h6(strong("DESeq")),
@@ -104,12 +103,80 @@ ui <- fluidPage(
                   h6(strong("edgeR")),
                   p("Uses weighted mean of log ratio to analyse count data and test for differential expression."),
                   br(),
-                  em("Note: This tool is under construction")
+
+                  h5("Case/Conditions Selection:"),
+                  img(src="choose_label.jpg", height = 250),
+                  h6(strong("By label")),
+                  tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
+                        "- Condition are the remaining rows", tags$br(), ),
+                  
+                  h6(strong("Individually")),
+                  p("Cases and Conditions are selected by clicking the associated row on the labels table"),
+                  
+                  br(),
+
+                  h4("Output"),
+
+
                    
+                ),
+
+                tabPanel(title="Generating a Subnetwork",
+                h3("Generating a Subnetwork"),
+                
+                div(style = "display:inline-block; float:right", circleButton(inputId="SN_return", icon = ">DE", status = "default", size = "default")),
+                div(style = "display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon = ">GL", status = "default", size = "default")),
+                tags$div("Generating a subnetwork with a chosen network produces a matrix of weights between genes.",tags$br(),
+                        "This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.", p("")),
+
+                p(em("A subnetwork must be generated before assessing DE or a gene list")),
+                
+                h4("User Guide"),
+                tags$div("1) Select ",  img(src="network_options.png", height = 30), "Button", p(""),
+                "2)", strong("Choose Network"), tags$br(), 
+                "Ensure the", code("networks"), "folder is in parent directory of the package.", tags$br(),
+                "Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format", tags$br(),
+                "Network Files are named after the folder and consist of...", tags$br(),
+                "a) matrix of network itself (suffix", code(".net.h5"), ")", tags$br(),
+                "b) the genes (suffix", code(".genes.h5"),")", tags$br(),
+                "c) the median value of their network (suffix", code(".med.h5"), ")", tags$br(),
+                 p(""),
+                "3) Select whether you wish to", strong("use occur or standard network"),tags$br(), 
+                "- Occr - a tally of how often we see genes co-expressed", tags$br(), 
+                "- Standard (not occr) - an average of the weights/edges of coexpression values", p(""), 
+
+                "4) Select ", strong("data"), p(""), 
+
+                "5) Click ", img(src="generate_subnetwork.png", height = 30), p(""), 
+                ),
+                h5("Data Selection"),
+                strong("Assess DE:"), br(),
+                em("Use DE Results"),
+                tags$div("Takes the data from RUN DE",tags$br(),),
+                  
+                em("Upload DE Data"),
+                  tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                        "- Column required for", code("mean_cmp, lof2_fc, pvals, padj"), tags$br(),
+                       ),
+
+
+                strong("Assess Gene List:"), br(),
+                em("Upload Gene List"), br(),
+                em("Generate Gene List"),
+
+                h4("Output"),
+                h5("Subnetwork Table"),
+                img(src="subnetwork_table.png", height = 100),
+                br(),
+                br(),
+                br(),
+                
                 ),
 
                 # cluster genes
                 tabPanel(title="Cluster Genes",
+                  div(style = "display:inline-block; float:right", circleButton(inputId="CG_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Cluster Genes"),
                   p('Creates modules which are clusters of genes that are hightly co-expressed'),
                   h5("Plot Types"),
@@ -127,6 +194,8 @@ ui <- fluidPage(
 
                 # gene connectivity 
                 tabPanel(title="Gene Connectivity",
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GC_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GC_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Gene Connectivity"),
                   p('Calculates node degrees to get a sense of the global and local connectivities of the gene'),
                   h5("Plot Types"),
@@ -145,6 +214,8 @@ ui <- fluidPage(
                  
                 # functional outliers
                 tabPanel(title="Functional Outliers",
+                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="FO_return_GL", icon = ">GL", status = "default", size = "default")),
                   h3("Functional Outliers"),
                   p("Functional outliers are genes that have been identified to be potentially dysregulated. 
                   They are the genes that are Differentially Expressed but do not show local co-expression"),
@@ -164,6 +235,8 @@ ui <- fluidPage(
                 
                 # GSEA
                 tabPanel(
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GSEA_return", icon = ">DE", status = "default", size = "default")),
+                  div(style = "display:inline-block; float:right", circleButton(inputId="GSEA_return_GL", icon = ">GL", status = "default", size = "default")),
                   title="Gene Set Enrichment Analysis",
                   h3("Gene Set Enrichment Analysis (GSEA)"),
                   p("GSEA is a process of ranking genes by how statistically significant their differential gene expression is. 
@@ -183,7 +256,9 @@ ui <- fluidPage(
 
             ##################### RUN DE TAB #####################
             tabPanel(
+              
               title="Run DE", 
+              
 
               # side panel for upload options
               dropdown(
@@ -220,6 +295,32 @@ ui <- fluidPage(
 
                 ), 
                ),
+               div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
 
 
                br(),
@@ -389,6 +490,32 @@ ui <- fluidPage(
                 status = "primary", width = "335px", size = "sm",
 
                ),
+               div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "ASSESS_DE_download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "ASSESS_DE_download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "ASSESS_DE_download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
               
               
               br(),
@@ -527,6 +654,8 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_upreg"),
+                                  downloadLink("CG_table_upreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
 
@@ -535,6 +664,7 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_downreg"),
+                                  downloadLink("CG_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                         
@@ -767,6 +897,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_upreg"),
+                                  downloadLink("genes_not_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -781,6 +912,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_upreg"),
+                                  downloadLink("genes_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -794,6 +926,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_downreg"),
+                                  downloadLink("genes_not_keep_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -808,6 +941,8 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_downreg"),
+                                  downloadLink("genes_keep_table_downreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
                       ),
@@ -984,6 +1119,32 @@ ui <- fluidPage(
                 status = "primary", width = "335px", size = "sm",
 
                ),
+                div(style = "display:inline-block; float:right", dropdown(right = TRUE,
+                   tags$h4("Download Options"),
+                   inputId = "ASSESS_GENE_LIST_download_dropdown",
+                   style = "minimal", icon = "DOWNLOAD OPTIONS",
+                   status = "primary", width = "300px", size = "sm",
+                   
+                   
+                   selectInput(
+                     inputId = "ASSESS_GENE_LIST_download_format",
+                     label= tags$h6("Choose Plot Download Format"),
+                     choices = c(".png", ".pdf"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   selectInput(
+                     inputId = "ASSESS_GENE_LIST_download_table_format",
+                     label= tags$h6("Choose Table Download Format"),
+                     choices = c(".csv", ".tsv", ".txt"),
+                     selected = ".png",
+                     width = "600px",
+                   ),
+                   
+                   # run button
+                   
+                   
+                 ), ),
 
 
               br(),
@@ -1361,6 +1522,10 @@ ui <- fluidPage(
               br(),
               br(),
             ),
+            
+
+            
   )
-  ))
+  
+  
 )
