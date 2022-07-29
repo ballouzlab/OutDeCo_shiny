@@ -125,6 +125,14 @@ server <- function(input, output, session) {
   hide(id = "DE_subnet_download")
   hide(id = "GL_subnet_download")
 
+  hide(id="CG_table_upreg_download")
+  hide(id="CG_table_downreg_download")
+  hide(id= "genes_not_keep_table_upreg_download")
+  hide(id="genes_keep_table_upreg_download")
+  hide(id="genes_not_keep_table_downreg_download")
+  hide(id="genes_keep_table_downreg_download")
+
+
   #Hide return buttons
   hide(id="SN_return")
   hide(id="CG_return")
@@ -240,6 +248,13 @@ server <- function(input, output, session) {
           updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
          hide(id="GSEA_return")
   })
+
+  observeEvent(input$GSEA_return, {
+          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
+          hide(id="GSEA_return")
+  })
+
   observeEvent(input$SN_return_GL, {
           updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
           updateTabsetPanel(session, "assessGL_navList", selected = "View Files")
@@ -261,6 +276,7 @@ server <- function(input, output, session) {
           updateTabsetPanel(session, "assessGL_navList", selected = "Functional Outliers")
           hide(id="FO_return_GL")
   })
+
   observeEvent(input$GSEA_return_GL, {
           updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
           updateTabsetPanel(session, "assessGL_navList", selected = "Gene Set Enrichment Analysis")
@@ -983,14 +999,18 @@ server <- function(input, output, session) {
 
       # clustering genes table output
       show(id="CG_table_text_upreg")
+      show(id="CG_table_upreg_download")
+      CG_table_upreg <- function(){EGAD::attr.human[match(clust_net_DE()$up$clusters$genes, EGAD::attr.human$entrezID),]}
       output$CG_table_upreg <- renderDataTable(
-        {EGAD::attr.human[match(clust_net_DE()$up$clusters$genes, EGAD::attr.human$entrezID),]},
+        {CG_table_upreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
       show(id="CG_table_text_downreg")
+      show(id="CG_table_downreg_download")
+      CG_table_downreg <- function(){EGAD::attr.human[match(clust_net_DE()$down$clusters$genes, EGAD::attr.human$entrezID),]}
       output$CG_table_downreg <- renderDataTable(
-        {EGAD::attr.human[match(clust_net_DE()$down$clusters$genes, EGAD::attr.human$entrezID),]},
+        {CG_table_downreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
       
@@ -1085,6 +1105,25 @@ server <- function(input, output, session) {
           dev.off()
         }
       )
+
+    output$CG_table_upreg_download <- downloadHandler(
+      filename = function() {
+        paste("clustered_up", input$ASSESS_DE_download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(CG_table_upreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+      }
+    )
+
+    output$CG_table_downreg_download <- downloadHandler(
+      filename = function() {
+        paste("clustered_down", input$ASSESS_DE_download_table_format, sep="")
+      },
+      content = function(file) {
+        write.table(CG_table_downreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+      }
+    )
+
     }
   )
 
@@ -1392,39 +1431,56 @@ server <- function(input, output, session) {
 
       # # genes in module table output
       show(id="genes_not_keep_table_text_upreg")
-      output$genes_not_keep_table_upreg <- renderDataTable(
-        { clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
+      hide(id= "genes_not_keep_table_upreg_download")
+      genes_not_keep_table_text_upreg <- function(){
+          clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
           clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
           genes_keep <- !is.na(match(clust_net_DE()$up$clusters$labels, clust_keep))
-          EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]},
+          EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]
+          }
+
+      output$genes_not_keep_table_upreg <- renderDataTable(
+        {genes_not_keep_table_upreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
       # # functional outliers table output
       show(id="genes_keep_table_text_upreg")
+      show(id="genes_keep_table_upreg_download")
+      genes_keep_table_upreg <- function(){
+        clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
+        clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+        genes_keep <- !is.na(match(clust_net_DE()$up$clusters$labels, clust_keep))
+        EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]
+      }
       output$genes_keep_table_upreg <- renderDataTable(
-        { clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
-          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-          genes_keep <- !is.na(match(clust_net_DE()$up$clusters$labels, clust_keep))
-          EGAD::attr.human[match(clust_net_DE()$up$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]},
+        {genes_keep_table_upreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
       show(id="genes_not_keep_table_text_downreg")
+      show(id="genes_not_keep_table_downreg_download")
+      genes_not_keep_table_downreg <- function(){
+        clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
+        clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+        genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
+        EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]
+      }
       output$genes_not_keep_table_downreg <- renderDataTable(
-        { clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
-          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-          genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
-          EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[!genes_keep], EGAD::attr.human$entrezID),]},
+        {genes_not_keep_table_downreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
       show(id="genes_keep_table_text_downreg")
+      show(id="genes_keep_table_downreg_download")
+      genes_keep_table_downreg <- function(){
+        clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
+        clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
+        genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
+        EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]
+      }
       output$genes_keep_table_downreg <- renderDataTable(
-        { clust_size <- plyr::count(clust_net_DE()$down$clusters$labels)
-          clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
-          genes_keep <- !is.na(match(clust_net_DE()$down$clusters$labels, clust_keep))
-          EGAD::attr.human[match(clust_net_DE()$down$clusters$genes[genes_keep], EGAD::attr.human$entrezID),]},
+        {genes_keep_table_downreg()},
         # options=list(columnDefs = list(list(visible=FALSE, targets=c(0,1,2,3))))
       )
 
@@ -1484,6 +1540,43 @@ server <- function(input, output, session) {
           }
           FO_down_heatmap()
           dev.off()
+        }
+      )
+
+      # Table Download
+      output$genes_not_keep_table_upreg_download <- downloadHandler(
+        filename = function() {
+          paste("genes_not_keep_table_up", input$ASSESS_DE_download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(genes_not_keep_table_upreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+        }
+      ) 
+
+      output$genes_keep_table_upreg_download <- downloadHandler(
+        filename = function() {
+          paste("genes_keep_table_up", input$ASSESS_DE_download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(genes_keep_table_upreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+        }
+      ) 
+
+      output$genes_not_keep_table_downreg_download <- downloadHandler(
+        filename = function() {
+          paste("genes_not_keep_table_down", input$ASSESS_DE_download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(genes_not_keep_table_downreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
+        }
+      ) 
+
+      output$genes_keep_table_downreg_download <- downloadHandler(
+        filename = function() {
+          paste("genes_keep_table_down", input$ASSESS_DE_download_table_format, sep="")
+        },
+        content = function(file) {
+          write.table(genes_keep_table_downreg(), file, row.names = FALSE, sep = separator, col.names = TRUE)
         }
       ) 
 

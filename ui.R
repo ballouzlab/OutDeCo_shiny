@@ -70,6 +70,8 @@ ui <- fluidPage(
                   div(style = "display:inline-block; float:right", circleButton("DE_return", icon = icon("angle-right"), status = "default", size = "default")),
                   h3("Differential Expression Analysis"),
                   p("Statistical analysis to discover quantitative changes in expression levels between experimental groups."),
+                  h4("User Guide"),
+                  
                   h5("Files/Data:"),
                   splitLayout(cellWidths = c("20%", "80%"), 
                       fluidPage(
@@ -113,6 +115,8 @@ ui <- fluidPage(
                   
                   br(),
 
+                  h4("Output"),
+
 
                    
                 ),
@@ -126,7 +130,8 @@ ui <- fluidPage(
                         "This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.", p("")),
 
                 p(em("A subnetwork must be generated before assessing DE or a gene list")),
-
+                
+                h4("User Guide"),
                 tags$div("1) Select ",  img(src="network_options.png", height = 30), "Button", p(""),
                 "2)", strong("Choose Network"), tags$br(), 
                 "Ensure the", code("networks"), "folder is in parent directory of the package.", tags$br(),
@@ -144,21 +149,26 @@ ui <- fluidPage(
 
                 "5) Click ", img(src="generate_subnetwork.png", height = 30), p(""), 
                 ),
-                h4("Data Selection"),
-                h5("Assess DE:"), 
-                h6(strong("Use DE Results")),
+                h5("Data Selection"),
+                strong("Assess DE:"), br(),
+                em("Use DE Results"),
                 tags$div("Takes the data from RUN DE",tags$br(),),
                   
-                h6(strong("Upload DE Data")),
+                em("Upload DE Data"),
                   tags$div("A matrix in either csv, tsv, txt format",tags$br(),
                         "- Column required for", code("mean_cmp, lof2_fc, pvals, padj"), tags$br(),
                        ),
 
 
-                h5("Assess Gene List:"),
-                h6(strong("Upload Gene List")),
-                h6(strong("Generate Gene List")),
+                strong("Assess Gene List:"), br(),
+                em("Upload Gene List"), br(),
+                em("Generate Gene List"),
 
+                h4("Output"),
+                h5("Subnetwork Table"),
+                img(src="subnetwork_table.png", height = 100),
+                br(),
+                br(),
                 br(),
                 
                 ),
@@ -644,6 +654,8 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_upreg"),
+                                  downloadLink("CG_table_upreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
 
@@ -652,6 +664,7 @@ ui <- fluidPage(
                         fluidRow(
                           column(11,
                                   dataTableOutput("CG_table_downreg"),
+                                  downloadLink("CG_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                         
@@ -884,6 +897,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_upreg"),
+                                  downloadLink("genes_not_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -898,6 +912,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_upreg"),
+                                  downloadLink("genes_keep_table_upreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -911,6 +926,7 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_not_keep_table_downreg"),
+                                  downloadLink("genes_not_keep_table_downreg_download", label = "Download", class = "download_style"),
                           )
                         ),
                       ),
@@ -925,6 +941,8 @@ ui <- fluidPage(
                         fluidRow(
                           column( 11,
                                   dataTableOutput("genes_keep_table_downreg"),
+                                  downloadLink("genes_keep_table_downreg_download", label = "Download", class = "download_style"),
+
                           )
                         ),
                       ),
