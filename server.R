@@ -1822,7 +1822,10 @@ server <- function(input, output, session) {
         # Invalid Input - user hasn't uploaded file
         if (is.null(input$DEFile)) {
           shinyalert(title = "Invalid Input", text = "Please upload a gene list file", type = "error")
-        } else {
+        } else if (is.null(input$GL_gene_list_type)) {
+          shinyalert(title = "Missing Selection", text = "Please select gene list type", type = "error")
+        }
+        else {
           gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
         }
 
