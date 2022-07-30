@@ -964,7 +964,7 @@ ui <- fluidPage(
                     ),  
                     
                     # error message
-                    p(id="CG_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="CG_error_DE", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                     br(),
                     
@@ -1096,7 +1096,7 @@ ui <- fluidPage(
                     ),
 
                     # error message
-                    p(id="GC_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="GC_error_DE", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                     # density - upreg 
                     conditionalPanel(
@@ -1210,7 +1210,7 @@ ui <- fluidPage(
                     ),
                     
                     # error message
-                    p(id="FO_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="FO_error_DE", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                   ),
                   
@@ -1361,7 +1361,7 @@ ui <- fluidPage(
                     
 
                     # error message
-                    p(id="DE_GSEA_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="DE_GSEA_error", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                   ),
                   br(),
@@ -1573,7 +1573,7 @@ ui <- fluidPage(
                     ),  
 
                     # error message
-                    p(id="CG_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="CG_error", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                     br(),
 
@@ -1680,7 +1680,7 @@ ui <- fluidPage(
 
 
                     # error message
-                    p(id="GC_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="GC_error", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                     # density
                     conditionalPanel(
@@ -1773,7 +1773,7 @@ ui <- fluidPage(
                     ),
                     
                     # error message
-                    p(id="FO_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="FO_error", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 
                   ), 
 
@@ -1869,7 +1869,7 @@ ui <- fluidPage(
 
                     # error message
 <<<<<<< HEAD
-                    p(id="GL_GSEA_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+                    p(id="GL_GSEA_error", "Please generate a subnetwork in NETWORK OPTIONS.", style="color:red"),
 =======
                     textOutput("GL_GSEA_error"),
 >>>>>>> main
