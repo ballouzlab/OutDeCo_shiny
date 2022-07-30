@@ -691,7 +691,7 @@ ui <- fluidPage(
                 tabPanel(title="Run Differential Expression",
                   h3("Plot Differential Expression"),
 
-                  p(id="runDE_error", "Please generate a subnetwork in FILE OPTIONS.", style="color:red"),
+                  p(id="runDE_error", "Please upload counts and labels in FILE OPTIONS.", style="color:red"),
 
                   dropdown(
                     inputId="DE_options",
