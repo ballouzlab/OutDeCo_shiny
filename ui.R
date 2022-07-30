@@ -98,7 +98,7 @@ ui <- fluidPage(
                       tabPanel(title="User Guide",
                         br(),
                         h5(strong("Files/Data")),
-                        splitLayout(cellWidths=c("20%", "80%"), 
+                        splitLayout(cellWidths=c("30%", "70%"), 
                             fluidPage(
                               img(src="run_de_file_options.jpg", height=200),
                             ),
