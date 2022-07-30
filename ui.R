@@ -73,16 +73,13 @@ ui <- fluidPage(
                   tags$li("Run a differential expression (DE) analysis."),
                   tags$li("Assess your DE results."),
                   tags$li("Assess an uploaded/generated gene list."),
-                  # tags$li("Report a functional outlier assessment."),
-                  # tags$li("Run a network connectivity analysis of DE results within a gene co-expression network."),
                   br(),
-                  
-                  h5("Differential Expression (DE) vs Gene List (GL)"),
+                  tags$a(href="https://github.com/ballouzlab/OutDeCo_lite", "Github source code"),
+                  br(),
+                  br(),
+                  h5(strong("Differential Expression"), "vs", strong("Gene List"), "?"),
                   tags$li("Assess DE will have analysis options for up and down regulated genes"),
                   tags$li("Assess Gene List will have analysis options for genes"),
-                  br(),
-
-                  tags$a(href="https://github.com/ballouzlab/OutDeCo_lite", "Github source code"),
 
                 ),
                 
@@ -91,102 +88,161 @@ ui <- fluidPage(
                 tabPanel(title="Differential Expression Analysis",
                   div(style="display:inline-block; float:right", circleButton("DE_return", icon=icon("angle-right"), status="default", size="default")),
                   h3("Differential Expression Analysis"),
+                  br(),
                   p(strong("Differential Expression Analysis"), "is a statistical analysis to discover quantitative changes in expression levels between experimental groups."),
-                  h4("User Guide"),
-                  
-                  h5("Files/Data:"),
-                  splitLayout(cellWidths=c("20%", "80%"), 
-                      fluidPage(
-                         img(src="run_de_file_options.jpg", height=200),
+                  br(),
+
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        h5(strong("Files/Data")),
+                        splitLayout(cellWidths=c("20%", "80%"), 
+                            fluidPage(
+                              img(src="run_de_file_options.jpg", height=200),
+                            ),
+                            fluidPage(
+                              h6(strong("Counts")),
+
+                              tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                              "- Columns contain individual samples  labelled by sample ID", tags$br(),
+                              "- Rows contain genes                labelled by entrez ID ", ),
+                            
+                              h6(strong("Labels")),
+                              tags$div("A matrix in either csv, tsv, txt format",tags$br(),
+                              "- Columns  labelled by category/label", tags$br(),
+                              "- Rows  labelled by run", ),
+                            ),
+                          ), 
+                        br(),
+                        br(),
+
+                        h5(strong("DE Methods")),
+                        img(src="DE_method.png", height=150),
+                        h6(strong("wilcox")),
+                        p("Compares means of two groups to analyse count data and test for differential expression."),
+                        h6(strong("DESeq")),
+                        p("Uses geometric normalisation to analyse count data and test for differential expression."),
+                        h6(strong("edgeR")),
+                        p("Uses weighted mean of log ratio to analyse count data and test for differential expression."),
+                        br(),
+                        br(),
+
+                        h5(strong("Case/Conditions Selection:")),
+                        img(src="choose_label.jpg", height=250),
+                        h6(strong("By label")),
+                        tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
+                              "- Condition are the remaining rows", tags$br(), ),
+                        
+                        h6(strong("Individually")),
+                        p("Cases and Conditions are selected by clicking the associated row on the labels table"),
                       ),
-                      fluidPage(
-                        h6(strong("Counts")),
 
-                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
-                        "- Columns contain individual samples  labelled by sample ID", tags$br(),
-                        "- Rows contain genes                labelled by entrez ID ", ),
-                      
-                        h6(strong("Labels")),
-                        tags$div("A matrix in either csv, tsv, txt format",tags$br(),
-                        "- Columns  labelled by category/label", tags$br(),
-                        "- Rows  labelled by run", ),
+                      tabPanel(title="Output",
+                        br(),
+                        h5(strong("Plot Types")),
+                        h6(strong("Volcano Plot")),
+                        img(src="volcano_plot.png", height=300),
+                        br(),
+                        br(),
+                        h6(strong("MA Plot")),
+                        img(src="MA_plot.png", height=300),
                       ),
-                    ), 
 
-                  br(),
-                  h5("DE Methods:"),
-                  img(src="DE_method.png", height=150),
-                  h6(strong("wilcox")),
-                  p("Compares means of two groups to analyse count data and test for differential expression."),
-                  h6(strong("DESeq")),
-                  p("Uses geometric normalisation to analyse count data and test for differential expression."),
-                  h6(strong("edgeR")),
-                  p("Uses weighted mean of log ratio to analyse count data and test for differential expression."),
-                  br(),
-
-                  h5("Case/Conditions Selection:"),
-                  img(src="choose_label.jpg", height=250),
-                  h6(strong("By label")),
-                  tags$div("- Cases are the rows where the chosen column (e.g. Relationship) has row equal to the chosen case (e.g. fthr)",tags$br(),
-                        "- Condition are the remaining rows", tags$br(), ),
+                    )
+                  ),
                   
-                  h6(strong("Individually")),
-                  p("Cases and Conditions are selected by clicking the associated row on the labels table"),
+                
                   
-                  br(),
-
-                  h4("Output"),
-                  h5("Plot Types:"),
-                  h6(strong("Volcano Plot")),
-                  img(src="volcano_plot.png", height=300),
-                  h6(strong("MA Plot")),
-                  img(src="MA_plot.png", height=300),
 
                 ),
 
                 ########################### GENERATE SUBNETWORK ###########################
                 
-                tabPanel(title="Generating a Subnetwork",
+                tabPanel(title="Generate Subnetwork",
                   h3("Generating a Subnetwork"),
                   
                   div(style="display:inline-block; float:right", circleButton(inputId="SN_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon=">GL", status="default", size="default")),
-                  tags$div("Generating a subnetwork with a chosen network produces a matrix of weights between genes.",tags$br(),
+                  
+                  br(),
+                  tags$div(strong("Generating a subnetwork"), "with a chosen network produces a matrix of weights between genes.",tags$br(),
                           "This subnetwork can then be clustered, analysed for gene connectivity, functional outliers and gene set enrichment analysis.", p("")),
 
                   p(em("A subnetwork must be generated before assessing Differentially Expressed Data or a Gene List.")),
-                  
-                  h4("User Guide"),
-                  tags$div("1) Select ",  img(src="network_options.png", height=30), "Button", p(""),
-                  "2)", strong("Choose Network"),
-                  "Ensure the", code("networks"), "folder is in parent directory of the package.",
-                  "Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format.", tags$br(), 
-                  h5("Networks"),
-                  "Network Files are named after the folder and consist of...", tags$br(),
-                  tags$li("matrix of network itself (suffix", code(".net.h5"), ")"), 
-                  tags$li("the genes (suffix", code(".genes.h5"),")"), 
-                  tags$li("the median value of their network (suffix", code(".med.h5"), ")"), 
-                  p(""),
-                  "3) Select whether you wish to", strong("use occur or standard network"),tags$br(), 
-                  strong("Occr"), " - a tally of how often we see genes co-expressed", tags$br(), 
-                  strong("Standard (not occr)"), "- an average of the weights/edges of coexpression values", p(""), 
+                  br(),
 
-                  "4) Select ", strong("data"), p(""), 
-                  h5("Data Selection"),
-                  h6(strong("Assess DE")), # br(),
-                  tags$li(em("Use DE Results"), "- Takes the data from RUN DE"),  
-                  tags$li(em("Upload DE Data"), "- A matrix in either csv, tsv, txt format. Columns required for", code("mean_cmp, lof2_fc, pvals, padj")), 
-                  h6(strong("Assess Gene List:")), # br(),
-                  tags$li(em("Upload Gene List"), "- A txt file containing a list of genes. Genes can be represented as: geneIDs, ensemblIDs or entrezIDs"), 
-                  tags$li(em("Generate Gene List"), "- Requires a human chromosome and the number of genes from that chromosome."), tags$br(), 
-                  "5) Click ", img(src="generate_subnetwork.png", height=50), p(""), 
-                  ),
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        h5(strong("Step 1")),
+                        p("Select ",  img(src="network_options.png", height=40), "Button."),
+                        br(),
+
+                        h5(strong("Step 2")),
+                        p("Ensure the", code("networks"), "folder is in parent directory of the package."),
+                        p("Inside", code("networks"), "are subfolders titled with the name of the network and contain network files in HDF5 (.h5) format."), 
+                        br(),
+
+                        
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            p("Network Files are named after the folder and consist of..."),
+                            tags$li("matrix of network itself (suffix", code(".net.h5"), ")"), 
+                            tags$li("the genes (suffix", code(".genes.h5"),")"), 
+                            tags$li("the median value of their network (suffix", code(".med.h5"), ")"), 
+                          )
+                        ),
+                        
+                        br(),
+                        
+                        h5(strong("Step 3")),
+                        p("Select whether you wish to use", strong("occur"), "or", strong("standard"), "network."),
+
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            tags$li(strong("Occr"), " - a tally of how often we see genes co-expressed"),
+                            tags$li(strong("Standard"), "- an average of the weights/edges of coexpression values"),
+                          )
+                        ),
+                        
+                        br(),
+                        
+                        h5(strong("Step 4")),
+                        p("Select ", strong("data.")), 
+
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            h6(strong("Assess DE")),
+                            tags$li(em("Use DE Results"), "- Takes the data from RUN DE"),  
+                            tags$li(em("Upload DE Data"), "- A matrix in either csv, tsv, txt format. Columns required for", code("mean_cmp, lof2_fc, pvals, padj")), 
+                            h6(strong("Assess Gene List:")),
+                            tags$li(em("Upload Gene List"), "- A txt file containing a list of genes. Genes can be represented as: geneIDs, ensemblIDs or entrezIDs"), 
+                            tags$li(em("Generate Gene List"), "- Requires a human chromosome and the number of genes from that chromosome."),
+                          )
+                        ),
+                        br(),
+                        
+                        
+                        h5(strong("Step 5")),
+                        p("5) Click ", img(src="generate_subnetwork.png", height=40), "."),
+
+                      ),
+
+                      tabPanel(title="Output",
+                        br(),
+                        h5(strong("Subnetwork Table")),
+                        br(),
+                        img(src="subnetwork_table.png", height=100),
+                      ),
+
+                    ),
+                  
                   br(), 
-                  
-
-                  h4("Output"),
-                  h5("Subnetwork Table"),
-                  img(src="subnetwork_table.png", height=100),
+                  ),
                 
                 ),
 
@@ -195,53 +251,87 @@ ui <- fluidPage(
                 tabPanel(title="Cluster Genes",
                   div(style="display:inline-block; float:right", circleButton(inputId="CG_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon=">GL", status="default", size="default")),
+                  
+                  
+                  br(),
                   h3("Cluster Genes"),
+                  br(),
                   p("The", strong("Cluster Genes"), "function generates modules which are clusters of genes that are hightly co-expressed."),
-                  h4("User Guide"), 
-                  tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
-                  br(), 
-                  tags$div("1) Select the",  img(src="options.jpg", height=30), "dropdown"),
-                  h5("Options"),
-                  p("The following options exist for clustering genes"),
-                  splitLayout(cellWidths=c("35%", "65%"), 
-                    fluidPage(
-                      p("For Assessing DE Data, the following options exist:"),
-                      h6(strong("Upregulated")), 
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Binarized Heatmap"),
-                      h6(strong("Downregulated")),
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Binarized Heatmap"),
-                      
-                    ), 
-                    fluidPage(
-                      p("For Assessing a Gene List, the following options exist:"),
-                      h6(strong("Genes")), 
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Binarized Heatmap"),
-                    ), 
-                  ),   
-                  br(), 
-                  br(), 
-                  tags$div("2) Select the plots you want to view by checking the checkbox associated with it.", p(""), "3) Click ", img(src="run_button.jpg")),
-                  br(), 
-                  h4("Plots"),
-                  h5("Heatmap"),  
-                  p("Heatmap showing the co-expression of Genes. The trees on the top and left axis of the map represents the clusters and the colour key demonstrates the level of co-expression for each gene pair."),
-                  img(src="heatmap_of_genes_CG.jpg", height=400),
-                  h5("Network"),  
-                  p("Network plot where nodes are genes and the weight of the edges corresponds to the co-expression levels between its endpoints."),
-                  img(src="network_of_genes_CG.jpg", height=400),
-                  h5("Binarized heatmap"),  
-                  p("Binary Heatmap showing co-expression of genes. All values in the heatmap are either 0 or 1 instead of ranging between 0 and 1, Yellow=1, there is a high level of co-expression between the genes, Purple=0, co-expression level of genes is 0."),
-                  img(src="binarized_heatmap_CG.jpg", height=400),
-                  br(), 
-                  h4("Tables"), 
-                  p("Gene details of the genes that were involved in clustering. Each row is a different gene and the columns are different fields pertaining to the gene."),
-                  img(src="gene_deetz_clustering.jpg", height=400), 
+                  br(),
+
+
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        # tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
+                        # br(),
+
+                        h5(strong("Step 1")),
+                        p("Select the", img(src="options.jpg", height=40), "dropdown. The following options exist for clustering genes:"),
+                        
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            splitLayout(cellWidths=c("50%", "50%"), 
+                              fluidPage(
+                                p("For Assessing DE Data,", br(), "the following options exist:"),
+                                h6(strong("Upregulated")), 
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Binarized Heatmap"),
+                                h6(strong("Downregulated")),
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Binarized Heatmap"),
+                                
+                              ), 
+                              fluidPage(
+                                p("For Assessing gene lists,", br(), "the following options exist:"),
+                                h6(strong("Genes")), 
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Binarized Heatmap"),
+                              ), 
+                            ),
+                          ),
+                        ),
+                        
+                        br(), 
+                        
+                        h5(strong("Step 2")),
+                        p("Select the plots you want to view by checking the checkbox associated with it."), 
+                        br(),
+
+                        h5(strong("Step 3")),
+                        p("Click ", img(src="run_button.jpg"), "."),
+                      ),
+
+                      tabPanel(title="Output",
+                        br(), 
+                        h5(strong("Plots")), 
+                        h6(strong("Heatmap")),  
+                        p("Heatmap showing the co-expression of Genes. The trees on the top and left axis of the map represents the clusters and the colour key demonstrates the level of co-expression for each gene pair."),
+                        img(src="heatmap_of_genes_CG.jpg", height=400),
+                        br(),
+
+                        h6(strong("Network")),  
+                        p("Network plot where nodes are genes and the weight of the edges corresponds to the co-expression levels between its endpoints."),
+                        img(src="network_of_genes_CG.jpg", height=400),
+                        br(),
+
+                        h6(strong("Binarized heatmap")),  
+                        p("Binary Heatmap showing co-expression of genes. All values in the heatmap are either 0 or 1 instead of ranging between 0 and 1, Yellow=1, there is a high level of co-expression between the genes, Purple=0, co-expression level of genes is 0."),
+                        img(src="binarized_heatmap_CG.jpg", height=400),
+                        br(), 
+                        br(),
+
+                        h5(strong("Tables")), 
+                        p("Gene details of the genes that were involved in clustering. Each row is a different gene and the columns are different fields pertaining to the gene."),
+                        img(src="gene_deetz_clustering.jpg", height=400), 
+                      ),
+                    ),
+                  ),
 
                 ),
 
@@ -250,54 +340,87 @@ ui <- fluidPage(
                 tabPanel(title="Gene Connectivity",
                   div(style="display:inline-block; float:right", circleButton(inputId="GC_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="GC_return_GL", icon=">GL", status="default", size="default")),
+                  
+                  br(),
                   h3("Gene Connectivity"),
-                  p("The", strong("Gene Connectivity"), "function calculates node degrees to get a sense of the global and local connectivities of the gene."),              
-                  h4("User Guide"), 
-                  tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
-                  tags$div("1) Select the",  img(src="options.jpg", height=30), "dropdown"),
-                  h5("Options"),
-                  p("Options for visualisation of gene connectivity include: Density, Clustered Density and Clustered Histogram. When any histogram is chosen, a slider appears for the user to change the number of breaks in the histogram."), 
-                  splitLayout(cellWidths=c("35%", "65%"), 
-                    fluidPage(
-                      p("For Assessing DE Data, the user has the following options"),
-                      h6(strong("Upregulated")), 
-                      tags$li("Density"), 
-                      tags$li("Histogram"), 
-                      tags$li("Clustered Density"),
-                      tags$li("Clustered Histogram"),
-                      h6(strong("Downregulated")),
-                      tags$li("Density"), 
-                      tags$li("Histogram"), 
-                      tags$li("Clustered Density"),
-                      tags$li("Clustered Histogram"),
-                    ), 
-                    fluidPage(
-                      p("For Assessing a Gene List, the user has the following options"),
-                      h6(strong("Genes")), 
-                      tags$li("Density"), 
-                      tags$li("Histogram"), 
-                      tags$li("Clustered Density"),
-                      tags$li("Clustered Histogram"),
+                  br(),
+                  p("The", strong("Gene Connectivity"), "function calculates node degrees to get a sense of the global and local connectivities of the gene."),
+                  br(),
+
+
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        # tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
+                        # br(),
+
+                        h5(strong("Step 1")),
+                        p("Select the",  img(src="options.jpg", height=40), "dropdown."),
+
+                        p("Options for visualisation of gene connectivity include:", strong("Density,"), strong("Clustered Density"), "and", strong("Clustered Histogram."), "When any histogram is chosen, a slider appears for the user to change the number of breaks in the histogram."), 
+                        
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            splitLayout(cellWidths=c("50%", "50%"), 
+                              fluidPage(
+                                p("For Assessing DE Data,", br(), "the user has the following options"),
+                                h6(strong("Upregulated")), 
+                                tags$li("Density"), 
+                                tags$li("Histogram"), 
+                                tags$li("Clustered Density"),
+                                tags$li("Clustered Histogram"),
+                                h6(strong("Downregulated")),
+                                tags$li("Density"), 
+                                tags$li("Histogram"), 
+                                tags$li("Clustered Density"),
+                                tags$li("Clustered Histogram"),
+                              ), 
+                              fluidPage(
+                                p("For Assessing a Gene List,", br(), "the user has the following options"),
+                                h6(strong("Genes")), 
+                                tags$li("Density"), 
+                                tags$li("Histogram"), 
+                                tags$li("Clustered Density"),
+                                tags$li("Clustered Histogram"),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        br(), 
+                        
+                        h5(strong("Step 2")),
+                        p("Select the plots you want to view by checking the checkbox associated with it.", p("")),
+                        br(),
+
+                        h5(strong("Step 3")),
+                        p("Click ", img(src="run_button.jpg"), "."),
+                      ),
+
+                      tabPanel(title="Output",
+                        br(), 
+                        h5(strong("Plots")),
+                        h6(strong("Density")),  
+                        p("Density plot of gene connectivity."),
+                        img(src="plot_scatter_density_up.png", height=400), 
+                        br(),
+
+                        h6(strong("Histogram")),
+                        p("Histogram of gene connectivity."),
+                        img(src="plot_scatter_hist_up.png", height=400),
+                        br(),
+
+                        h6(strong("Subset by clusters")),  
+                        p("Gene connectivity can be subset by their clusters as well."),
+                        img(src="plot_scatter_hist_down_colored.png", height=400), 
+                      ),
+
                     ),
                   ),
-                  br(), 
-                  br(), 
-                  tags$div("2) Select the plots you want to view by checking the checkbox associated with it.", p(""), "3) Click ", img(src="run_button.jpg")),
-                  br(), 
-                  h4("Plots"),
-                  h5("Density"),  
-                  p("Density plot of gene connectivity."),
-                  img(src="plot_scatter_density_up.png", height=400), 
-                  h5("Histogram"),
-                  p("Histogram of gene connectivity."),
-                  img(src="plot_scatter_hist_up.png", height=400),
-                  h5("Subset by clusters"),  
-                  p("Gene connectivity can be subset by their clusters as well."),
-                  img(src="plot_scatter_hist_down_colored.png", height=400), 
-                  br(),
-                  br(), 
-                  br(), 
-                  # em("Note: This tool is under construction"),
+
+              
                    
                 ),
                  
@@ -306,62 +429,93 @@ ui <- fluidPage(
                 tabPanel(title="Functional Outliers",
                   div(style="display:inline-block; float:right", circleButton(inputId="FO_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="FO_return_GL", icon=">GL", status="default", size="default")),
+                  
+                  br(),
                   h3("Functional Outliers"),
+                  br(),
                   p("The", strong("Functional Outliers"), "function outputs genes that have been identified to be potentially dysregulated. 
                   They are the genes that are Differentially Expressed but do not show local co-expression."),
-                  p("Module Default Threshold: More than 6 genes"),
-                  h4("User Guide"), 
-                  tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
-                  tags$div("1) Select the",  img(src="options.jpg", height=30), "dropdown"),
-                  h5("Options"),
-                  p("Options for visualising functional outliers include: Network, Heatmap, Genes in Modules and Functional Outliers. A slider will also appear, giving the user the option of choosing how many genes are required to form a module (default=6)."),
-                  splitLayout(cellWidths=c("35%", "65%"),
-                    fluidPage(
-                      p("For Assessing DE Data, the user has the following options"),
-                      h6(strong("Upregulated")), 
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Genes in Module"),
-                      tags$li("Functional Outliers"),
-                      h6(strong("Downregulated")),
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Genes in Module"),
-                      tags$li("Functional Outliers"),
-                    ),
-                    fluidPage(
-                      p("For Assessing a Gene List, the user has the following options"),
-                      h6(strong("Genes")), 
-                      tags$li("Network"), 
-                      tags$li("Heatmap"), 
-                      tags$li("Genes in Module"),
-                      tags$li("Functional Outliers"),
+                  p(em("Module Default Threshold: More than 6 genes.")),
+                  br(),
+
+
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        # p("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
+                        
+                        h5(strong("Step 1")),
+                        p("Select the", img(src="options.jpg", height=40), "dropdown."),
+                        p("Options for visualising functional outliers include: ", strong("Network, Heatmap, Genes in Modules,"), "and", strong("Functional Outliers."), "A slider will also appear, giving the user the option of choosing how many genes are required to form a module (default=6)."),
+                        
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            splitLayout(cellWidths=c("50%", "50%"),
+                              fluidPage(
+                                p("For Assessing DE Data,", br(), "the user has the following options"),
+                                h6(strong("Upregulated")), 
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Genes in Module"),
+                                tags$li("Functional Outliers"),
+                                h6(strong("Downregulated")),
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Genes in Module"),
+                                tags$li("Functional Outliers"),
+                              ),
+                              fluidPage(
+                                p("For Assessing a Gene List,", br(), "the user has the following options"),
+                                h6(strong("Genes")), 
+                                tags$li("Network"), 
+                                tags$li("Heatmap"), 
+                                tags$li("Genes in Module"),
+                                tags$li("Functional Outliers"),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        br(), 
+                        
+                        h5(strong("Step 2")),
+                        p("Select the plots you want to view by checking the checkbox associated with it."),
+                        br(),
+
+                        h5(strong("Step 3")),
+                        p("Click ", img(src="run_button.jpg"), "."),
+                      ),
+
+                      tabPanel(title="Output",
+                        br(),
+                        h5(strong("Plots")),
+                        h6(strong("Coexpression Heatmap")),
+                        p("Heatmap of genes detailing the outliers connectivity and expression."),
+                        img(src="plot_coexpression_heatmap_down_filt.png", height=400),
+                        br(),
+
+                        h6(strong("Network")),
+                        p("Network plot detailing the outliers connectivity and expression."),
+                        img(src="plot_network_down.png", height=400),
+                        br(),
+                        br(),
+
+                        h5(strong("Tables")),
+                        h6(strong("Genes in Module")),
+                        p("These are the gene details of the genes that were filtered away and formed modules with other genes."),
+                        img(src="gene_deetz_notkeep_FO.jpg", height=400),
+                        br(),
+
+                        h6(strong("Functional Outliers")),
+                        p("These are the gene details of the genes that were remaining once the other genes formed modules also known as Functional Outliers."),
+                        img(src="genes_keep_deetz_FO.jpg", height=400),
+                      ),
+
                     ),
                   ),
-                  br(), 
-                  br(),
-                  tags$div("2) Select the plots you want to view by checking the checkbox associated with it.", p(""), "3) Click ", img(src="run_button.jpg")),
-                  br(),
-                  h4("Plots"),
-                  h5("Coexpression Heatmap"),
-                  p("Heatmap of genes detailing the outliers connectivity and expression."),
-                  img(src="plot_coexpression_heatmap_down_filt.png", height=400),
-                  h5("Network"),
-                  p("Network plot detailing the outliers connectivity and expression."),
-                  img(src="plot_network_down.png", height=400),
-                  br(),
-                  br(),
-                  h4("Tables"),
-                  h5("Genes in Module"),
-                  p("These are the gene details of the genes that were filtered away and formed modules with other genes."),
-                  img(src="gene_deetz_notkeep_FO.jpg", height=400),
-                  h5("Functional Outliers"),
-                  p("These are the gene details of the genes that were remaining once the other genes formed modules also known as Functional Outliers."),
-                  img(src="genes_keep_deetz_FO.jpg", height=400),
-                  br(),
-                  br(), 
-                  br(), 
-                  # em("Note: This tool is under construction"),
+
                 ),
                 
                 ########################### GSEA ###########################
@@ -370,49 +524,75 @@ ui <- fluidPage(
                   div(style="display:inline-block; float:right", circleButton(inputId="GSEA_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="GSEA_return_GL", icon=">GL", status="default", size="default")),
                   title="Gene Set Enrichment Analysis",
+
+                  br(),
                   h3("Gene Set Enrichment Analysis (GSEA)"),
+                  br(),
                   p(strong("GSEA"), "is a process of ranking genes by how statistically significant their differential gene expression is. 
                   This can remove false positives from the data."),
-                  h4("User Guide"), 
-                  tags$div("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
-                  tags$div("1) Select the",  img(src="options.jpg", height=30), "dropdown"),
-                  h5("Options"),
-                  p("There are two main types of Gene Set Enrichment Analysis that can occur. Standard GSEA and AUCS GSEA. AUCS GSEA can only be run on DE Data. The following options for GSEA include:"),
-                  splitLayout(cellWidths=c("35%", "65%"),
-                    fluidPage( 
-                      p("For Assessing DE Data, the user has the following options"),
-                      h6(strong("GSEA Type")), 
-                      tags$li("Standard GSEA"), 
-                      tags$li("AUCs GSEA"), 
-                      h6(strong("Standard GSEA")),
-                      em("(appears when Standard GSEA is checked)"),
-                      tags$li("Upregulated P-value Heatmap"), 
-                      tags$li("Downregulated P-value Heatmap"), 
+                  br(),
+
+                  mainPanel(
+                    tabsetPanel(
+
+                      tabPanel(title="User Guide",
+                        br(),
+                        # p("If you have not generated a subnetwork, the following error will appear.", img(src="nosub_error.jpg"), "Make sure you have generated a subnetwork before continuing to these steps."),
+                        
+                        h5(strong("Step 1")),
+                        p("Select the",  img(src="options.jpg", height=40), "dropdown."),
+                        p("There are two main types of Gene Set Enrichment Analysis that can occur. Standard GSEA and AUCS GSEA. AUCS GSEA can only be run on DE Data. The following options for GSEA include:"),
+                        
+                        div(style="position:relative; left:calc(6%);", 
+                          fluidPage(
+                            splitLayout(cellWidths=c("50%", "50%"),
+                              fluidPage( 
+                                p("For Assessing DE Data,", br(), "the user has the following options"),
+                                h6(strong("GSEA Type")), 
+                                tags$li("Standard GSEA"), 
+                                tags$li("AUCs GSEA"), 
+                                h6(strong("Standard GSEA")),
+                                em("(appears when Standard GSEA is checked)"),
+                                tags$li("Upregulated P-value Heatmap"), 
+                                tags$li("Downregulated P-value Heatmap"), 
+                              ),
+                              fluidPage(
+                                p("For Assessing a Gene List,", br(), "the user has the following options"),
+                                h6(strong("Standard GSEA")),
+                                tags$li("P-value Heatmap"), 
+                              ), 
+                            ),
+                          ),
+                        ),                        
+                        br(), 
+
+                        h5(strong("Step 2")),
+                        p("Select the plots you want to view by checking the checkbox associated with it."), 
+                        br(),
+
+                        h5(strong("Step 3")),
+                        p("Click ", img(src="run_button.jpg"), "."),
+                      ),
+
+                      tabPanel(title="Output",
+                        br(),
+                        h5(strong("Standard GSEA")),
+                        p("P-value heatmap of genes."),
+                        img(src="go_enrich.png", height=400),
+                        br(),
+                        br(),
+
+                        h5(strong("Ranking")),
+                        tags$li("AUROC graph"),
+                        tags$li("Scatter plot (AUCs vs P-values)"),
+                        tags$li("Gene set size histogram"),
+                        tags$li("AUC histogram"),
+                        img(src="go_enrich_ranked.png", height=400),
+                      ),
+
                     ),
-                    fluidPage(
-                      p("For Assessing a Gene List, the user has the following options"),
-                      h6(strong("Standard GSEA")),
-                      tags$li("P-value Heatmap"), 
-                    ), 
                   ),
-                  br(), 
-                  br(),
-                  tags$div("2) Select the plots you want to view by checking the checkbox associated with it.", p(""), "3) Click ", img(src="run_button.jpg")),
-                  br(),
-                  h4("Plots"),
-                  h5("Overlap"),
-                  p("P-value heatmap of genes."),
-                  img(src="go_enrich.png", height=400),
-                  h5("Ranking"),
-                  tags$li("AUROC graph"),
-                  tags$li("Scatter plot (AUCs vs P-values)"),
-                  tags$li("Gene set size histogram"),
-                  tags$li("AUC histogram"),
-                  img(src="go_enrich_ranked.png", height=400),
-                  br(),
-                  br(), 
-                  br(), 
-                  #em("Note: This tool is under construction")
+
                  ),
                  
               )
@@ -520,7 +700,8 @@ ui <- fluidPage(
 
                 tabPanel(title="Run Differential Expression",
                   h3("Plot Differential Expression"),
-                  p(id="runDE_error", "Please upload counts and labels data in FILE OPTIONS"),
+
+                  p(id="runDE_error", "Please generate a subnetwork in FILE OPTIONS.", style="color:red"),
 
                   dropdown(
                     inputId="DE_options",
@@ -608,6 +789,7 @@ ui <- fluidPage(
                   actionButton(inputId="assess_run_de", label="Assess DE Data"), 
 
                 ),
+
               ),
             ),
             
@@ -764,7 +946,7 @@ ui <- fluidPage(
                     ),  
                     
                     # error message
-                    textOutput("CG_error_DE"),
+                    p(id="CG_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
 
                     br(),
                     
@@ -894,11 +1076,9 @@ ui <- fluidPage(
                       actionButton(inputId="runGCDE", label="Run", ),
 
                     ),
-                    
-                  
 
                     # error message
-                    textOutput("GC_error_DE"),
+                    p(id="GC_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
 
                     # density - upreg 
                     conditionalPanel(
@@ -1012,7 +1192,7 @@ ui <- fluidPage(
                     ),
                     
                     # error message
-                    textOutput("FO_error_DE"),
+                    p(id="FO_error_DE", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
 
                   ),
                   
@@ -1163,7 +1343,8 @@ ui <- fluidPage(
                     
 
                     # error message
-                    textOutput("DE_GSEA_error"),
+                    p(id="DE_GSEA_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+
                   ),
                   br(),
                   
@@ -1374,7 +1555,8 @@ ui <- fluidPage(
                     ),  
 
                     # error message
-                    textOutput("CG_error"),
+                    p(id="CG_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+
                     br(),
 
                     tabsetPanel(
@@ -1480,7 +1662,7 @@ ui <- fluidPage(
 
 
                     # error message
-                    textOutput("GC_error"),
+                    p(id="GC_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
 
                     # density
                     conditionalPanel(
@@ -1573,7 +1755,7 @@ ui <- fluidPage(
                     ),
                     
                     # error message
-                    textOutput("FO_error"),
+                    p(id="FO_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
 
                   ), 
 
@@ -1583,11 +1765,8 @@ ui <- fluidPage(
                   tabsetPanel(
 
                     # plots tab
-                    tabPanel(
-                      br(),
-                      title="Plots",
-                      br(),
-                      
+                    tabPanel(title="Plots",
+               
                       # heatmap
                       conditionalPanel(
                         condition="$.inArray('Network', input.FOPlotOptions_genelist) > -1", 
@@ -1609,10 +1788,7 @@ ui <- fluidPage(
                     ),
 
                     # tables tab
-                    tabPanel(
-                      br(),
-                      title="Tables", 
-                      br(),
+                    tabPanel(title="Tables",
 
                       # selected genes table output
                       conditionalPanel(
@@ -1654,7 +1830,7 @@ ui <- fluidPage(
                     
                     # options dropdown
                     dropdown(
-                      inputId="GL_GSEA_options",
+                      inputId="GL_GSEA_dropdown",
 
                       # dropdown characteristics
                       style="minimal", icon="OPTIONS",
@@ -1674,7 +1850,7 @@ ui <- fluidPage(
                     ),
 
                     # error message
-                    p(id="GL_GSEA_error", "Please generate a subnetwork in OPTIONS.", style="color:red"),
+                    p(id="GL_GSEA_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
                     br(),
                   
                     # heatmap
