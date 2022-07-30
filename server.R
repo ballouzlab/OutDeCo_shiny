@@ -1431,7 +1431,7 @@ server <- function(input, output, session) {
 
       # # genes in module table output
       show(id="genes_not_keep_table_text_upreg")
-      hide(id= "genes_not_keep_table_upreg_download")
+      show(id= "genes_not_keep_table_upreg_download")
       genes_not_keep_table_upreg <- function(){
           clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
           clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
