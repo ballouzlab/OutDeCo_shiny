@@ -243,16 +243,10 @@ server <- function(input, output, session) {
           updateTabsetPanel(session, "assessDE_navList", selected = "Functional Outliers")
           hide(id="FO_return")
   })
-  observeEvent(input$FO_return, {
+  observeEvent(input$GSEA_return, {
           updateTabsetPanel(session, "navpage", selected = "Assess DE")
           updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
          hide(id="GSEA_return")
-  })
-
-  observeEvent(input$GSEA_return, {
-          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
-          updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
-          hide(id="GSEA_return")
   })
 
   observeEvent(input$SN_return_GL, {
