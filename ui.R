@@ -530,6 +530,7 @@ ui <- fluidPage(
                   br(),
                   p(strong("GSEA"), "is a process of ranking genes by how statistically significant their differential gene expression is. 
                   This can remove false positives from the data."),
+<<<<<<< HEAD
                   br(),
 
                   mainPanel(
@@ -590,6 +591,23 @@ ui <- fluidPage(
                         img(src="go_enrich_ranked.png", height=400),
                       ),
 
+=======
+                  h4("User Guide"), 
+                  tags$div("If you have not generated a subnetwork, the following error will appear.", code("Please generate a subnetwork in NETWORK OPTIONS"), "Make sure you have generated a subnetwork before continuing to these steps."),
+                  tags$div("1) Select the",  img(src="options.jpg", height = 30), "dropdown"),
+                  h5("Options"),
+                  p("There are two main types of Gene Set Enrichment Analysis that can occur. Standard GSEA and AUCS GSEA. AUCS GSEA can only be run on DE Data. The following options for GSEA include:"),
+                  splitLayout(cellWidths = c("35%", "65%"),
+                    fluidPage( 
+                      p("For Assessing DE Data, the user has the following options"),
+                      h6(strong("GSEA Type")), 
+                      tags$li("Standard GSEA"), 
+                      tags$li("AUCs GSEA"), 
+                      h6(strong("Standard GSEA")),
+                      em("(appears when Standard GSEA is checked)"),
+                      tags$li("Upregulated P-value Heatmap"), 
+                      tags$li("Downregulated P-value Heatmap"), 
+>>>>>>> main
                     ),
                   ),
 
@@ -1850,7 +1868,11 @@ ui <- fluidPage(
                     ),
 
                     # error message
+<<<<<<< HEAD
                     p(id="GL_GSEA_error", "Please generate a subnetwork in NERWORK OPTIONS.", style="color:red"),
+=======
+                    textOutput("GL_GSEA_error"),
+>>>>>>> main
                     br(),
                   
                     # heatmap

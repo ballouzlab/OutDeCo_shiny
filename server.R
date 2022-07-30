@@ -18,7 +18,7 @@ server <- function(input, output, session) {
   hide(id = "FO_dropdown")
   hide(id = "FO_dropdown_DE")
   hide(id = "DE_GSEA_dropdown")
-  hide(id = "GL_GSEA_dropdown")
+  hide(id = "GL_GSEA_options")
   hide(id = "assess_run_de")
 
 
@@ -243,14 +243,8 @@ server <- function(input, output, session) {
           updateTabsetPanel(session, "assessDE_navList", selected = "Functional Outliers")
           hide(id="FO_return")
   })
-  observeEvent(input$FO_return, {
-          updateTabsetPanel(session, "navpage", selected = "Assess DE")
-          updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
-         hide(id="GSEA_return")
-  })
-
   observeEvent(input$GSEA_return, {
-          updateTabsetPanel(session, "navpage", selected = "Assess Gene List")
+          updateTabsetPanel(session, "navpage", selected = "Assess DE")
           updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
           hide(id="GSEA_return")
   })
