@@ -18,7 +18,7 @@ server <- function(input, output, session) {
   hide(id = "FO_dropdown")
   hide(id = "FO_dropdown_DE")
   hide(id = "DE_GSEA_dropdown")
-  hide(id = "GL_GSEA_options")
+  hide(id = "GL_GSEA_dropdown")
   hide(id = "assess_run_de")
 
 
