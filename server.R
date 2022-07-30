@@ -859,7 +859,7 @@ server <- function(input, output, session) {
       updateAwesomeCheckboxGroup(inputId = "clusterPlotOptions_downreg", choices = c("Network", "Heatmap", "Binarized Heatmap"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_upreg", choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_downreg", choices =  c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
-      updateAwesomeCheckboxGroup(inputId = "FOPlotOptions_DE", choices = c("Upregulated Network", "Upregulated Heatmap", "Downregulated Network", "Downregulated Heatmap"), status = "")
+      updateAwesomeCheckboxGroup(inputId = "FO_upreg_options", choices = c("Network", "Heatmap", "Genes in Module", "Functional Outliers"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GSEA_type",choices = c("Standard GSEA", "AUCs GSEA"),status = "",)
       updateAwesomeCheckboxGroup(inputId = "GSEA_std_PlotOptions",choices = c("Upregulated P-value Heatmap", "Downregulated P-value Heatmap"),status = "")
       # Clear plots
