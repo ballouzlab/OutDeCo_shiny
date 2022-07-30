@@ -859,7 +859,7 @@ server <- function(input, output, session) {
       updateAwesomeCheckboxGroup(inputId = "clusterPlotOptions_downreg", choices = c("Network", "Heatmap", "Binarized Heatmap"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_upreg", choices = c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GCPlotOptions_downreg", choices =  c("Density", "Histogram", "Clustered Density", "Clustered Histogram"), status = "")
-      updateAwesomeCheckboxGroup(inputId = "FOPlotOptions_DE", choices = c("Upregulated Network", "Upregulated Heatmap", "Downregulated Network", "Downregulated Heatmap"), status = "")
+      updateAwesomeCheckboxGroup(inputId = "FO_upreg_options", choices = c("Network", "Heatmap", "Genes in Module", "Functional Outliers"), status = "")
       updateAwesomeCheckboxGroup(inputId = "GSEA_type",choices = c("Standard GSEA", "AUCs GSEA"),status = "",)
       updateAwesomeCheckboxGroup(inputId = "GSEA_std_PlotOptions",choices = c("Upregulated P-value Heatmap", "Downregulated P-value Heatmap"),status = "")
       # Clear plots
@@ -1390,7 +1390,7 @@ server <- function(input, output, session) {
       node_degrees <- sn$sub_nets_DE$node_degrees  
       medK <- as.numeric(sn$sub_nets_DE$median)
 
-      filt_min <- input$filtmin
+      filt_min <- input$filtmin_DE
 
       show(id="FOnetwork_upreg_text")
       show(id="FO_up_network_download")
@@ -1431,7 +1431,7 @@ server <- function(input, output, session) {
 
       # # genes in module table output
       show(id="genes_not_keep_table_text_upreg")
-      hide(id= "genes_not_keep_table_upreg_download")
+      show(id= "genes_not_keep_table_upreg_download")
       genes_not_keep_table_upreg <- function(){
           clust_size <- plyr::count(clust_net_DE()$up$clusters$labels)
           clust_keep <- clust_size[clust_size[,2] < filt_min ,1]
