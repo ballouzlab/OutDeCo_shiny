@@ -166,7 +166,7 @@ server <- function(input, output, session) {
       updateTabsetPanel(session, "Header", selected = "Differential Expression Analysis")
     } else if (input$navpage == "Assess DE") {
       if (input$assessDE_navList == "View Files") {
-        updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+        updateTabsetPanel(session, "Header", selected = "Generate Subnetwork")
         show(id="SN_return")
         
       } else if (input$assessDE_navList == "Cluster Genes") {
@@ -191,7 +191,7 @@ server <- function(input, output, session) {
       
   } else if (input$navpage == "Assess Gene List") {
       if (input$assessGL_navList == "View Files") {
-        updateTabsetPanel(session, "Header", selected = "Generating a Subnetwork")
+        updateTabsetPanel(session, "Header", selected = "Generate Subnetwork")
         show(id="SN_return_GL")
         
       } else if (input$assessGL_navList == "Cluster Genes") {
