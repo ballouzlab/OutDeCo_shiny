@@ -161,10 +161,9 @@ ui <- fluidPage(
                 ########################### GENERATE SUBNETWORK ###########################
                 
                 tabPanel(title="Generate Subnetwork",
-                  h3("Generating a Subnetwork"),
-                  
                   div(style="display:inline-block; float:right", circleButton(inputId="SN_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="SN_return_GL", icon=">GL", status="default", size="default")),
+                  h3("Generating a Subnetwork"),
                   
                   br(),
                   tags$div(strong("Generating a subnetwork"), "with a chosen network produces a matrix of weights between genes.",tags$br(),
@@ -251,9 +250,6 @@ ui <- fluidPage(
                 tabPanel(title="Cluster Genes",
                   div(style="display:inline-block; float:right", circleButton(inputId="CG_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="CG_return_GL", icon=">GL", status="default", size="default")),
-                  
-                  
-                  br(),
                   h3("Cluster Genes"),
                   br(),
                   p("The", strong("Cluster Genes"), "function generates modules which are clusters of genes that are hightly co-expressed."),
@@ -340,8 +336,6 @@ ui <- fluidPage(
                 tabPanel(title="Gene Connectivity",
                   div(style="display:inline-block; float:right", circleButton(inputId="GC_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="GC_return_GL", icon=">GL", status="default", size="default")),
-                  
-                  br(),
                   h3("Gene Connectivity"),
                   br(),
                   p("The", strong("Gene Connectivity"), "function calculates node degrees to get a sense of the global and local connectivities of the gene."),
@@ -429,8 +423,6 @@ ui <- fluidPage(
                 tabPanel(title="Functional Outliers",
                   div(style="display:inline-block; float:right", circleButton(inputId="FO_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="FO_return_GL", icon=">GL", status="default", size="default")),
-                  
-                  br(),
                   h3("Functional Outliers"),
                   br(),
                   p("The", strong("Functional Outliers"), "function outputs genes that have been identified to be potentially dysregulated. 
@@ -524,8 +516,6 @@ ui <- fluidPage(
                   div(style="display:inline-block; float:right", circleButton(inputId="GSEA_return", icon=">DE", status="default", size="default")),
                   div(style="display:inline-block; float:right", circleButton(inputId="GSEA_return_GL", icon=">GL", status="default", size="default")),
                   title="Gene Set Enrichment Analysis",
-
-                  br(),
                   h3("Gene Set Enrichment Analysis (GSEA)"),
                   br(),
                   p(strong("GSEA"), "is a process of ranking genes by how statistically significant their differential gene expression is. 
