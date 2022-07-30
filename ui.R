@@ -1656,7 +1656,7 @@ ui <- fluidPage(
                     ),
 
                     # error message
-                    p(id = "GL_GSEA_error", "Please generate a subnetwork in OPTIONS.", style = "color:red"),
+                    textOutput("GL_GSEA_error"),
                     br(),
                   
                     # heatmap

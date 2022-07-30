@@ -18,7 +18,7 @@ server <- function(input, output, session) {
   hide(id = "FO_dropdown")
   hide(id = "FO_dropdown_DE")
   hide(id = "DE_GSEA_dropdown")
-  hide(id = "GL_GSEA_dropdown")
+  hide(id = "GL_GSEA_options")
   hide(id = "assess_run_de")
 
 
@@ -246,7 +246,7 @@ server <- function(input, output, session) {
   observeEvent(input$GSEA_return, {
           updateTabsetPanel(session, "navpage", selected = "Assess DE")
           updateTabsetPanel(session, "assessDE_navList", selected = "Gene Set Enrichment Analysis")
-         hide(id="GSEA_return")
+          hide(id="GSEA_return")
   })
 
   observeEvent(input$SN_return_GL, {
@@ -1888,7 +1888,6 @@ server <- function(input, output, session) {
             show(id = "FO_dropdown")
             hide(id = "FO_error")
             show(id = "GL_GSEA_options")
-            show(id = "GL_GSEA_dropdown")
             hide(id = "GL_GSEA_error")
             # Clear data
             output$network <- NULL
