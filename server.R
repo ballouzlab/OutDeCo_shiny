@@ -18,7 +18,7 @@ server <- function(input, output, session) {
   hide(id = "FO_dropdown")
   hide(id = "FO_dropdown_DE")
   hide(id = "DE_GSEA_dropdown")
-  hide(id = "GL_GSEA_options")
+  hide(id = "GL_GSEA_dropdown")
   hide(id = "assess_run_de")
 
 
@@ -521,9 +521,9 @@ server <- function(input, output, session) {
       # No cases have been selected
       filt = groups != 0 
       if (is.null(cases)) {
-        shinyalert(title = "Invalid Input", text = "Please select cases to assess", type = "error")
+        shinyalert(title = "Missing Selection", text = "Please select cases to assess", type = "error")
       } else if (is.null(conditions)) {
-        shinyalert(title = "Invalid Input", text = "Please select conditions to assess", type = "error")
+        shinyalert(title = "Missing Selection", text = "Please select conditions to assess", type = "error")
       # Valid input - cases and control selected
       } else {
         deg <- calc_DE(counts_data[,filt], groups[filt], input$DE_method) 
@@ -726,10 +726,10 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "assessDE_navList", selected = "View Files")
     updateTabsetPanel(session, "subnetwork_file_tabset_DE", selected = "Subnetwork")
     if (input$DE_data_selection == "Use DE Results" && is.null(de$deg_output)) {
-      shinyalert(title = "Invalid Input", text = "Please first Run DE", type = "error")
+      shinyalert(title = "Error", text = "Please first run DE", type = "error")
       updateTabsetPanel(session, inputId="navpage", selected="Run DE")
     } else if (input$DE_data_selection == "Upload DE Data" && is.null(input$DE_file)) {
-      shinyalert(title = "Invalid Input", text = "Please upload a DE Data File", type = "error")
+      shinyalert(title = "Missing DE Data File", text = "Please upload a DE Data File", type = "error")
     #Valid file for Upload DE Data 
     } else if (input$DE_data_selection == "Upload DE Data") {
       if (input$is_occr == "Yes") {
@@ -742,15 +742,15 @@ server <- function(input, output, session) {
         net <- paste0(network_path(), occr, ".net.h5")
         if (!file.exists(genes)) {
           errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(median)) {
           errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(net)) {
           errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(DE(), tolower(network_type()), dir=network_path())
@@ -766,15 +766,15 @@ server <- function(input, output, session) {
         net <- paste0(network_path(), network_type(), ".net.h5")
         if (!file.exists(genes)) {
           errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(median)) {
           errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(net)) {
           errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(DE(), tolower(network_type()), dir=network_path(), flag_occr = FALSE)
@@ -794,15 +794,15 @@ server <- function(input, output, session) {
         net <- paste0(network_path(), occr, ".net.h5")
         if (!file.exists(genes)) {
           errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(median)) {
           errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(net)) {
           errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path())
@@ -818,15 +818,15 @@ server <- function(input, output, session) {
         net <- paste0(network_path(), network_type(), ".net.h5")
         if (!file.exists(genes)) {
           errorMess <- paste("Please ensure", err_genes, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(median)) {
           errorMess <- paste("Please ensure", err_median, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else if (!file.exists(net)) {
           errorMess <- paste("Please ensure", err_net, "exists in", network_type(), "folder")
-          shinyalert(title = "Missing network file", text = errorMess, type = "error")
+          shinyalert(title = "Missing Network File", text = errorMess, type = "error")
         }
         else {
           sn$sub_nets_DE <- subset_network_hdf5(de$deg_output$degs, tolower(network_type()), dir=network_path(), flag_occr = FALSE)
@@ -1791,7 +1791,7 @@ server <- function(input, output, session) {
     updateTabsetPanel(session, "assessGL_navList", selected = "View Files")
     updateTabsetPanel(session, "subnetwork_file_tabset", selected = "Subnetwork")
     if (is.null(input$gene_list_selection)) {
-      shinyalert(title = "Invalid Input", text = "Please choose a gene list method", type = "error")
+      shinyalert(title = "Missing Selection", text = "Please choose a gene list method", type = "error")
     } else {
       # GENERATE GENE LIST
       if (input$gene_list_selection == "Generate Gene List") {
@@ -1822,7 +1822,10 @@ server <- function(input, output, session) {
         # Invalid Input - user hasn't uploaded file
         if (is.null(input$DEFile)) {
           shinyalert(title = "Invalid Input", text = "Please upload a gene list file", type = "error")
-        } else {
+        } else if (is.null(input$GL_gene_list_type)) {
+          shinyalert(title = "Missing Selection", text = "Please select gene list type", type = "error")
+        }
+        else {
           gene_list <- read.delim(file = input$DEFile$datapath, header = FALSE, sep = "\n", dec = ".")[,1]
         }
 
@@ -1841,15 +1844,15 @@ server <- function(input, output, session) {
           net <- paste0(network_path_gene_list(), occr, ".net.h5")
           if (!file.exists(genes)) {
             errorMess <- paste("Please ensure", err_genes, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else if (!file.exists(median)) {
             errorMess <- paste("Please ensure", err_median, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else if (!file.exists(net)) {
             errorMess <- paste("Please ensure", err_net, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else {
             sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list())
@@ -1865,15 +1868,15 @@ server <- function(input, output, session) {
           net <- paste0(network_path_gene_list(), network_type_gene_list(), ".net.h5")
           if (!file.exists(genes)) {
             errorMess <- paste("Please ensure", err_genes, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else if (!file.exists(median)) {
             errorMess <- paste("Please ensure", err_median, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else if (!file.exists(net)) {
             errorMess <- paste("Please ensure", err_net, "exists in", network_type_gene_list(), "folder")
-            shinyalert(title = "Missing network file", text = errorMess, type = "error")
+            shinyalert(title = "Missing Network File", text = errorMess, type = "error")
           }
           else {
             sn$sub_nets <- subset_network_hdf5_gene_list(gene_list, tolower(network_type_gene_list()), dir=network_path_gene_list(), flag_occr = FALSE)
@@ -1887,7 +1890,7 @@ server <- function(input, output, session) {
             hide(id = "GC_error")
             show(id = "FO_dropdown")
             hide(id = "FO_error")
-            show(id = "GL_GSEA_options")
+            show(id = "GL_GSEA_dropdown")
             hide(id = "GL_GSEA_error")
             # Clear data
             output$network <- NULL
