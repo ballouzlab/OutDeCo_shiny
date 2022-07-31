@@ -229,6 +229,11 @@ ui <- fluidPage(
                         h5(strong("Step 5")),
                         p("5) Click ", img(src="generate_subnetwork.png", height=40), "."),
 
+                        br(),
+                        br(),
+                        br(),
+                        h5(em("Disclaimer:")),
+                        p("OutDeCo can run networks with up to a million genes on a system with 16GB RAM, RX580 8GB and Ryzen 5 3600 in 100 seconds")
                       ),
 
                       tabPanel(title="Output",
