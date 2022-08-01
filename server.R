@@ -1388,7 +1388,7 @@ server <- function(input, output, session) {
 
       show(id="FOnetwork_upreg_text")
       show(id="FO_up_network_download")
-      FO_up_network <- function(){plot_network(1-sub_net$up, clust_net_DE()$up, 1 - medK)}
+      FO_up_network <- function(){plot_network(1-sub_net$up, clust_net_DE()$up, 1 - medK,  filt_min = filt_min)}
       output$FOnetwork_upreg <- renderPlot(
         {FO_up_network()}, 
         width = 500, 
@@ -1397,7 +1397,7 @@ server <- function(input, output, session) {
 
       show(id="FOheatmap_upreg_text")
       show(id="FO_up_heatmap_download")
-      FO_up_heatmap <- function(){plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, filt = TRUE, flag_plot_bin = FALSE)}
+      FO_up_heatmap <- function(){plot_coexpression_heatmap(sub_net$up, clust_net_DE()$up, filt = TRUE, flag_plot_bin = FALSE, filt_min = filt_min)}
       output$FOheatmap_upreg <- renderPlot(
         {FO_up_heatmap()}, 
         width = 500,
@@ -1406,7 +1406,7 @@ server <- function(input, output, session) {
 
       show(id="FOnetwork_downreg_text")
       show(id="FO_down_network_download")
-      FO_down_network <- function(){plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK)}
+      FO_down_network <- function(){plot_network(1 - sub_net$down, clust_net_DE()$down, 1 - medK,  filt_min = filt_min)}
       output$FOnetwork_downreg <- renderPlot(
         {FO_down_network()}, 
         width = 500, 
@@ -1415,7 +1415,7 @@ server <- function(input, output, session) {
 
       show(id="FOheatmap_downreg_text")
       show(id="FO_down_heatmap_download")
-      FO_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE)}
+      FO_down_heatmap <- function(){plot_coexpression_heatmap(sub_net$down, clust_net_DE()$down, filt = TRUE, flag_plot_bin = FALSE, filt_min = filt_min)}
       output$FOheatmap_downreg <- renderPlot(
         {FO_down_heatmap()}, 
         width = 500, 
