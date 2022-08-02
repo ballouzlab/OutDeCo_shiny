@@ -29,7 +29,9 @@ ui <- fluidPage(
 
   useShinyjs(),
   chooseSliderSkin("Flat",  color="#325D88"),
-  add_busy_spinner(spin="dots", position="bottom-right", color="#3E3F3A"),
+  add_busy_spinner(spin="dots", position="full-page", color="#3E3F3A", height = "200px",
+width = "200px"
+),
   
   titlePanel(title=div(img(src="ODClogo.png", height=80), "OutDeCo")),
  
