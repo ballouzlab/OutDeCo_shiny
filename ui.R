@@ -29,7 +29,7 @@ ui <- fluidPage(
 
   useShinyjs(),
   chooseSliderSkin("Flat",  color="#325D88"),
-  add_busy_spinner(spin="dots", position="full-page", color="#3E3F3A", height = "200px",
+  add_busy_spinner(spin="dots", position="bottom-right", color="#3E3F3A", height = "200px",
 width = "200px"
 ),
   
