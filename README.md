@@ -1,4 +1,4 @@
-# OutDeCo <img src="./vignettes/figures/sticker2.gif" align="right" height = 150/>
+# OutDeCo <img src="./www/sticker2.gif" align="right" height = 150/>
 *OutDeCo*: Outlier detection through co-expression. The purpose of this package is to assess genes - more specifically differentially expressed genes - with respect to their co-expression properties. 
 
 # Introduction 
@@ -20,7 +20,7 @@ The functions implemented in *OutDeCo* can be applied to human gene expression d
   * Run a network connectivity analysis of DE results within a gene co-expression network
 
 
-![principle2](./vignettes/figures/fig_outliers_matrix.png)
+![principle2](./wwww/fig_outliers_matrix.png)
 
 
 
@@ -45,7 +45,7 @@ Ask us! Please reach out.
 Using devtools: 
 ```{r , eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("sarbal/OutDeCo")
+devtools::install_github("ballouzlab/OutDeCo_lite")
 ```
 The co-expression networks provided are large, so before starting you will need to download them to your local working directroy. If the files already exist in your current directory, they will not be downloaded again. 
 ```{}
