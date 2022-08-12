@@ -13,9 +13,9 @@ However, this misses an interesting and potentially important counterfactual. Wh
 
 
 
-## What you can do with this package
-The functions implemented in *OutDeCo* can be applied to human gene expression data or a gene list of interest. An outline of the objects and workflow included in this package are in the **schematic**, which we go into more detail in the next sections. In particular, this package allows users to:
-  * Run a differential expression (DE) analysis either through the typical case-control approach or a meta-analytic recurrence analysis 
+## What you can do with this app
+The functions implemented in *OutDeCo* can be applied to human gene expression data or a gene list of interest. An outline of the objects and workflow included in this package are in the **schematic**, which we go into more detail in the next sections. In particular, this app allows users to:
+  * Run a differential expression (DE) analysis either through the case-control approach 
   * Assess your DE results using gene co-expression properties 
   * Report a functional outlier assessment
   * Run a network connectivity analysis of DE results within a gene co-expression network
@@ -34,9 +34,6 @@ A gene set of interest, typically from a differential expression analysis. Or an
 Although not necessary, this method runs best on a HPC with 20GB+ RAM. However, datasets of a few hundred samples and up to 30,000 genes can run on smaller CPUs, without the need to parallelise.  
 
 
-## What is in this user guide
-This manual contains a usage guide and descriptions of the package. A step-by-step vignette can be found [here](https://github.com/sarbal/OutDeCo/blob/master/vignettes/vignette.md)
-
 
 ## How to get help
 Ask us! Please reach out. 
@@ -47,6 +44,8 @@ Using devtools:
 ```{r , eval=FALSE}
 # install.packages("devtools")
 devtools::install_github("ballouzlab/OutDeCo_lite")
+devtools::install_github("ballouzlab/OutDeCo_shiny")
+
 ```
 The co-expression networks provided are large, so before starting you will need to download them to your local working directroy. If the files already exist in your current directory, they will not be downloaded again. 
 ```{}
