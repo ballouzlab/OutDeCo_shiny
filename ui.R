@@ -14,7 +14,7 @@ library(stringi)
 library(stringr)
 library(ggplot2)
 library(ggplotify)
-library(OutDeCo)
+#library(OutDeCo)
 library(EGAD)
 
 ui <- fluidPage(

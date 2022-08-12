@@ -1,0 +1,13 @@
+name: OutDeCo
+title:
+username:
+account: sarbal
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6773730
+bundleId: 6193812
+url: https://sarbal.shinyapps.io/OutDeCo/
+when: 1660264957.49118
+lastSyncTime: 1660264957.49118
+asMultiple: FALSE
+asStatic: FALSE

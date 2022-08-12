@@ -2,6 +2,7 @@ source("./src/plot_functions.R", local = TRUE)
 source("./src/cluster_coexp.R", local = TRUE)
 source("./src/subset_network_hdf5.R", local = TRUE)
 source("./src/calc_DE.R", local = TRUE)
+network_dir = "../networks/"
 
 # Warnings silenced for wilcox
 options(warn=-1)
@@ -704,7 +705,7 @@ server <- function(input, output, session) {
   output$select.folder <-
     renderUI(expr = selectInput(inputId = 'folder.name',
                                 label = 'Network Name',
-                                choices = list.dirs(path = "../networks",
+                                choices = list.dirs(path = network_dir,
                                                     full.names = FALSE,
                                                     recursive = FALSE)))
 
@@ -1767,7 +1768,7 @@ server <- function(input, output, session) {
   output$select.folder_gene_list <-
     renderUI(expr = selectInput(inputId = 'folder.name_gene_list',
                                 label = 'Network Name',
-                                choices = list.dirs(path = "../networks",
+                                choices = list.dirs(path = network_dir,
                                                     full.names = FALSE,
                                                     recursive = FALSE)))
 
