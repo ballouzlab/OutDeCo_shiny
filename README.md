@@ -1,4 +1,4 @@
-# OutDeCo <img src="./www/sticker2.gif" align="right" height = 150/>
+# OutDeCo <img src="./www/ODClogo.png" align="right" height = 150/>
 *OutDeCo*: Outlier detection through co-expression. The purpose of this package is to assess genes - more specifically differentially expressed genes - with respect to their co-expression properties. 
 
 # Introduction 
@@ -7,8 +7,9 @@ This manual provides an overview of the Bioconductor package *OutDeCo* for diffe
 ## What do we mean by "functional outliers"? 
 Genes do not act alone. They participate in pathways (genetic interactions) or form complexes (physical interactions), each of which defines their function. An approach to assess their functions is to look to differential expression, where we assay the transcriptome and search for differences between conditions. Since one way to think of gene function is to consider disease, i.e., where systems break down or respond unusually to a perturbation, differential expression is a typical approach. This is usually followed by a gene set enrichment analysis to discover the common theme or function in the set of genes. 
 
-However, this misses an interesting and potentially important counterfactual. What if the genes are no-longer functioning in their respective roles i.e., with their common interacting partners? Rather, it might be that genes acting uncharacteristically are of relevance to the dysfunction. We call these rogue actor genes “functional outliers”. In this scenario, a gene set enrichment analysis will miss these genes. We've created this packaged to search for those outlier genes. 
-![principle](./wwww/fig_outliers_network.png)
+However, this misses an interesting and potentially important counterfactual. What if the genes are no-longer functioning in their respective roles i.e., with their common interacting partners? Rather, it might be that genes acting uncharacteristically are of relevance to the dysfunction. We call these rogue actor genes “functional outliers”. In this scenario, a gene set enrichment analysis will miss these genes. We've created this package to search for those outlier genes. 
+
+![principle](./www/fig_outliers_network.png)
 
 
 
@@ -20,7 +21,7 @@ The functions implemented in *OutDeCo* can be applied to human gene expression d
   * Run a network connectivity analysis of DE results within a gene co-expression network
 
 
-![principle2](./wwww/fig_outliers_matrix.png)
+![principle2](./www/fig_outliers_matrix.png)
 
 
 
